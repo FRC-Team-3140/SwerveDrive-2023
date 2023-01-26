@@ -1,0 +1,44 @@
+{
+  "NetworkTables": {
+    "transitory": {
+      "Angle": {
+        "open": true
+      },
+      "LiveWindow": {
+        ".status": {
+          "open": true
+        }
+      },
+      "PID": {
+        "open": true
+      },
+      "SmartDashboard": {
+        "Auto Mode": {
+          "open": true
+        }
+      },
+      "swerve_chassis": {
+        "module_bl": {
+          "open": true
+        },
+        "module_br": {
+          "open": true
+        },
+        "module_fl": {
+          "open": true
+        },
+        "module_fr": {
+          "open": true
+        }
+      }
+    },
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Auto Mode": "String Chooser"
+    }
+  },
+  "NetworkTables Settings": {
+    "mode": "Client (NT4)",
+    "serverTeam": "3140"
+  }
+}
