@@ -29,7 +29,8 @@
         },
         "module_fr": {
           "open": true
-        }
+        },
+        "open": true
       }
     },
     "types": {

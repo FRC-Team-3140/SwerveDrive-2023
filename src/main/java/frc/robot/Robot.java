@@ -19,6 +19,8 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.SwerveModule;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -38,7 +40,8 @@ public class Robot extends TimedRobot {
      * used for any initialization code.
      */
     @Override
-    public void robotInit() {        
+    public void robotInit() {  
+              
         NetworkTableInstance.getDefault().getTable("PID").getEntry("P").setDouble(.0075000);
         NetworkTableInstance.getDefault().getTable("PID").getEntry("I").setDouble(.0250);
         NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle").setDouble(0.0);
@@ -105,10 +108,13 @@ public class Robot extends TimedRobot {
             m_autonomousCommand.cancel();
         }
     }
-
+    public static double speedDampener = 1;
     // This function is called periodically during operator control.
     @Override
     public void teleopPeriodic() {
+
+ //       SwerveModule.maxDriveSpeed = 1 - RobotContainer.m_xbox_cotroller.getLeftTriggerAxis();
+   //     //System.out.println(RobotContainer.m_xbox_cotroller.getLeftTriggerAxis());
         // This command will schedule the robot to drive via teleop if
         // setDefaultCommand isn't used in RobotContainer
         // m_robotContainer.drive_robot.execute();
