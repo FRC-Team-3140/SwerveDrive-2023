@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -10,7 +11,9 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SwerveDrive extends SubsystemBase {
@@ -39,6 +42,13 @@ public class SwerveDrive extends SubsystemBase {
 
     private boolean locked = false;
 
+    double accel_angle = 0.0;
+    double angle_filtered = 0.0;
+    LinearFilter angle_filter;
+    double afpc = 0.02;
+    double aftc = 0.2;
+    private Accelerometer accelerometer;
+
     public SwerveDrive() {
         m_gyro.reset();
         swerve_table = NetworkTableInstance.getDefault().getTable("swerve_chassis");
@@ -50,6 +60,9 @@ public class SwerveDrive extends SubsystemBase {
         r_velocity.setDouble(0.0);
         drive_enabled = swerve_table.getEntry("enabled");
         drive_enabled.setBoolean(true);
+
+        accelerometer = new BuiltInAccelerometer();
+        angle_filter = LinearFilter.singlePoleIIR(aftc, afpc);
     }
 
     // This method will run repetitively while the robot is running
@@ -84,6 +97,13 @@ public class SwerveDrive extends SubsystemBase {
             m_swerveModule_fl.periodic();
             m_swerveModule_fr.periodic();
         }
+
+        angle_filtered = angle_filter.calculate(accel_angle);
+        accel_angle = -Math.atan2(accelerometer.getX(), accelerometer.getY()) * 180 / Math.PI;
+        if (angle_filtered > 15)
+            angle_filtered = 15;
+        if (angle_filtered < -15)
+            angle_filtered = -15;
     }
 
     // ----------------- Setter Methods ----------------- \\
@@ -105,5 +125,8 @@ public class SwerveDrive extends SubsystemBase {
     public boolean getLocked() {
         return locked;
     }
-    
+
+    public double getAccelFiltered() {
+        return angle_filtered;
+    }
 }
