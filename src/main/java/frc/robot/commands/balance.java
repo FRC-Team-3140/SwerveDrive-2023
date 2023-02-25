@@ -11,7 +11,7 @@ import frc.robot.subsystems.SwerveDrive;
 public class balance extends CommandBase {
   private final SwerveDrive m_swerve;
 
-  private final double max_speed = 0.55;
+  private final double max_speed = 0.2;
   private final double max_angle = 10;
   
   private final PIDController pidController = new PIDController(max_speed / max_angle, 0.02, 0.04);
@@ -29,7 +29,7 @@ public class balance extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double angle = m_swerve.getAccelFiltered();
+    double angle = m_swerve.getAngleFiltered();
     double speed = pidController.calculate(-angle);
     speed = Math.min(Math.max(speed, -max_speed), max_speed);
     m_swerve.setChassisSpeeds(speed, 0, 0);

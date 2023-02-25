@@ -17,6 +17,7 @@ import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.SwerveDrive;
@@ -41,7 +42,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {  
-              
         NetworkTableInstance.getDefault().getTable("PID").getEntry("P").setDouble(.0075000);
         NetworkTableInstance.getDefault().getTable("PID").getEntry("I").setDouble(.0250);
         NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle").setDouble(0.0);
@@ -118,6 +118,13 @@ public class Robot extends TimedRobot {
         // This command will schedule the robot to drive via teleop if
         // setDefaultCommand isn't used in RobotContainer
         // m_robotContainer.drive_robot.execute();
+        NetworkTableInstance.getDefault().getTable("Velocity").getEntry("AvgDriveVelocity").setDouble(SwerveDrive.getAvgVelocity());
+        NetworkTableInstance.getDefault().getTable("Velocity").getEntry("FRDriveVelocity").setDouble(SwerveDrive.getFRVelocity());
+        NetworkTableInstance.getDefault().getTable("Velocity").getEntry("FlDriveVelocity").setDouble(SwerveDrive.getFLVelocity());
+        NetworkTableInstance.getDefault().getTable("Velocity").getEntry("BRDriveVelocity").setDouble(SwerveDrive.getBRVelocity());
+        NetworkTableInstance.getDefault().getTable("Velocity").getEntry("BlDriveVelocity").setDouble(SwerveDrive.getBLVelocity());
+        NetworkTableInstance.getDefault().getTable("Velocity").getEntry("FrPosition").setDouble(SwerveDrive.getFRPosition());
+
 }
 
     @Override

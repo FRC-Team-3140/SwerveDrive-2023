@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import java.sql.Time;
+import java.time.Clock;
+
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.filter.LinearFilter;
@@ -13,6 +16,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -42,12 +46,24 @@ public class SwerveDrive extends SubsystemBase {
 
     private boolean locked = false;
 
+    //Get Angle Filtered
     double accel_angle = 0.0;
     double angle_filtered = 0.0;
     LinearFilter angle_filter;
     double afpc = 0.02;
     double aftc = 0.2;
     private Accelerometer accelerometer;
+
+    //Get Velocity
+    private static double avgVelocity = 0.0;  
+    private static double FRVelocity = 0.0;  
+    private static double FLVelocity = 0.0;  
+    private static double BRVelocity = 0.0;  
+    private static double BLVelocity = 0.0;  
+
+    //Get Position
+    private static double FRPosition = 0.0;
+
 
     public SwerveDrive() {
         m_gyro.reset();
@@ -104,6 +120,13 @@ public class SwerveDrive extends SubsystemBase {
             angle_filtered = 15;
         if (angle_filtered < -15)
             angle_filtered = -15;
+        
+        avgVelocity = (m_swerveModule_bl.driveSparkMax.getEncoder().getVelocity() + m_swerveModule_br.driveSparkMax.getEncoder().getVelocity() + m_swerveModule_fr.driveSparkMax.getEncoder().getVelocity() + m_swerveModule_fl.driveSparkMax.getEncoder().getVelocity()) / 4;
+        FRVelocity = m_swerveModule_fr.driveSparkMax.getEncoder().getVelocity(); 
+        FLVelocity = m_swerveModule_fl.driveSparkMax.getEncoder().getVelocity();
+        BRVelocity = m_swerveModule_br.driveSparkMax.getEncoder().getVelocity();
+        BLVelocity = m_swerveModule_bl.driveSparkMax.getEncoder().getVelocity();
+        FRPosition = m_swerveModule_fr.driveSparkMax.getEncoder().getPosition();
     }
 
     // ----------------- Setter Methods ----------------- \\
@@ -126,7 +149,31 @@ public class SwerveDrive extends SubsystemBase {
         return locked;
     }
 
-    public double getAccelFiltered() {
+    public double getAngleFiltered() {
         return angle_filtered;
+    }
+
+    public static double getAvgVelocity(){
+        return avgVelocity;
+    }
+
+    public static double getFRVelocity(){
+        return FRVelocity;
+    }
+
+    public static double getFLVelocity(){
+        return FLVelocity;
+    }
+
+    public static double getBRVelocity(){
+        return BRVelocity;
+    }
+
+    public static double getBLVelocity(){
+        return BLVelocity;
+    }
+
+    public static double getFRPosition(){
+        return FRPosition;
     }
 }
