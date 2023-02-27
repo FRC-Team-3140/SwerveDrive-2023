@@ -17,11 +17,9 @@ import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.SwerveDrive;
-import frc.robot.subsystems.SwerveModule;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -42,16 +40,11 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {  
-        System.out.println("AVE CHRISTUS REX");
-        System.out.println("SANCTA MARIA, MATER DEI, ORA PRO NOBIS PECCATORIBUS ET NOBIS VICTORIAM REDDE");
+        System.out.println("AVE CHRISTUS REX but in spanish");
+        System.out.println("SANCTA MARIA, MATER DEI, ORA PRO NOBIS PECCATORIBUS ET NOBIS VICTORIAM REDDE but in spanish");
 
         NetworkTableInstance.getDefault().getTable("PID").getEntry("P").setDouble(.0075000);
         NetworkTableInstance.getDefault().getTable("PID").getEntry("I").setDouble(.0250);
-        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle").setDouble(0.0);
-        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_BL").setInteger(0);
-        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_BR").setInteger(0);
-        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_FL").setInteger(0);
-        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_FR").setInteger(0);
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
         m_robotContainer = RobotContainer.getInstance();
