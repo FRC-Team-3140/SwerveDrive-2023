@@ -113,8 +113,6 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
 
- //       SwerveModule.maxDriveSpeed = 1 - RobotContainer.m_xbox_cotroller.getLeftTriggerAxis();
-   //     //System.out.println(RobotContainer.m_xbox_cotroller.getLeftTriggerAxis());
         // This command will schedule the robot to drive via teleop if
         // setDefaultCommand isn't used in RobotContainer
         // m_robotContainer.drive_robot.execute();

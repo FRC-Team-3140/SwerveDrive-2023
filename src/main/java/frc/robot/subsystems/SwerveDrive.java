@@ -1,6 +1,11 @@
 package frc.robot.subsystems;
 
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -15,9 +20,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SwerveDrive extends SubsystemBase {
     
+    public static PhotonCamera aprilTagCamera = new PhotonCamera("Apriltag-Cam");
+    public static PhotonCamera colorCam = new PhotonCamera("Color-Cam");
+
+
+
     private final SwerveModule m_swerveModule_fr = new SwerveModule("fr", 10, 1, 2, 131, 86);
     private final SwerveModule m_swerveModule_fl = new SwerveModule("fl", 13, 3, 4, 308, 171);
-    private final SwerveModule m_swerveModule_br = new SwerveModule("br", 11, 5, 6, 140, 183);
+    private static final SwerveModule m_swerveModule_br = new SwerveModule("br", 11, 5, 6, 140, 183);
     private final SwerveModule m_swerveModule_bl = new SwerveModule("bl", 12, 7, 8, 295, 249);
     public static boolean headless = true;
     // Locations for the swerve drive modules relative to the robot center.
@@ -56,6 +66,7 @@ public class SwerveDrive extends SubsystemBase {
     @Override
     public void periodic() {
         // TODO Auto-generated method stub        
+        
         double dx = x_velocity.getDouble(0);
         double dy = y_velocity.getDouble(0);
         double rads_per_sec = r_velocity.getDouble(0);
@@ -89,10 +100,9 @@ public class SwerveDrive extends SubsystemBase {
     // ----------------- Setter Methods ----------------- \\
     public void setChassisSpeeds(double x_vel, double y_vel, double r_vel) {
         //If val < deadband then set it to 0, else ignore
-        double deadband = .1;
-        x_velocity.setDouble(Math.abs(x_vel) < deadband ? 0 : x_vel);
-        y_velocity.setDouble(Math.abs(y_vel) < deadband ? 0 : y_vel);
-        r_velocity.setDouble(Math.abs(r_vel) < deadband ? 0 : r_vel);
+        x_velocity.setDouble(x_vel);
+        y_velocity.setDouble(y_vel);
+        r_velocity.setDouble(r_vel);
     }
     
     public void setLocked(boolean locked) {
@@ -105,5 +115,42 @@ public class SwerveDrive extends SubsystemBase {
     public boolean getLocked() {
         return locked;
     }
+
+    public RelativeEncoder[] getEncoders(){
+        return new RelativeEncoder[]{
+            m_swerveModule_bl.getEncoder(),
+            m_swerveModule_br.getEncoder(),
+            m_swerveModule_fl.getEncoder(),
+            m_swerveModule_fr.getEncoder()};
+    }
+    public SwerveModule getBRModule(){
+        return m_swerveModule_br;
+    }
+
+    public PhotonTrackedTarget getTarget(){ 
+        return aprilTagCamera.getLatestResult().getBestTarget();
+    }
     
+    public PhotonTrackedTarget getColor(){
+        return colorCam.getLatestResult().getBestTarget();
+    }
+    public boolean hasTarget(){
+        return aprilTagCamera.getLatestResult().hasTargets();
+    }
+//cone=0 cube=1
+    public void changePipeline(){
+        if(colorCam.getPipelineIndex() == 0){
+            colorCam.setPipelineIndex(1);
+        }else if(colorCam.getPipelineIndex() == 1){
+            colorCam.setPipelineIndex(0);
+        }
+    }
+    public void setIdleModes(IdleMode bMode){
+        m_swerveModule_bl.setIdleMode(bMode);
+        m_swerveModule_br.setIdleMode(bMode);
+        m_swerveModule_fl.setIdleMode(bMode);
+        m_swerveModule_fr.setIdleMode(bMode);
+    }
 }
+
+

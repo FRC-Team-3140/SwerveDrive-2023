@@ -20,6 +20,7 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public class Constants {
-    public static double speedDampener = 0;
+    public static double speedDampener = 1;
+    double positionConversionFactor = 1/2;
 }
 
