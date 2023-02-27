@@ -12,6 +12,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import java.io.File;
 
 /**
  * Do NOT add any static variables to this class, or any initialization at all.
@@ -27,7 +28,10 @@ public final class Main {
    *
    * <p>If you change your main robot class, change the parameter type.
    */
-  public static void main(String... args) {
+  public static void main(String... args) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+    File f = new File("coconut.jpg");
+    System.out.println(f);
+     assert f.exists() && f.isFile() : "G̸̘̳̠̭̼̓̀͛̉͝į̴̼̫̬̗̈̊͒̊̾̌v̷̛͔̘͙̻̞͋̎̔͂ȩ̸̛̥͚̺̙̂̎͐̊͝ ̷͚̪͔̳̫́̿̀͐̆m̵̮͇͍͕̹̎̃̌͐̉ê̴̟͙͕̞͖̊̊̉̾̕ ̵̱͓̼͆͋́͑͌͜͜ß̵̳̖̙͔͔̃͂͒̋̚å̵̖̝̼͍̯̀̄̆̊͝¢̸̪̺̟͍̈́̀̌̍̄ͅḱ̴̩̮̭͉̣̑̑̑̐ ̵̭̟̥̖̲̈̾̀̓͘m̵̫͇̭̖̠̀̊̈́̑͠¥̶̡̱͉̮̞̅́̈́͛͌ ̵̙̼̥̰̇̽̾͆̽ͅ¢̴̡̟̭̫̰̈̀̉͊̕ð̶̡̛̛̥̝̯͛̏̑͜¢̸͎̳̼̻̭̈̒͂̓̄ð̷̨̨̳̟͔̈́̈́͑̄̃ñ̶̺̣̣͈̳̉̈́̅̈̋µ̷̻̣͈̣̯̅͗͋̋́†̵̟̮̜͖͖͋͗̌̌̅";
     RobotBase.startRobot(Robot::new);
   }
 }

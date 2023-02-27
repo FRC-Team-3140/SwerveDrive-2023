@@ -42,13 +42,16 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {  
+        System.out.println("AVE CHRISTUS REX");
+        System.out.println("SANCTA MARIA, MATER DEI, ORA PRO NOBIS PECCATORIBUS ET NOBIS VICTORIAM REDDE");
+
         NetworkTableInstance.getDefault().getTable("PID").getEntry("P").setDouble(.0075000);
         NetworkTableInstance.getDefault().getTable("PID").getEntry("I").setDouble(.0250);
         NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle").setDouble(0.0);
         NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_BL").setInteger(0);
-    NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_BR").setInteger(0);
-    NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_FL").setInteger(0);
-    NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_FR").setInteger(0);
+        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_BR").setInteger(0);
+        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_FL").setInteger(0);
+        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_FR").setInteger(0);
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
         m_robotContainer = RobotContainer.getInstance();
@@ -113,8 +116,6 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
 
- //       SwerveModule.maxDriveSpeed = 1 - RobotContainer.m_xbox_cotroller.getLeftTriggerAxis();
-   //     //System.out.println(RobotContainer.m_xbox_cotroller.getLeftTriggerAxis());
         // This command will schedule the robot to drive via teleop if
         // setDefaultCommand isn't used in RobotContainer
         // m_robotContainer.drive_robot.execute();

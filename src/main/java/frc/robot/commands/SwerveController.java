@@ -36,12 +36,12 @@ public class SwerveController extends CommandBase{
         // TODO Auto-generated method stub
 
         super.execute();
-
+        double deadband = .1;
         double dx = m_x_axis.get();
         double dy = m_y_axis.get();
         double dr = m_r_axis.get();
 
-        m_drive.setChassisSpeeds(dx, dy, dr);
+        m_drive.setChassisSpeeds(Math.abs(dx) < deadband ? 0 : dx, Math.abs(dy) < deadband ? 0 : dy, Math.abs(dr) < deadband ? 0: dr);
         
     }
 

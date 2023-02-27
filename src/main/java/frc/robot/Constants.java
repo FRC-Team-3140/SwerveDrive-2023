@@ -21,5 +21,9 @@ package frc.robot;
  */
 public class Constants {
     public static double speedDampener = 1;
+<<<<<<< HEAD
+=======
+    double positionConversionFactor = 1/2;
+>>>>>>> e17e8548da3f6ac1506edd472a3d62a1a16d9bce
 }
 
