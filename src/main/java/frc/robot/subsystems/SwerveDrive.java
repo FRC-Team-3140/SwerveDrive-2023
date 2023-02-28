@@ -230,6 +230,9 @@ public class SwerveDrive extends SubsystemBase {
     public boolean hasTarget() {
         return aprilTagCamera.getLatestResult().hasTargets();
     }
+    public boolean hasColor() {
+        return colorCam.getLatestResult().hasTargets();
+    }
 
     public SwerveModule getBRModule(){
         return m_swerveModule_br;
