@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -24,7 +25,7 @@ public class Arm extends SubsystemBase {
   private final double maxAngleWrist = 0;
 
   //Wrist Absolute Encoder
-  private final Encoder wristEncoder = new Encoder(null, null);
+  private final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(1);
 
   //Arm and wrist motor and pid controller definitions
   private final CANSparkMax ArmSparkMax;
@@ -85,7 +86,7 @@ public class Arm extends SubsystemBase {
     return ArmSparkMax.getEncoder();
   }
 
-  public Encoder getWristEncoder(){
+  public DutyCycleEncoder getWristEncoder(){
     return wristEncoder;
   }
 }
