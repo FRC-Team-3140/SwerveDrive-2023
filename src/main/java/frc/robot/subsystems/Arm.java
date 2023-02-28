@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -48,6 +47,8 @@ public class Arm extends SubsystemBase {
     wristSparkMax = new CANSparkMax(WristID, MotorType.kBrushless);
     m_Compressor = new Compressor(compressorID, PneumaticsModuleType.CTREPCM);
     m_DoubleSolenoid = new DoubleSolenoid(PneumaticsModuleID, PneumaticsModuleType.CTREPCM, forwardCh, reverseCh);
+
+    wristSparkMax.getEncoder().setPosition(0.0);
   }
 
   @Override
