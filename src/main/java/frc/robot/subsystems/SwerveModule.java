@@ -61,7 +61,7 @@ public class SwerveModule{
     private double base_angle;
 
     public static double maxTurnSpeed = 0.3;
-    public static double maxDriveSpeed = 0.4;
+    public static double maxDriveSpeed = 0.8;
     private double turnIntegratorRange = 0.01;
 
     private boolean enable_turn = true;
@@ -93,7 +93,8 @@ public class SwerveModule{
 
         driveSparkMax.restoreFactoryDefaults();
         driveSparkMax.setInverted(false);
-        driveSparkMax.setIdleMode(IdleMode.kCoast);
+        driveSparkMax.setIdleMode(IdleMode.kBrake);
+
         double gear_rat = 1.0/8.14;
         driveSparkMax.setSmartCurrentLimit(35);
 

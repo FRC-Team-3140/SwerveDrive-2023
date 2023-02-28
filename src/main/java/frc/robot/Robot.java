@@ -19,6 +19,7 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.SwerveDrive;
 
 /**
@@ -103,6 +104,8 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             m_autonomousCommand.cancel();
         }
+
+        //Arm Arm1
     }
     public static double speedDampener = 1;
     // This function is called periodically during operator control.
@@ -118,6 +121,9 @@ public class Robot extends TimedRobot {
         NetworkTableInstance.getDefault().getTable("Velocity").getEntry("BRDriveVelocity").setDouble(SwerveDrive.getBRVelocity());
         NetworkTableInstance.getDefault().getTable("Velocity").getEntry("BlDriveVelocity").setDouble(SwerveDrive.getBLVelocity());
         NetworkTableInstance.getDefault().getTable("Velocity").getEntry("FrPosition").setDouble(SwerveDrive.getFRPosition());
+
+        //Arm Stuff
+        //NetworkTableInstance.getDefault().getTable("ARM").getEntry("ArmEncoder").setDouble(Arm1.getArmEncoder());
 
 }
 
