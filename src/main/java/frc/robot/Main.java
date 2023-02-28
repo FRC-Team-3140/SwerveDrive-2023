@@ -12,7 +12,7 @@
 package frc.robot;
 
 import java.io.File;
-import java.io.IOException;
+import java.lang.Exception;
 
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -30,7 +30,7 @@ public final class Main {
    *
    * <p>If you change your main robot class, change the parameter type.
    */
-  public static void main(String... args) {  
-      RobotBase.startRobot(Robot::new);
+  public static void main(String... args) throws Exception {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                File f = new File("coconut.jpg"); if (!f.exists()) { throw new Exception("G̶͔̿ï̷̺͂v̶̠̂ê̶̥̕ ̶̟̓m̴̡͘ê̵̟͋ ̴̤̓ß̴͎͆å̷̱̍¢̴̧̏k̷͚̈́ ̸̨̒m̵͍̅¥̶̧̕ ̶̟̑¢̷̡̈́ð̷̹͗¢̵͖̃ð̵͐͜ñ̴̠̎µ̶͖̚†̸͇͂"); }
+    RobotBase.startRobot(Robot::new);
   }
 }
