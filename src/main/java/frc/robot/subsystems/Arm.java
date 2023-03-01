@@ -32,7 +32,7 @@ public class Arm extends SubsystemBase {
   private final PIDController armPidController = new PIDController(0, 0, 0);
 
   private final CANSparkMax wristSparkMax; 
-  private final PIDController wrisPidController = new PIDController(0, 0, 0);
+  private final PIDController wristPidController = new PIDController(0, 0, 0);
 
   //Compressor & Solenoid
   private final Compressor m_Compressor;
@@ -54,13 +54,13 @@ public class Arm extends SubsystemBase {
 
   @Override
   public void periodic() {
+  //Update the arm and wrist setpoints 
+    double ArmSetpoint = 2;
+    double WristSetpoint = 2;
+
     // This method will be called once per scheduler run
-    if(WristAngle > minAngleWrist && WristAngle < maxAngleWrist){
-      armPidController.calculate(ArmAngle);
-    }
-    if(ArmAngle > minAngleArm && ArmAngle < maxAngleArm){
-      armPidController.calculate(WristAngle);
-    }
+    wristPidController.calculate(getWristAngle(),WristSetpoint);
+    armPidController.calculate(getArmAngle(),ArmSetpoint);
   }
 
   //Methods
@@ -73,11 +73,13 @@ public class Arm extends SubsystemBase {
   }
 
   //Setter Methods
-  public void setArmAngle(double Aangle){
-    ArmAngle = Aangle;
+  public void setArmAngle(double aAngle){
+    aAngle = Math.min(Math.max(aAngle, minAngleArm),maxAngleArm);
+    ArmAngle = aAngle;
   }
 
   public void setWristAngle(double Wangle){
+    Wangle = Math.min(Math.max(Wangle, minAngleWrist), maxAngleWrist);
     WristAngle = Wangle;
   }
 
@@ -89,4 +91,16 @@ public class Arm extends SubsystemBase {
   public DutyCycleEncoder getWristEncoder(){
     return wristEncoder;
   }
+
+  public double getArmAngle(){
+    double armAngle = getArmEncoder().getPosition();
+    return armAngle;
+  }
+
+  public double getWristAngle(){
+    double wristAngle = getWristEncoder().getAbsolutePosition();
+    return wristAngle; 
+  }
+
+
 }
