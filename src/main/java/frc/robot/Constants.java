@@ -22,6 +22,12 @@ package frc.robot;
 public class Constants {
     public static double speedDampener = 0.8;
     
-    double positionConversionFactor = 1/2;
+    public static final double positionConversionFactor = 1/2;
+
+    public static final int compressorID = 0;
+    public static final int PneumaticsModuleID1 = 2;
+   // public static final int PneumaticsModuleID2 = 2;
+    public static final int forwardCh = 0;
+    public static final int reverseCh = 1;
 }
 

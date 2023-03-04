@@ -10,13 +10,9 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.controller.BangBangController; 
 
 public class Arm extends SubsystemBase {
   //Min and Max angle || NOT SET YET DON'T USE!!!
@@ -35,10 +31,6 @@ public class Arm extends SubsystemBase {
   private final CANSparkMax wristSparkMax; 
   private final PIDController wristPidController = new PIDController(0, 0, 0);
 
-  //Compressor & Solenoid
-  private final Compressor m_Compressor;
-  private final DoubleSolenoid m_DoubleSolenoid;
-
   //Set Angles
   private double ArmAngle;
   private double WristAngle;
@@ -47,8 +39,6 @@ public class Arm extends SubsystemBase {
   public Arm(int ArmID, int WristID, int compressorID, int PneumaticsModuleID, int forwardCh, int reverseCh) {
     ArmSparkMax = new CANSparkMax(ArmID, MotorType.kBrushless);
     wristSparkMax = new CANSparkMax(WristID, MotorType.kBrushless);
-    m_Compressor = new Compressor(compressorID, PneumaticsModuleType.CTREPCM);
-    m_DoubleSolenoid = new DoubleSolenoid(PneumaticsModuleID, PneumaticsModuleType.CTREPCM, forwardCh, reverseCh);
 
     ArmSparkMax.setSmartCurrentLimit(35);
     ArmSparkMax.setIdleMode(IdleMode.kBrake);
@@ -70,15 +60,6 @@ public class Arm extends SubsystemBase {
     // This method will be called once per scheduler run
     wristPidController.calculate(getWristAngle(),WristSetpoint);
     armPidController.calculate(getArmAngle(),ArmSetpoint);
-  }
-
-  //Methods
-  public void openClaw(){
-    m_DoubleSolenoid.set(Value.kForward);
-  }
-
-  public void closeClaw(){
-    m_DoubleSolenoid.set(Value.kReverse);
   }
 
   //Setter Methods
