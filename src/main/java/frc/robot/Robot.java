@@ -17,6 +17,7 @@ import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.Arm;
@@ -122,6 +123,9 @@ public class Robot extends TimedRobot {
         NetworkTableInstance.getDefault().getTable("Velocity").getEntry("BRDriveVelocity").setDouble(SwerveDrive.getBRVelocity());
         NetworkTableInstance.getDefault().getTable("Velocity").getEntry("BlDriveVelocity").setDouble(SwerveDrive.getBLVelocity());
         NetworkTableInstance.getDefault().getTable("Velocity").getEntry("FrPosition").setDouble(SwerveDrive.getFRPosition());
+        m_robotContainer.getWristMotor().setVoltage(5 * m_robotContainer.getXbox().getLeftY());
+        m_robotContainer.getArmMotor().setVoltage(5 * -(m_robotContainer.getXbox().getRightY()));
+        
 
         //Arm Stuff
         //NetworkTableInstance.getDefault().getTable("ARM").getEntry("ArmEncoder").setDouble(Arm1.getArmEncoder());
@@ -137,6 +141,9 @@ public class Robot extends TimedRobot {
     // This function is called periodically during test mode.
     @Override
     public void testPeriodic() {
+       // m_robotContainer.getSwerve().setChassisSpeeds(.7, 0, 0);
+       
+        
     }
 
 }

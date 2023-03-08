@@ -21,8 +21,6 @@ public class Claw extends SubsystemBase {
   /** Creates a new Arm. */
   public Claw(int PneumaticsModuleID1, int forwardCh, int reverseCh) {
     m_DoubleSolenoid = new DoubleSolenoid(PneumaticsModuleID1, PneumaticsModuleType.CTREPCM, forwardCh, reverseCh);
-
-    
   }
 
   @Override
@@ -31,17 +29,23 @@ public class Claw extends SubsystemBase {
 
   }
   //Setter method
-  public RunCommand toggleClaw() {
+
+  public void clawOpen() {
+    m_DoubleSolenoid.set(Value.kReverse);
+  }
+  public void clawClosed(){
+    m_DoubleSolenoid.set(Value.kForward);
+  }
+
+  public void toggleClaw() {
     System.out.println(closed);
-    return closed ? 
-      new RunCommand(()->{
-        m_DoubleSolenoid.set(Value.kForward);
-        closed = false;
-      }):      
-      new RunCommand(()->{
-        m_DoubleSolenoid.set(Value.kReverse);
-        closed = true;
-      });
+    if (closed) {
+      m_DoubleSolenoid.set(Value.kForward);
+      closed = false;
+    } else {
+      m_DoubleSolenoid.set(Value.kReverse);
+      closed = true;
+    }
   }
 }
 

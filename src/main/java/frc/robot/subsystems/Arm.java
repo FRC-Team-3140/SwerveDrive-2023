@@ -30,22 +30,23 @@ public class Arm extends SubsystemBase {
 
   private final CANSparkMax wristSparkMax; 
   private final PIDController wristPidController = new PIDController(0, 0, 0);
+  private final BangBangController bangBangController = new BangBangController();
 
   //Set Angles
   private double ArmAngle;
   private double WristAngle;
 
   /** Creates a new Arm. */
-  public Arm(int ArmID, int WristID, int compressorID, int PneumaticsModuleID, int forwardCh, int reverseCh) {
+  public Arm(int ArmID, int WristID) {
     ArmSparkMax = new CANSparkMax(ArmID, MotorType.kBrushless);
     wristSparkMax = new CANSparkMax(WristID, MotorType.kBrushless);
 
-    ArmSparkMax.setSmartCurrentLimit(35);
-    ArmSparkMax.setIdleMode(IdleMode.kBrake);
+    ArmSparkMax.setSmartCurrentLimit(80);
+    ArmSparkMax.setIdleMode(IdleMode.kCoast);
     ArmSparkMax.burnFlash();
 
-    wristSparkMax.setSmartCurrentLimit(35);
-    wristSparkMax.setIdleMode(IdleMode.kBrake);
+    wristSparkMax.setSmartCurrentLimit(20);
+    wristSparkMax.setIdleMode(IdleMode.kCoast);
     wristSparkMax.burnFlash();
 
     wristSparkMax.getEncoder().setPosition(0.0);
@@ -58,19 +59,29 @@ public class Arm extends SubsystemBase {
     double WristSetpoint = 2;
 
     // This method will be called once per scheduler run
+    
+    
+    
     wristPidController.calculate(getWristAngle(),WristSetpoint);
     armPidController.calculate(getArmAngle(),ArmSetpoint);
+   
+    ArmSparkMax.set(getArmAngle() > ArmSetpoint? .1 : -.1);
   }
 
   //Setter Methods
   public void setArmAngle(double aAngle){
-    aAngle = Math.min(Math.max(aAngle, minAngleArm),maxAngleArm);
-    ArmAngle = aAngle;
+    ArmAngle = Math.min(Math.max(aAngle, minAngleArm),maxAngleArm);
   }
 
   public void setWristAngle(double Wangle){
-    Wangle = Math.min(Math.max(Wangle, minAngleWrist), maxAngleWrist);
-    WristAngle = Wangle;
+    WristAngle = Math.min(Math.max(Wangle, minAngleWrist), maxAngleWrist);
+  }
+  public void setWristSpeed(double WristSetpoint){
+     wristSparkMax.set(getWristAngle() > WristSetpoint ? .1 : -.1 );
+  }
+  
+  public void setArmSpeed(double ArmSetpoint){
+     wristSparkMax.set(getWristAngle() > ArmSetpoint ? .1 : -.1 );
   }
 
   //Getter Methods
@@ -83,13 +94,11 @@ public class Arm extends SubsystemBase {
   }
 
   public double getArmAngle(){
-    double armAngle = getArmEncoder().getPosition();
-    return armAngle;
+    return getArmEncoder().getPosition();
   }
 
   public double getWristAngle(){
-    double wristAngle = getWristEncoder().getAbsolutePosition();
-    return wristAngle; 
+    return getWristEncoder().getAbsolutePosition();
   }
 
 
