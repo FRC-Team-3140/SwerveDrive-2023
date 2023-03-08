@@ -24,6 +24,9 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.SwerveDrive;
 //import edu.wpi.first.math.controller.Bang;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -39,8 +42,8 @@ public class Robot extends TimedRobot {
     private RobotContainer m_robotContainer;
 
     //Arm & Claw Subsystems
-    private final Arm ARM = new Arm(Constants.armID, Constants.wristID);
-    private final Claw CLAW = new Claw(Constants.PneumaticsModuleID1, Constants.forwardCh, Constants.reverseCh);
+//    private final Arm ARM = new Arm(Constants.armID, Constants.wristID);
+    
 
     /**
      * This function is run when the robot is first started up and should be
@@ -114,6 +117,7 @@ public class Robot extends TimedRobot {
         }
     }
     public static double speedDampener = 1;
+    DutyCycleEncoder bruh  = new DutyCycleEncoder(1);
     // This function is called periodically during operator control.
     @Override
     public void teleopPeriodic() {
@@ -128,17 +132,26 @@ public class Robot extends TimedRobot {
         NetworkTableInstance.getDefault().getTable("Velocity").getEntry("BlDriveVelocity").setDouble(SwerveDrive.getBLVelocity());
         NetworkTableInstance.getDefault().getTable("Velocity").getEntry("FrPosition").setDouble(SwerveDrive.getFRPosition());
         
-        m_robotContainer.getWristMotor().setVoltage(5 * m_robotContainer.getController2().getLeftY());
-        m_robotContainer.getArmMotor().setVoltage(5 * -(m_robotContainer.getController2().getRightY()));
-        
+        if(Math.abs(m_robotContainer.getController2().getLeftY()) >= .05){
+            m_robotContainer.getWristMotor().setVoltage(5 * -(m_robotContainer.getController2().getLeftY()));
+            System.out.println(bruh.getAbsolutePosition());
+        }else{
+            m_robotContainer.getWristMotor().setVoltage(0);
+        }
+        if(Math.abs(m_robotContainer.getController2().getRightY()) >= .05){
+            m_robotContainer.getArmMotor().setVoltage(5 * -(m_robotContainer.getController2().getRightY()));
+            System.out.println(m_robotContainer.getArmMotor().getEncoder().getPosition());
+        }else{
+            m_robotContainer.getArmMotor().setVoltage(0);
+        }
 
         //Arm Stuff
         // NetworkTableInstance.getDefault().getTable("ARM").getEntry("ArmEncoder").setDouble(Arm1.getArmEncoder());}
         // XboxController Control1 = m_robotContainer.getController1();
         XboxController Control2 = m_robotContainer.getController2();
 
-        ARM.setArmAngle(Control2.getLeftY());
-        ARM.setWristAngle(Control2.getRightY());
+        // ARM.setArmAngle(Control2.getLeftY());
+        // ARM.setWristAngle(Control2.getRightY());
 }
 
     @Override

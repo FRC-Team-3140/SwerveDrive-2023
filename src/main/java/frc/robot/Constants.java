@@ -31,6 +31,6 @@ public class Constants {
     public static final int armID = 10;
     public static final int susID = 69;
 
-    
+
 }
 

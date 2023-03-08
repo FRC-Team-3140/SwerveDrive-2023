@@ -42,11 +42,11 @@ public class Arm extends SubsystemBase {
     wristSparkMax = new CANSparkMax(WristID, MotorType.kBrushless);
 
     ArmSparkMax.setSmartCurrentLimit(80);
-    ArmSparkMax.setIdleMode(IdleMode.kCoast);
+    ArmSparkMax.setIdleMode(IdleMode.kBrake);
     ArmSparkMax.burnFlash();
 
     wristSparkMax.setSmartCurrentLimit(20);
-    wristSparkMax.setIdleMode(IdleMode.kCoast);
+    wristSparkMax.setIdleMode(IdleMode.kBrake);
     wristSparkMax.burnFlash();
 
     wristSparkMax.getEncoder().setPosition(0.0);
