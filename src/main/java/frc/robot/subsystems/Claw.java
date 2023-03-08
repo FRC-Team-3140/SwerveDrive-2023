@@ -37,11 +37,13 @@ public class Claw extends SubsystemBase {
     m_DoubleSolenoid.set(Value.kForward);
   }
 
-  public void toggleClaw() {
+  public void toggleClaw(boolean pressed) {
     System.out.println(closed);
-    if (closed) {
-      m_DoubleSolenoid.set(Value.kForward);
-      closed = false;
+    if (pressed) {
+      if(closed){
+        m_DoubleSolenoid.set(Value.kForward);
+        closed = false;
+      }
     } else {
       m_DoubleSolenoid.set(Value.kReverse);
       closed = true;

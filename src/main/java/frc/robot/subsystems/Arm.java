@@ -12,7 +12,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.math.controller.BangBangController; 
+
+//impirt edu.wpi.first.math.controller.Bang;
 
 public class Arm extends SubsystemBase {
   //Min and Max angle || NOT SET YET DON'T USE!!!
@@ -30,10 +31,9 @@ public class Arm extends SubsystemBase {
 
   private final CANSparkMax wristSparkMax; 
   private final PIDController wristPidController = new PIDController(0, 0, 0);
-  private final BangBangController bangBangController = new BangBangController();
 
   //Set Angles
-  private double ArmAngle;
+  private double ArmAngle; 
   private double WristAngle;
 
   /** Creates a new Arm. */
@@ -73,9 +73,11 @@ public class Arm extends SubsystemBase {
     ArmAngle = Math.min(Math.max(aAngle, minAngleArm),maxAngleArm);
   }
 
-  public void setWristAngle(double Wangle){
-    WristAngle = Math.min(Math.max(Wangle, minAngleWrist), maxAngleWrist);
+  public void setWristAngle(double angle){
+    // double Wangle = ;
+    // WristAngle = Math.min(Math.max(Wangle, minAngleWrist), maxAngleWrist);
   }
+  
   public void setWristSpeed(double WristSetpoint){
      wristSparkMax.set(getWristAngle() > WristSetpoint ? .1 : -.1 );
   }
@@ -100,6 +102,4 @@ public class Arm extends SubsystemBase {
   public double getWristAngle(){
     return getWristEncoder().getAbsolutePosition();
   }
-
-
 }

@@ -24,8 +24,13 @@ public class Constants {
     
     public static final double positionConversionFactor = 1/2;
     public static final int PneumaticsModuleID1 = 2;
-   // public static final int PneumaticsModuleID2 = 2;
     public static final int forwardCh = 0;
     public static final int reverseCh = 1;
+
+    public static final int wristID = 9;
+    public static final int armID = 10;
+    public static final int susID = 69;
+
+    
 }
 

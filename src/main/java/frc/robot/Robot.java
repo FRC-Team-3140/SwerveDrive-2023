@@ -8,7 +8,7 @@
 // update. Deleting the comments indicating the section will prevent
 // it from being updated in the future.
 
-// ROBOTBUILDER TYPE: Robot.
+// ROBOTBUILDER TYPE: Robot. 
 
 package frc.robot;
 
@@ -21,7 +21,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.SwerveDrive;
+//import edu.wpi.first.math.controller.Bang;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -35,6 +37,10 @@ public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
 
     private RobotContainer m_robotContainer;
+
+    //Arm & Claw Subsystems
+    private final Arm ARM = new Arm(Constants.armID, Constants.wristID);
+    private final Claw CLAW = new Claw(Constants.PneumaticsModuleID1, Constants.forwardCh, Constants.reverseCh);
 
     /**
      * This function is run when the robot is first started up and should be
@@ -106,8 +112,6 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             m_autonomousCommand.cancel();
         }
-
-        //Arm Arm1
     }
     public static double speedDampener = 1;
     // This function is called periodically during operator control.
@@ -123,13 +127,18 @@ public class Robot extends TimedRobot {
         NetworkTableInstance.getDefault().getTable("Velocity").getEntry("BRDriveVelocity").setDouble(SwerveDrive.getBRVelocity());
         NetworkTableInstance.getDefault().getTable("Velocity").getEntry("BlDriveVelocity").setDouble(SwerveDrive.getBLVelocity());
         NetworkTableInstance.getDefault().getTable("Velocity").getEntry("FrPosition").setDouble(SwerveDrive.getFRPosition());
-        m_robotContainer.getWristMotor().setVoltage(5 * m_robotContainer.getXbox().getLeftY());
-        m_robotContainer.getArmMotor().setVoltage(5 * -(m_robotContainer.getXbox().getRightY()));
+        
+        m_robotContainer.getWristMotor().setVoltage(5 * m_robotContainer.getController2().getLeftY());
+        m_robotContainer.getArmMotor().setVoltage(5 * -(m_robotContainer.getController2().getRightY()));
         
 
         //Arm Stuff
-        //NetworkTableInstance.getDefault().getTable("ARM").getEntry("ArmEncoder").setDouble(Arm1.getArmEncoder());
+        // NetworkTableInstance.getDefault().getTable("ARM").getEntry("ArmEncoder").setDouble(Arm1.getArmEncoder());}
+        // XboxController Control1 = m_robotContainer.getController1();
+        XboxController Control2 = m_robotContainer.getController2();
 
+        ARM.setArmAngle(Control2.getLeftY());
+        ARM.setWristAngle(Control2.getRightY());
 }
 
     @Override
