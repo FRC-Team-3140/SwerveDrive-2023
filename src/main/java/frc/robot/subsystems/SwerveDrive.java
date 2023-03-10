@@ -95,8 +95,7 @@ public class SwerveDrive extends SubsystemBase {
 
         ChassisSpeeds fieldSpeeds = new ChassisSpeeds(dx, dy, rads_per_sec);
         ChassisSpeeds botSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(dx, dy, rads_per_sec, m_gyro.getRotation2d());
-        SwerveModuleState[] states = headless ? m_kinematics.toSwerveModuleStates(botSpeeds)
-                : m_kinematics.toSwerveModuleStates(fieldSpeeds);
+        SwerveModuleState[] states = headless ? m_kinematics.toSwerveModuleStates(botSpeeds): m_kinematics.toSwerveModuleStates(fieldSpeeds);
 
         // int angleBL = (int)
         // NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_BL").getInteger(0);
@@ -143,12 +142,6 @@ public class SwerveDrive extends SubsystemBase {
 
     // ----------------- Setter Methods ----------------- \\
     public void setChassisSpeeds(double x_vel, double y_vel, double r_vel) {
-
-        // If val < deadband then set it to 0, else ignore
-        double deadband = .1;
-        x_velocity.setDouble(Math.abs(x_vel) < deadband ? 0 : x_vel);
-        y_velocity.setDouble(Math.abs(y_vel) < deadband ? 0 : y_vel);
-        r_velocity.setDouble(Math.abs(r_vel) < deadband ? 0 : r_vel);
 
         //If val < deadband then set it to 0, else ignore
         x_velocity.setDouble(x_vel);

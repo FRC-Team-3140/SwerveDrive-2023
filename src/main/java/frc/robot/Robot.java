@@ -16,17 +16,11 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.hal.HAL;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.Arm;
-import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.SwerveDrive;
-//import edu.wpi.first.math.controller.Bang;
-import edu.wpi.first.wpilibj.AddressableLED;
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -53,7 +47,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {  
         System.out.println("AVE CHRISTUS REX but in spanish");
         System.out.println("SANCTA MARIA, MATER DEI, ORA PRO NOBIS PECCATORIBUS ET NOBIS VICTORIAM REDDE but in spanish");
-
+        NetworkTableInstance.getDefault().getTable("Arm").getEntry("Arm Angle").setDouble(0);
         NetworkTableInstance.getDefault().getTable("PID").getEntry("P").setDouble(.0075000);
         NetworkTableInstance.getDefault().getTable("PID").getEntry("I").setDouble(.0250);
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
@@ -116,8 +110,8 @@ public class Robot extends TimedRobot {
             m_autonomousCommand.cancel();
         }
     }
-    public static double speedDampener = 1;
-    DutyCycleEncoder bruh  = new DutyCycleEncoder(1);
+    public static double wristDampener = 0.5;
+    public static double armDampener = 1;
     // This function is called periodically during operator control.
     @Override
     public void teleopPeriodic() {
@@ -133,25 +127,22 @@ public class Robot extends TimedRobot {
         NetworkTableInstance.getDefault().getTable("Velocity").getEntry("FrPosition").setDouble(SwerveDrive.getFRPosition());
         
         if(Math.abs(m_robotContainer.getController2().getLeftY()) >= .05){
-            m_robotContainer.getWristMotor().setVoltage(5 * -(m_robotContainer.getController2().getLeftY()));
-            System.out.println(bruh.getAbsolutePosition());
+  //          m_robotContainer.getArm().setWristVoltage(5 * -(m_robotContainer.getController2().getLeftY()) * wristDampener);
+            System.out.println(m_robotContainer.getArm().getWristAngle());
         }else{
-            m_robotContainer.getWristMotor().setVoltage(0);
-        }
+    //        m_robotContainer.getArm().setWristVoltage(0);
+        } 
         if(Math.abs(m_robotContainer.getController2().getRightY()) >= .05){
-            m_robotContainer.getArmMotor().setVoltage(5 * -(m_robotContainer.getController2().getRightY()));
-            System.out.println(m_robotContainer.getArmMotor().getEncoder().getPosition());
+      //      m_robotContainer.getArm().setArmVoltage(5 * -(m_robotContainer.getController2().getRightY()) * armDampener);
+            System.out.println(m_robotContainer.getArm().getArmAngle());
         }else{
-            m_robotContainer.getArmMotor().setVoltage(0);
+        //    m_robotContainer.getArm().setArmVoltage(0);
         }
 
         //Arm Stuff
+        
         // NetworkTableInstance.getDefault().getTable("ARM").getEntry("ArmEncoder").setDouble(Arm1.getArmEncoder());}
         // XboxController Control1 = m_robotContainer.getController1();
-        XboxController Control2 = m_robotContainer.getController2();
-
-        // ARM.setArmAngle(Control2.getLeftY());
-        // ARM.setWristAngle(Control2.getRightY());
 }
 
     @Override
@@ -164,6 +155,8 @@ public class Robot extends TimedRobot {
     @Override
     public void testPeriodic() {
        // m_robotContainer.getSwerve().setChassisSpeeds(.7, 0, 0);
+       DigitalInput limit = RobotContainer.getLimitSwitch();
+       System.out.println(limit.get());
        
         
     }

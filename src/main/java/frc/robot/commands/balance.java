@@ -8,7 +8,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveDrive;
 
-public class balance extends CommandBase {
+public class Balance extends CommandBase {
   private final SwerveDrive m_swerve;
 
   private final double max_speed = 0.2;
@@ -17,14 +17,16 @@ public class balance extends CommandBase {
   private final PIDController pidController = new PIDController(max_speed / max_angle, 0.02, 0.04);
 
   /** Creates a new balance. */
-  public balance(SwerveDrive swerveDrive) {
+  public Balance(SwerveDrive swerveDrive) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_swerve = swerveDrive;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    m_swerve.setLocked(false);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override

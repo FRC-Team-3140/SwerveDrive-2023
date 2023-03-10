@@ -20,7 +20,6 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public class Constants {
-    public static double speedDampener = 0.8;
     
     public static final double positionConversionFactor = 1/2;
     public static final int PneumaticsModuleID1 = 2;
@@ -29,8 +28,33 @@ public class Constants {
 
     public static final int wristID = 9;
     public static final int armID = 10;
-    public static final int susID = 69;
 
+    public static final double defaultDampening = 0.8;
+
+    public static double angleDiff(double angle1, double angle2) {
+        while (angle1 < 0) {
+            angle1 += 360;
+        }
+        while (angle1 >= 360) {
+            angle1 -= 360;
+        }
+        while (angle2 < 0) {
+            angle2 += 360;
+        }
+        while (angle2 >= 360) {
+            angle2 -= 360;
+        }
+
+        double diff = angle1 - angle2;
+        if (diff > 180) {
+            diff -= 360;
+        }
+        if (diff <= -180) {
+            diff += 360;
+        }
+
+        return diff;
+    }
 
 }
 

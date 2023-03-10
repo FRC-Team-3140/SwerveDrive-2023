@@ -18,6 +18,7 @@ public class TurnToObject extends CommandBase{
     
     @Override
     public void initialize() {
+        m_drive.setLocked(false);
         m_drive.setIdleModes(IdleMode.kBrake);
     }
 
@@ -26,7 +27,6 @@ public class TurnToObject extends CommandBase{
     public void execute() {
         if(m_drive.getColor() != null){
             objectAngle = m_drive.getColor().getYaw();
-            System.out.println(objectAngle);
             if(objectAngle<0){
                 m_drive.setChassisSpeeds(0, 0, 0.1);
             }else{

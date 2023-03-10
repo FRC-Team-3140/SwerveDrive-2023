@@ -12,19 +12,15 @@ public class TargetAlign extends CommandBase {
         addRequirements(swerveDrive);
     }
     double setpoint;
-    
+    double deadband = .05;
+
     @Override
     public void initialize() {
         m_Drive.setLocked(false);
         if(m_Drive.getTarget() != null)
         setpoint = m_Drive.getTarget().getBestCameraToTarget().getY() ;
     }
-    PIDController driving_pid;
-    double drivingVelocity;
-    double I;
-    double P;
-    double turnIntegratorRange = 0.01;
-    double deadband = .01;
+
     @Override
     public void execute() {
         
@@ -35,24 +31,29 @@ public class TargetAlign extends CommandBase {
         //driving_pid.setIntegratorRange(-turnIntegratorRange, turnIntegratorRange);
         //hi
         //
-        drivingVelocity = Math.pow(DIST,2) * 5;
-        m_Drive.setChassisSpeeds(0, Math.copySign(drivingVelocity, relativePosition.getY()),0);
+        m_Drive.setChassisSpeeds(0,Math.copySign(.1, relativePosition.getY()) , 0);
+        double drivingVelocity = Math.pow(DIST,2) * 5;
+        //m_Drive.setChassisSpeeds(0, Math.copySign(drivingVelocity, relativePosition.getY()),0);
         }
     }
+
     @Override
     public boolean isFinished() {
-        // TODO Auto-generated method stub
+        // TODO Auto-generated method sub
         if(m_Drive.getTarget() != null){ 
-            System.out.println(m_Drive.getTarget().getBestCameraToTarget().getY());
             if(Math.abs(m_Drive.getTarget().getBestCameraToTarget().getY()) < deadband){
                 m_Drive.setLocked(true);
                 return true;
             }
             return false;
-        //();
         }
         System.out.println("Lost target");
         return true;
+    }
+
+    @Override
+    public void end(boolean interrupt) {
+        m_Drive.setChassisSpeeds(0, 0, 0);
     }
 }
     
