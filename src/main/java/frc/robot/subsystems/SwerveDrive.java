@@ -231,4 +231,8 @@ public class SwerveDrive extends SubsystemBase {
         return m_swerveModule_br;
     }
 
+    public Accelerometer getAccelerometer(){
+        return accelerometer;
+    }
+
 }
