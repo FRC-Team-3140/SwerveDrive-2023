@@ -1,9 +1,9 @@
-package frc.robot.commands;
+package frc.robot.commands.Drivetrain;
 
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.Swerve.SwerveDrive;
 import edu.wpi.first.wpilibj.Timer;
 
 public class DriveDistance extends CommandBase{

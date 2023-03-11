@@ -1,9 +1,9 @@
-package frc.robot.commands;
+package frc.robot.commands.Balance;
 
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.Swerve.SwerveDrive;
 
 public class balance_alt extends CommandBase{
     //Welecome to Balance Alt...

@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.Arm;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
@@ -19,7 +19,10 @@ public class reachTop extends CommandBase{
     }
      @Override
      public boolean isFinished() {
-         return Math.abs(topDegreeArm).getArmAngle() <= topDegreeArm;
+         return arm.getArmAngle() <= topDegreeArm;
      }
 
 }
+
+// Work on this
+// reachTop, findPath

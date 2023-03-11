@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
 public class LED  extends SubsystemBase{
-    static AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(30);
+    static AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(43);
     static AddressableLED led;
     static boolean yellowPurple;
 

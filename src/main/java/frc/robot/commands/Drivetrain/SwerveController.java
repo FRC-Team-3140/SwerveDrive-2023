@@ -1,9 +1,9 @@
-package frc.robot.commands;
+package frc.robot.commands.Drivetrain;
 
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.Swerve.SwerveDrive;
 
 public class SwerveController extends CommandBase{
 

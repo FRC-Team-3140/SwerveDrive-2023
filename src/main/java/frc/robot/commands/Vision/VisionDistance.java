@@ -1,9 +1,9 @@
-package frc.robot.commands;
+package frc.robot.commands.Vision;
 
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.Swerve.SwerveDrive;
 
 public class VisionDistance extends CommandBase {
     double distance;
