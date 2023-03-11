@@ -125,18 +125,19 @@ public class Robot extends TimedRobot {
         NetworkTableInstance.getDefault().getTable("Velocity").getEntry("BRDriveVelocity").setDouble(SwerveDrive.getBRVelocity());
         NetworkTableInstance.getDefault().getTable("Velocity").getEntry("BlDriveVelocity").setDouble(SwerveDrive.getBLVelocity());
         NetworkTableInstance.getDefault().getTable("Velocity").getEntry("FrPosition").setDouble(SwerveDrive.getFRPosition());
-        
+    //50.9047 + 75 arm, 203.2 wrist
+
         if(Math.abs(m_robotContainer.getController2().getLeftY()) >= .05){
-  //          m_robotContainer.getArm().setWristVoltage(5 * -(m_robotContainer.getController2().getLeftY()) * wristDampener);
+            m_robotContainer.getArm().setWristVoltage(5 * -(m_robotContainer.getController2().getLeftY()) * wristDampener);
             System.out.println(m_robotContainer.getArm().getWristAngle());
         }else{
-    //        m_robotContainer.getArm().setWristVoltage(0);
+            m_robotContainer.getArm().setWristVoltage(0);
         } 
         if(Math.abs(m_robotContainer.getController2().getRightY()) >= .05){
-      //      m_robotContainer.getArm().setArmVoltage(5 * -(m_robotContainer.getController2().getRightY()) * armDampener);
+            m_robotContainer.getArm().setArmVoltage(5 * -(m_robotContainer.getController2().getRightY()) * armDampener);
             System.out.println(m_robotContainer.getArm().getArmAngle());
         }else{
-        //    m_robotContainer.getArm().setArmVoltage(0);
+            m_robotContainer.getArm().setArmVoltage(0);
         }
 
         //Arm Stuff

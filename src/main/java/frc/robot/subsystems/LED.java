@@ -17,8 +17,8 @@ public class LED  extends SubsystemBase{
     }
 
     public void purple(){
-        for(int sus = 0; sus < ledBuffer.getLength(); sus++){
-            ledBuffer.setRGB(sus, 200, 0,255);        
+        for(int i = 0; i < ledBuffer.getLength(); i++){
+            ledBuffer.setRGB(i, 200, 0,255);        
         }
         led.setData(ledBuffer);
         yellowPurple = false;

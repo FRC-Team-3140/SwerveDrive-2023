@@ -2,7 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveDrive;
-import frc.robot.Constants;
+import frc.robot.Functions;
 
 public class TurnDegrees extends CommandBase {
     SwerveDrive m_drive;
@@ -30,8 +30,8 @@ public class TurnDegrees extends CommandBase {
 
     @Override
     public void execute() {
-        currentAngle = SwerveDrive.m_gyro.getAngle();
-        m_drive.setChassisSpeeds(0, 0, Math.copySign(0.1, Constants.angleDiff(targetAngle, currentAngle)));
+                currentAngle = SwerveDrive.m_gyro.getAngle();
+        m_drive.setChassisSpeeds(0, 0, Math.copySign(0.1, Functions.angleDiff(targetAngle, currentAngle)));
     }
 
     @Override
@@ -41,6 +41,6 @@ public class TurnDegrees extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(Constants.angleDiff(targetAngle, currentAngle)) <= 3;
+        return Math.abs(Functions.angleDiff(targetAngle, currentAngle)) <= 3;
     }
 }

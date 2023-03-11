@@ -4,6 +4,9 @@
       "Angle": {
         "open": true
       },
+      "Arm": {
+        "open": true
+      },
       "LiveWindow": {
         ".status": {
           "open": true

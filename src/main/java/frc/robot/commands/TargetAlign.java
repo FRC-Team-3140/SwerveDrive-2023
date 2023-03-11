@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveDrive;
@@ -27,12 +26,12 @@ public class TargetAlign extends CommandBase {
         if(m_Drive.hasTarget()){
             
         Transform3d relativePosition = m_Drive.getTarget().getBestCameraToTarget();
-        double DIST = relativePosition.getY();
+    //double DIST = relativePosition.getY();
         //driving_pid.setIntegratorRange(-turnIntegratorRange, turnIntegratorRange);
         //hi
         //
         m_Drive.setChassisSpeeds(0,Math.copySign(.1, relativePosition.getY()) , 0);
-        double drivingVelocity = Math.pow(DIST,2) * 5;
+    //double drivingVelocity = Math.pow(DIST,2) * 5;
         //m_Drive.setChassisSpeeds(0, Math.copySign(drivingVelocity, relativePosition.getY()),0);
         }
     }

@@ -19,7 +19,7 @@ public class DriveDistance extends CommandBase{
         //Make sure one of the speed directions is 0.
         m_drive = swerveDrive;
         distance = dist;
-        speedX=speedx;
+        speedX = speedx;
         speedY = speedy;
         if(speedX != 0){
             time = dist/speedX;

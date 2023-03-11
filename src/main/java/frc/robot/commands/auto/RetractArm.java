@@ -4,35 +4,27 @@
 
 package frc.robot.commands.auto;
 
-import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.Arm;
 
-public class DriveToWall extends CommandBase {
-  SwerveDrive m_drive;
-  Accelerometer accelerometer;
-  double Threshold = 0.1;
-  /** Creates a new DriveToEnd. */
-  public DriveToWall(SwerveDrive m_drive) {
-    this.m_drive = m_drive;
+public class RetractArm extends CommandBase {
+  /** Creates a new RetractArm. */
+  Arm arm;
+  public RetractArm(Arm arm) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_drive);
+    addRequirements(arm);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    accelerometer = m_drive.getAccelerometer();
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(accelerometer.getX() <= Threshold){
-      m_drive.setChassisSpeeds(0, 0, 0);
-    } else {
-      m_drive.setChassisSpeeds(0.1, 0, 0);
-    }
+    // Put Angles that get the arm to the "stowaway" position
+    arm.setWristAngle(0);
+    arm.setArmAngle(0);
   }
 
   // Called once the command ends or is interrupted.
@@ -42,8 +34,6 @@ public class DriveToWall extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(accelerometer.getX() <= Threshold){
-      return true;
-    }else{return false;}
+    return false;
   }
 }
