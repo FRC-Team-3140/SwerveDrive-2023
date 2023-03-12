@@ -1,24 +1,23 @@
-// package frc.robot.commands.Auto2;
+package frc.robot.commands.Auto2;
 
-// import edu.wpi.first.wpilibj2.command.CommandBase;
-// import frc.robot.subsystems.Arm.Arm;
-// import frc.robot.subsystems.Arm.Position;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Arm.Arm;
 
-// public class ArmTop extends CommandBase{
-//     Arm arm;
-//     public ArmTop(Arm arm){
-//         this.arm = arm;
-//         addRequirements(arm);
-//     }
+public class ArmTop extends CommandBase{
+    Arm arm;
+    public ArmTop(Arm arm){
+        this.arm = arm;
+        addRequirements(arm);
+    }
 
-//     @Override
-//     public void initialize() {
-//         super.initialize();
-//     }
+    @Override
+    public void initialize() {
+        super.initialize();
+    }
     
-//     @Override
-//     public void execute() {
-//         new Position(arm, 203.2);
+    @Override
+    public void execute() {
+        new Position(arm, 203.2);
 
-//     }
-// }
+    }
+}
