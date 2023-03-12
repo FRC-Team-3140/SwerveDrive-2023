@@ -23,9 +23,7 @@ public class LED  extends SubsystemBase{
         led.setData(ledBuffer);
         yellowPurple = false;
     }
-    //IM SORRY SOCIETY
-    //
-    //red erros, green comments. Idk whaver the heck your color scheme is though lol Ohh say can you seee By the dawns early light
+    
     public void yellow(){
         for(int i = 0; i < ledBuffer.getLength(); i++){
             ledBuffer.setRGB(i, 240, 179, 12);
