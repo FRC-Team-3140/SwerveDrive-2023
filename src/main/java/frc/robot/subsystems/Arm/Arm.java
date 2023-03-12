@@ -24,7 +24,7 @@ public class Arm extends SubsystemBase {
   private final double minAngleArm = 0;
   private final double maxAngleArm = .581149;
   private final double minAngleWrist = 0;
-  private final double maxAngleWrist = 180;
+  private final double maxAngleWrist = 209;
 
   // Wrist Absolute Encoder
   public final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(1);
@@ -56,10 +56,12 @@ public class Arm extends SubsystemBase {
     ArmSparkMax = new CANSparkMax(ArmID, MotorType.kBrushless);
     wristSparkMax = new CANSparkMax(WristID, MotorType.kBrushless);
 
+    ArmSparkMax.restoreFactoryDefaults();
     ArmSparkMax.setSmartCurrentLimit(60);
     ArmSparkMax.setIdleMode(IdleMode.kBrake);
     ArmSparkMax.burnFlash();
-
+    
+    wristSparkMax.restoreFactoryDefaults();
     wristSparkMax.setSmartCurrentLimit(20);
     wristSparkMax.setIdleMode(IdleMode.kBrake);
     wristSparkMax.burnFlash();
@@ -135,11 +137,24 @@ public class Arm extends SubsystemBase {
 
   
   public void setWristVoltage(double wristVoltage) {
-    wristSparkMax.setVoltage(wristVoltage);
+    System.out.println(getWristAngle());
+    if(!limitSwitchWrist.get()){
+      wristSparkMax.setVoltage(Math.min(wristVoltage,0));
+    }else if(getWristAngle() < 2){
+      wristSparkMax.setVoltage(Math.max(wristVoltage, 0));
+    }else{
+      wristSparkMax.setVoltage(wristVoltage);
+    }
   }
 
   public void setArmVoltage(double armVoltage) {
-    ArmSparkMax.setVoltage(armVoltage);
+    if(!limitSwitchArmUpper.get()){
+      ArmSparkMax.setVoltage(Math.min(armVoltage, 0));
+    }else if(!limitSwitchLower.get()){
+      ArmSparkMax.setVoltage(Math.max(armVoltage, 0));
+    }else{
+      ArmSparkMax.setVoltage(armVoltage);
+    }
   }
 
   // Getter Methods
@@ -156,7 +171,7 @@ public class Arm extends SubsystemBase {
   }
 
   public double getWristAngle() {
-    double a = ((getWristEncoder().getAbsolutePosition() - 0.5) % 1) * 360;
+    double a = ((getWristEncoder().getAbsolutePosition() - .892239) % 1) * 360;
     return a < 0 ? a + 360 : a;
   }
 

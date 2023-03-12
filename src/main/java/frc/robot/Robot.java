@@ -175,11 +175,14 @@ public class Robot extends TimedRobot {
     public void testPeriodic() {
        // m_robotContainer.getSwerve().setChassisSpeeds(.7, 0, 0);
 
-    //    System.out.println(5 * -m_robotContainer.getController2().getLeftY());
-    //    System.out.println(5 * -m_robotContainer.getController2().getRightY());
+        // System.out.println(5 * -m_robotContainer.getController2().getLeftY());
+        // System.out.println(5 * -m_robotContainer.getController2().getRightY());
+    // m_robotContainer.getArm().setArmVoltage((1 * armDampener));
+    // m_robotContainer.getArm().setWristVoltage((1 * wristDampener));
 
-    System.out.println(RobotContainer.getLimitSwitchLower().get());
-
+    m_robotContainer.getArm().setWristVoltage(5 * -(m_robotContainer.getController2().getRightY()) * wristDampener);
+    m_robotContainer.getArm().setArmVoltage((5 * -(m_robotContainer.getController2().getLeftY()) * armDampener));
+           
 
 
 
