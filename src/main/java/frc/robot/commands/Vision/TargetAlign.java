@@ -30,7 +30,7 @@ public class TargetAlign extends CommandBase {
         //driving_pid.setIntegratorRange(-turnIntegratorRange, turnIntegratorRange);
         //hi
         //
-        m_Drive.setChassisSpeeds(0,Math.copySign(.1, relativePosition.getY()) , 0);
+        m_Drive.setChassisSpeeds(0,Math.copySign(.15, relativePosition.getY()) , 0);
     //double drivingVelocity = Math.pow(DIST,2) * 5;
         //m_Drive.setChassisSpeeds(0, Math.copySign(drivingVelocity, relativePosition.getY()),0);
         }

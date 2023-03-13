@@ -167,13 +167,15 @@ public class Arm extends SubsystemBase {
   }
 
   public double getArmAngle() {
-    return getArmEncoder().getPosition();
+    return (getArmEncoder().getPosition() * 360) / (296) ;
   }
 
   public double getWristAngle() {
     double a = ((getWristEncoder().getAbsolutePosition() - .892239) % 1) * 360;
     return a < 0 ? a + 360 : a;
   }
+
+  
 
   // public boolean atSetpoint(){
   // return wristPidController.atSetpoint() && armPidController.atSetpoint();

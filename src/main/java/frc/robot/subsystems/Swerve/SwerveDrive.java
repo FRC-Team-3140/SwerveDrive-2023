@@ -37,6 +37,11 @@ public class SwerveDrive extends SubsystemBase {
     Translation2d m_backLeftLocation = new Translation2d(-.3302, .2794);
     Translation2d m_backRightLocation = new Translation2d(-.3302, -.2794);
     public static AHRS m_gyro = new AHRS(SPI.Port.kMXP);
+    NetworkTable DataNAVX;
+    LinearFilter angle_filter2 = LinearFilter.singlePoleIIR(0.1, 0.02);
+    double m_last_pitch = 0.0;
+    
+
 
     // Creating my kinematics object using the module locations
     SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(m_frontLeftLocation, m_frontRightLocation,
@@ -235,3 +240,5 @@ public class SwerveDrive extends SubsystemBase {
     }
 
 }
+
+//rotatation/ gear ratio

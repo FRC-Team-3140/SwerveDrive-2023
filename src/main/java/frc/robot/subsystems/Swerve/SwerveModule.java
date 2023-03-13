@@ -102,6 +102,8 @@ public class SwerveModule{
         double wheel_cer = 4.0*0.0254*Math.PI;
         driveSparkMax.getEncoder().setVelocityConversionFactor(gear_rat*wheel_cer);
         driveSparkMax.getEncoder().setPositionConversionFactor(gear_rat*wheel_cer);
+
+        
         driveSparkMax.burnFlash();
 
         turnSparkMax.restoreFactoryDefaults();

@@ -10,11 +10,11 @@ import frc.robot.subsystems.Swerve.SwerveDrive;
 public class balance_alt extends CommandBase{
     //Welecome to Balance Alt...
     SwerveDrive m_drive;
-    RelativeEncoder encoder;
-    double startPosition = Double.MAX_VALUE;
+    RelativeEncoder[] encoder;
+    double startPosition[] = new double[4];
     public balance_alt(SwerveDrive swerveDrive) {
         m_drive = swerveDrive;
-        encoder = m_drive.getBRModule().getEncoder();
+        encoder = m_drive.getEncoders();
         addRequirements(swerveDrive);
     }
      
@@ -23,7 +23,7 @@ public class balance_alt extends CommandBase{
     public void initialize() {
         // TODO Auto-generated method stub
         m_drive.setLocked(false);
-        startPosition = Double.MAX_VALUE;
+        for(int i = 0; i < 4; i++) startPosition[i] = Double.MAX_VALUE;
         hasTilted = false;
     }
     @Override
@@ -32,16 +32,20 @@ public class balance_alt extends CommandBase{
         m_drive.setChassisSpeeds(.075, 0, 0);
         if(Math.abs(SwerveDrive.m_gyro.getPitch()) > 2 && !hasTilted){
             hasTilted = true;
-            startPosition = encoder.getPosition();
+            for(int i = 0; i< 4; i++)   startPosition[i] = encoder[i].getPosition();
         }
     }
     double traveled;
+    boolean[] hasTraveledToEnd = new boolean[]{false, false, false, false};
     @Override
     public boolean isFinished() {
         // TODO Auto-generated method stub = m_drive.getBRModule().getEncoder();
-        traveled = encoder.getPosition() - startPosition;
-        System.out.println("What is my mans doing" + ", " + SwerveDrive.m_gyro.getPitch() + ", " + traveled + ", " + encoder.getPositionConversionFactor());
-        return Math.abs(encoder.getPosition() - startPosition) > 17 && hasTilted;
+        for(int i = 0; i < 4; i++){
+            traveled = encoder[i].getPosition() - startPosition[i];
+            hasTraveledToEnd[i] = Math.abs(encoder[i].getPosition() - startPosition[i]) > 34/2;
+            System.out.println("What is my mans doing" + ", " + SwerveDrive.m_gyro.getPitch() + ", " + traveled + ", " + encoder[i].getPosition());
+        }
+        return  hasTilted && hasTraveledToEnd[0] && hasTraveledToEnd[1] &&  hasTraveledToEnd[2] && hasTraveledToEnd[3];
     }
 
     @Override

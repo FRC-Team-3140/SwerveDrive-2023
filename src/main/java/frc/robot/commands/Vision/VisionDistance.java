@@ -20,11 +20,21 @@ public class VisionDistance extends CommandBase {
     @Override
     public void execute() {
         if(mDrive.getTarget() != null){
-            mDrive.setChassisSpeeds(-Math.pow((mDrive.getTarget().getBestCameraToTarget().getX() - distance), 2)* .1 + .075, 0, 0);                
+            mDrive.setChassisSpeeds(Math.pow(mDrive.getTarget().getBestCameraToTarget().getX() - distance, 3) * .15 + .075, 0, 0);                
         }
+        //Math.pow((mDrive.getTarget().getBestCameraToTarget().getX() - distance), 3)* .15 + .075
     }
     @Override
     public boolean isFinished() {
-        return distance > mDrive.getTarget().getBestCameraToTarget().getX();
+        if(mDrive.getTarget() != null){
+            return distance >= Math.sqrt(Math.pow(mDrive.getTarget().getBestCameraToTarget().getX(),2) - .1264);
+        }else{
+            return true;
+        }
+        
+    }
+    @Override
+    public void end(boolean interrupted) {
+        mDrive.setChassisSpeeds(0, 0, 0);
     }
 }
