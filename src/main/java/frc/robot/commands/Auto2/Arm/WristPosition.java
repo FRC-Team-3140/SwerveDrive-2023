@@ -1,8 +1,7 @@
 package frc.robot.commands.Auto2.Arm;
 import frc.robot.Functions;
 import frc.robot.subsystems.Arm.Arm;
-
-
+import frc.robot.subsystems.Arm.Wrist;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class WristPosition extends CommandBase{
@@ -13,17 +12,17 @@ public class WristPosition extends CommandBase{
     double WristAngle;
     double currentAngle;
 
-    Arm arm;
+    Wrist wrist;
     double angle;
 
-    public WristPosition(Arm arm, double angle) {
-        this.arm = arm;
+    public WristPosition(Wrist wrist, double angle) {
+        this.wrist = wrist;
         this.angle = angle;
         WristAngle = Math.min(Math.max(angle, minAngleWrist), maxAngleWrist);
-        currentAngle = arm.getWristAngle();
+        currentAngle = wrist.getWristAngle();
         System.out.println("Current angle " + currentAngle);
         
-        addRequirements(arm);
+        addRequirements(wrist);
     }
     
 
@@ -32,13 +31,13 @@ public class WristPosition extends CommandBase{
        // System.out.println("Position adjusted");
 
 
-        this.currentAngle = arm.getWristAngle();
+        this.currentAngle = wrist.getWristAngle();
         double diff = Functions.angleDiff(WristAngle, currentAngle);
         //System.out.println("diff = "+diff);
         if (diff > 0)
-             arm.setWristVoltage(1);
+             wrist.setWristVoltage(1);
         else
-            arm.setWristVoltage(-1);
+            wrist.setWristVoltage(-1);
     }
 
     @Override
@@ -48,7 +47,7 @@ public class WristPosition extends CommandBase{
     }
     @Override
     public void end(boolean interrupted) {
-        arm.setWristVoltage(0);
+        wrist.setWristVoltage(0);
         System.out.println("Position reached");
 
         super.end(interrupted);

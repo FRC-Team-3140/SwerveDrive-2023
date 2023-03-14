@@ -6,17 +6,20 @@ import frc.robot.commands.Balance.balance_alt;
 import frc.robot.commands.Drivetrain.DriveDistance;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.Claw;
+import frc.robot.subsystems.Arm.Wrist;
 import frc.robot.subsystems.Swerve.SwerveDrive;
 import frc.robot.commands.auto.OneCubeAuto;
 
 public class EverythingAuto extends CommandBase{
     SwerveDrive swerve;
     Arm arm;
+    Wrist wrist;
     Claw claw;
     
-    public EverythingAuto(SwerveDrive swerve, Arm arm, Claw claw){
+    public EverythingAuto(SwerveDrive swerve, Arm arm, Wrist wrist, Claw claw){
         this.swerve = swerve;
         this.arm = arm;
+        this.wrist = wrist;
         this.claw = claw;
         addRequirements(swerve, claw, arm);
     }
@@ -24,7 +27,7 @@ public class EverythingAuto extends CommandBase{
     public void initialize() {
        new SequentialCommandGroup(
    
-            new OneCubeAuto(swerve, claw, arm),
+            new OneCubeAuto(swerve, claw, arm, wrist),
             new DriveDistance(swerve, -1, 0, -.3),
             new balance_alt(swerve)
 

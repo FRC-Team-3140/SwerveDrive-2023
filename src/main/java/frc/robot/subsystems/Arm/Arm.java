@@ -23,18 +23,11 @@ public class Arm extends SubsystemBase {
   // Min and Max angle || NOT SET YET DON'T USE!!!
   private final double minAngleArm = 0;
   private final double maxAngleArm = .581149;
-  private final double minAngleWrist = 0;
-  private final double maxAngleWrist = 209;
-
-  // Wrist Absolute Encoder
-  public final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(1);
-
+  
   // Arm and wrist motor and pid controller definitions
   public final CANSparkMax ArmSparkMax;
   private PIDController armPidController = new PIDController(.035, 0, 0);
 
-  public final CANSparkMax wristSparkMax;
-  private PIDController wristPidController = new PIDController(0, 0, 0);
   // private final DigitalInput limitSwitch = RobotContainer.getLimitSwitch();
 
   // 0.473388 max wrist encoder output(top) 0.892239 (bottom)
@@ -42,31 +35,22 @@ public class Arm extends SubsystemBase {
 
   // Set Angles
   private double ArmAngle;
-  private double WristAngle;
+  
   double xCoord;
   double yCoord;
   double armLength = Units.feetToMeters(31 / 12);
-  double wristLength = Units.feetToMeters(23.75 / 12);
   DigitalInput limitSwitchArmUpper = RobotContainer.getLimitSwitchUper();
   DigitalInput limitSwitchLower = RobotContainer.getLimitSwitchLower();
-  DigitalInput limitSwitchWrist = RobotContainer.getlimitSwitchWrist();
+ 
 
   /** Creates a new Arm. */
-  public Arm(int ArmID, int WristID) {
+  public Arm(int ArmID) {
     ArmSparkMax = new CANSparkMax(ArmID, MotorType.kBrushless);
-    wristSparkMax = new CANSparkMax(WristID, MotorType.kBrushless);
-
+   
     ArmSparkMax.restoreFactoryDefaults();
     ArmSparkMax.setSmartCurrentLimit(60);
     ArmSparkMax.setIdleMode(IdleMode.kBrake);
     ArmSparkMax.burnFlash();
-    
-    wristSparkMax.restoreFactoryDefaults();
-    wristSparkMax.setSmartCurrentLimit(20);
-    wristSparkMax.setIdleMode(IdleMode.kBrake);
-    wristSparkMax.burnFlash();
-
-    wristSparkMax.getEncoder().setPosition(0.0);
   }
 
   // .035 P only arm
@@ -104,21 +88,18 @@ public class Arm extends SubsystemBase {
     // Math.abs(ArmAngle - getWristAngle()) > 3 ?
     // Math.copySign(2, ArmAngle - getWristAngle()) : 0
     // );
-    NetworkTableInstance.getDefault().getTable("Arm").getEntry("WristAngle").setDouble(getWristAngle());
     NetworkTableInstance.getDefault().getTable("Arm").getEntry("ArmAngle").setDouble(getArmAngle());
-    NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist Voltage")
-        .setDouble(wristSparkMax.getBusVoltage());
     NetworkTableInstance.getDefault().getTable("Arm").getEntry("Arm Voltage").setDouble(ArmSparkMax.getBusVoltage());
 
   }
 
-  private void wristAngleFromCoords(double xCoord, double yCoord) {
-    double bruh = Math
-        .acos((sqr(xCoord) + sqr(yCoord) - sqr(armLength) - sqr(wristLength)) / (2 * armLength * wristLength));
-    WristAngle = bruh + 36;
-    ArmAngle = Math.atan2(wristLength * Math.sin(bruh) * yCoord + (armLength + wristLength * Math.cos(bruh)) * xCoord,
-        (armLength + wristLength * Math.cos(bruh)) * yCoord - wristLength * Math.sin(bruh) * xCoord);
-  }
+  // private void wristAngleFromCoords(double xCoord, double yCoord) {
+  //   double bruh = Math
+  //       .acos((sqr(xCoord) + sqr(yCoord) - sqr(armLength) - sqr(wristLength)) / (2 * armLength * wristLength));
+  //   WristAngle = bruh + 36;
+  //   ArmAngle = Math.atan2(wristLength * Math.sin(bruh) * yCoord + (armLength + wristLength * Math.cos(bruh)) * xCoord,
+  //       (armLength + wristLength * Math.cos(bruh)) * yCoord - wristLength * Math.sin(bruh) * xCoord);
+  // }
 
   private double sqr(double valToBeSquared) {
     return valToBeSquared * valToBeSquared;
@@ -131,21 +112,8 @@ public class Arm extends SubsystemBase {
 
 
   // mechanical was here
-  public void setWristAngle(double angle) {
-    WristAngle = Math.min(Math.max(angle, minAngleWrist), maxAngleWrist);
-  }
-
+ 
   
-  public void setWristVoltage(double wristVoltage) {
-    System.out.println(getWristAngle());
-    if(!limitSwitchWrist.get()){
-      wristSparkMax.setVoltage(Math.min(wristVoltage,0));
-    }else if(getWristAngle() < 2){
-      wristSparkMax.setVoltage(Math.max(wristVoltage, 0));
-    }else{
-      wristSparkMax.setVoltage(wristVoltage);
-    }
-  }
 
   public void setArmVoltage(double armVoltage) {
     if(!limitSwitchArmUpper.get()){
@@ -172,18 +140,11 @@ public class Arm extends SubsystemBase {
     return ArmSparkMax.getEncoder();
   }
 
-  public DutyCycleEncoder getWristEncoder() {
-    return wristEncoder;
-  }
 
   public double getArmAngle() {
     return (getArmEncoder().getPosition() * 360) / (296) ;
   }
 
-  public double getWristAngle() {
-    double a = ((getWristEncoder().getAbsolutePosition() - .892239) % 1) * 360;
-    return a < 0 ? a + 360 : a;
-  }
 
   
 

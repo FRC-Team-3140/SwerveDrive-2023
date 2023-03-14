@@ -142,9 +142,9 @@ public class Robot extends TimedRobot {
 
 
         if(Math.abs(m_robotContainer.getController2().getRightY()) >= .05 ){
-            m_robotContainer.getArm().setWristVoltage(5 * -(m_robotContainer.getController2().getRightY()) * wristDampener);
+            m_robotContainer.getWrist().setWristVoltage(5 * -(m_robotContainer.getController2().getRightY()) * wristDampener);
         }else{
-            m_robotContainer.getArm().setWristVoltage(0);
+            m_robotContainer.getWrist().setWristVoltage(0);
         } 
         if(Math.abs(m_robotContainer.getController2().getLeftY()) >= .05){
             m_robotContainer.getArm().setArmVoltage((5 * -(m_robotContainer.getController2().getLeftY()) * armDampener));
@@ -181,7 +181,7 @@ public class Robot extends TimedRobot {
     // m_robotContainer.getArm().setArmVoltage((1 * armDampener));
     // m_robotContainer.getArm().setWristVoltage((1 * wristDampener));
 
-    m_robotContainer.getArm().setWristVoltage(5 * -(m_robotContainer.getController2().getRightY()) * wristDampener);
+    m_robotContainer.getWrist().setWristVoltage(5 * -(m_robotContainer.getController2().getRightY()) * wristDampener);
     m_robotContainer.getArm().setArmVoltage((5 * -(m_robotContainer.getController2().getLeftY()) * armDampener));
            
 

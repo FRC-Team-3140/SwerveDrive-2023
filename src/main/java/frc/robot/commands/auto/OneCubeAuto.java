@@ -8,11 +8,11 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Drivetrain.DriveDistance;
 import frc.robot.commands.Drivetrain.TurnDegrees;
-import frc.robot.commands.reachTop;
 import frc.robot.commands.Auto2.Arm.ArmPosition;
 import frc.robot.commands.Auto2.Arm.ArmTopAuto;
 import frc.robot.commands.Auto2.Arm.WristPosition;
 import frc.robot.subsystems.Arm.Claw;
+import frc.robot.subsystems.Arm.Wrist;
 import frc.robot.subsystems.Swerve.SwerveDrive;
 import frc.robot.subsystems.Arm.Arm;
 
@@ -20,12 +20,14 @@ public class OneCubeAuto extends CommandBase {
     SwerveDrive m_drive;
     Claw claw;
     Arm arm;
+    Wrist wrist;
     
-    public OneCubeAuto(SwerveDrive swerveDrive, Claw claw, Arm arm){
+    public OneCubeAuto(SwerveDrive swerveDrive, Claw claw, Arm arm, Wrist wrist){
         addRequirements(swerveDrive, arm, claw);
         m_drive = swerveDrive;
         this.claw = claw;
         this.arm = arm;
+        this.wrist = wrist;
         
     }
     @Override
@@ -36,7 +38,7 @@ public class OneCubeAuto extends CommandBase {
             //new ArmTopAuto(arm),
            // new ArmPosition(arm, -55),
             new ArmPosition(arm, 150),
-            new WristPosition(arm, 58),
+            new WristPosition(wrist, 58),
             new DriveToWall(m_drive),
             new InstantCommand(() -> {
                 System.out.println("Open claw");
@@ -45,7 +47,7 @@ public class OneCubeAuto extends CommandBase {
             
             new WaitCommand(1),
             new ParallelCommandGroup(
-                new WristPosition(arm, 168),
+                new WristPosition(wrist, 168),
                 new DriveDistance(m_drive, -1.5, -.6, 0)
                 ),
             new ArmPosition(arm, 34),
