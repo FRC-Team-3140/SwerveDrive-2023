@@ -9,12 +9,13 @@ public class TurnDegrees extends CommandBase {
     double objectAngle;
     double currentAngle;
     double targetAngle; 
-
-    public TurnDegrees(SwerveDrive swerveDrive, double angle){
+    boolean resetGyro;
+    double speed;
+    public TurnDegrees(SwerveDrive swerveDrive, double angle, boolean resetGyro){
         addRequirements(swerveDrive);
         m_drive = swerveDrive;
         targetAngle = angle;
-
+        this.resetGyro = resetGyro;
         while (targetAngle < 0) {
             targetAngle += 360;
         }
@@ -25,13 +26,18 @@ public class TurnDegrees extends CommandBase {
 
     @Override
     public void initialize() {
+        if(resetGyro){
+            SwerveDrive.m_gyro.reset();
+        }
+
         m_drive.setLocked(false);
+        speed = Math.copySign(.2, targetAngle - currentAngle);
     }
 
     @Override
     public void execute() {
-                currentAngle = SwerveDrive.m_gyro.getAngle();
-        m_drive.setChassisSpeeds(0, 0, Math.copySign(0.1, Functions.angleDiff(targetAngle, currentAngle)));
+        currentAngle = SwerveDrive.m_gyro.getAngle();
+        m_drive.setChassisSpeeds(0, 0, speed );
     }
 
     @Override
@@ -41,6 +47,6 @@ public class TurnDegrees extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(Functions.angleDiff(targetAngle, currentAngle)) <= 3;
+        return Math.abs(targetAngle - (SwerveDrive.m_gyro.getYaw() + 180)) <= 3;
     }
 }

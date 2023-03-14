@@ -12,6 +12,7 @@ public class DriveToWall extends CommandBase {
   SwerveDrive m_drive;
   Accelerometer accelerometer;
   double Threshold = 0.1;
+  boolean hasMoved = false;
   /** Creates a new DriveToEnd. */
   public DriveToWall(SwerveDrive m_drive) {
     this.m_drive = m_drive;
@@ -28,21 +29,20 @@ public class DriveToWall extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(accelerometer.getX() <= Threshold){
-      m_drive.setChassisSpeeds(0, 0, 0);
-    } else {
       m_drive.setChassisSpeeds(0.1, 0, 0);
-    }
+      hasMoved = true;
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_drive.setChassisSpeeds(0, 0, 0);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(accelerometer.getX() <= Threshold){
+    if(accelerometer.getX() > Threshold && hasMoved == true){
       return true;
     }else{return false;}
   }

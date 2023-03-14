@@ -101,7 +101,7 @@ public class SwerveModule {
         // converts inches to meters
         double wheel_cer = 4.0 * 0.0254 * Math.PI;
         driveSparkMax.getEncoder().setVelocityConversionFactor(gear_rat * wheel_cer);
-        driveSparkMax.getEncoder().setPositionConversionFactor(gear_rat * wheel_cer);
+        driveSparkMax.getEncoder().setPositionConversionFactor(8.14 /4 * .0254);
 
         driveSparkMax.burnFlash();
 
@@ -119,7 +119,6 @@ public class SwerveModule {
         // this.base_angle = getCancoderAbsPosition();
 
         driveEncoder = driveSparkMax.getEncoder();
-        driveEncoder.setPositionConversionFactor(1 / 2);
 
         speedDampening = NetworkTableInstance.getDefault().getTable("swerve_chassis").getEntry("speed_dampening");
 
@@ -239,18 +238,21 @@ public class SwerveModule {
     private SwerveModuleState optimize(SwerveModuleState desiredState, Rotation2d currentAngle) {
         var delta = desiredState.angle.minus(currentAngle);
         if (Math.abs(delta.getDegrees()) > 90.0) {
-            double encoder = driveEncoder.getPosition();
+           /* double encoder = driveEncoder.getPosition();
             m_position += encoder - m_last_encoder;
             m_last_encoder = encoder;
             System.out.printf("mid: %s pos: %f encoderF: %f\n", module_id,m_position, encoder);
+            */
             return new SwerveModuleState(
                     -desiredState.speedMetersPerSecond,
                     desiredState.angle.rotateBy(Rotation2d.fromDegrees(180.0)));
         } else {
+            /*
             double encoder = driveEncoder.getPosition();
             m_position += encoder - m_last_encoder;
             m_last_encoder = encoder;
             System.out.printf("mid: %s pos: %f encoderR: %f\n", module_id,m_position, encoder);
+            */
             return new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
 
         }

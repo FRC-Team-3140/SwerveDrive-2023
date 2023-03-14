@@ -9,7 +9,7 @@ public class WristPosition extends CommandBase{
    
     private final double minAngleWrist = 0;
     private final double maxAngleWrist = 209;
-    int deadband = 10;
+    int deadband = 1;
     double WristAngle;
     double currentAngle;
 
@@ -36,9 +36,9 @@ public class WristPosition extends CommandBase{
         double diff = Functions.angleDiff(WristAngle, currentAngle);
         //System.out.println("diff = "+diff);
         if (diff > 0)
-             arm.wristSparkMax.setVoltage(.5);
+             arm.setWristVoltage(1);
         else
-            arm.wristSparkMax.setVoltage(-.5);
+            arm.setWristVoltage(-1);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class WristPosition extends CommandBase{
     }
     @Override
     public void end(boolean interrupted) {
-        arm.wristSparkMax.setVoltage(0);
+        arm.setWristVoltage(0);
         System.out.println("Position reached");
 
         super.end(interrupted);

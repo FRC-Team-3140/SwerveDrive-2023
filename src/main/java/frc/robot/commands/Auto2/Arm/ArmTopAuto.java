@@ -17,13 +17,12 @@ public class ArmTopAuto extends SequentialCommandGroup {
     Arm arm;
     double x = 0;
     
-    public ArmTopAuto(Claw claw, Arm arm){
-        this.claw = claw;
+    public ArmTopAuto(Arm arm){
         this.arm = arm;
-        addRequirements(claw, arm);
+        addRequirements(arm);
 
         addCommands(
-            new ArmPosition(arm, 145),
+            new ArmPosition(arm, 155),
             new WristPosition(arm, 58)
         );
     }

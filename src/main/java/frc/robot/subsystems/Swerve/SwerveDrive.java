@@ -36,8 +36,9 @@ public class SwerveDrive extends SubsystemBase {
     Translation2d m_frontRightLocation = new Translation2d(.3302, -.2794);
     Translation2d m_backLeftLocation = new Translation2d(-.3302, .2794);
     Translation2d m_backRightLocation = new Translation2d(-.3302, -.2794);
+
     public static AHRS m_gyro = new AHRS(SPI.Port.kMXP);
-    NetworkTable DataNAVX;
+    NetworkTable DataNAVX = NetworkTableInstance.getDefault().getTable("SmartDashboard").getSubTable("DataNAVX");
     LinearFilter angle_filter2 = LinearFilter.singlePoleIIR(0.1, 0.02);
     double m_last_pitch = 0.0;
     
@@ -74,6 +75,7 @@ public class SwerveDrive extends SubsystemBase {
     private static double FRPosition = 0.0;
 
     public SwerveDrive() {
+        
         m_gyro.reset();
         swerve_table = NetworkTableInstance.getDefault().getTable("swerve_chassis");
         x_velocity = swerve_table.getEntry("x_velocity");
@@ -92,6 +94,7 @@ public class SwerveDrive extends SubsystemBase {
     // This method will run repetitively while the robot is running
     @Override
     public void periodic() {
+        updateNavX();
         // TODO Auto-generated method stub        
         double dx = x_velocity.getDouble(0);
         double dy = y_velocity.getDouble(0);
@@ -109,10 +112,10 @@ public class SwerveDrive extends SubsystemBase {
         // NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_FL").getInteger(0);
         // int angleFR = (int)
         // NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_FR").getInteger(0);
-        // NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_BL").setDouble(states[2].angle.getDegrees());
-        // NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_BR").setDouble(states[3].angle.getDegrees());
-        // NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_FL").setDouble(states[0].angle.getDegrees());
-        // NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_FR").setDouble(states[1].angle.getDegrees());
+        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Pos_BL").setDouble(m_swerveModule_bl.getEncoder().getPosition());
+        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Pos_BR").setDouble(m_swerveModule_br.getEncoder().getPosition());
+        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Pos_FL").setDouble(m_swerveModule_fl.getEncoder().getPosition());
+        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Pos_FR").setDouble(m_swerveModule_fr.getEncoder().getPosition());
         if (drive_enabled.getBoolean(true)) {
             SwerveDriveKinematics.desaturateWheelSpeeds(states, SwerveModule.maxDriveSpeed);
             m_swerveModule_fl.setStates(states[0], locked);
@@ -125,7 +128,7 @@ public class SwerveDrive extends SubsystemBase {
             m_swerveModule_fl.periodic();
             m_swerveModule_fr.periodic();
         }
-
+        
         angle_filtered = angle_filter.calculate(accel_angle);
         accel_angle = -Math.atan2(accelerometer.getX(), accelerometer.getY()) * 180 / Math.PI;
         if (angle_filtered > 15)

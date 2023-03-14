@@ -22,9 +22,9 @@ public class DriveDistance extends CommandBase{
         speedX = speedx;
         speedY = speedy;
         if(speedX != 0){
-            time = dist/speedX;
+            time = Math.abs(dist/speedX);
         }else if(speedY !=0) {
-            time = dist/speedY;
+            time = Math.abs(dist/speedY);
         }
         
 

@@ -71,7 +71,7 @@ public class ParkingBrake extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-       // m_stop_position = m_driveTrain.getPosition();
+        m_stop_position = m_driveTrain.getPosition();
         
     }
 

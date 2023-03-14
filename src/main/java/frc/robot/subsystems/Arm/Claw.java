@@ -19,7 +19,7 @@ public class Claw extends SubsystemBase {
 
   /** Creates a new Arm. */
   public Claw(int PneumaticsModuleID1, int forwardCh, int reverseCh) {
-    m_DoubleSolenoid = new DoubleSolenoid(PneumaticsModuleID1, PneumaticsModuleType.CTREPCM, forwardCh, reverseCh);
+    m_DoubleSolenoid = new DoubleSolenoid(PneumaticsModuleID1, PneumaticsModuleType.CTREPCM, reverseCh, forwardCh);
   }
 
   @Override

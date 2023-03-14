@@ -21,18 +21,24 @@ public class balance_alt extends CommandBase{
     boolean hasTilted = false;
     @Override
     public void initialize() {
+        SwerveDrive.m_gyro.reset();
         // TODO Auto-generated method stub
         m_drive.setLocked(false);
-        for(int i = 0; i < 4; i++) startPosition[i] = Double.MAX_VALUE;
+        for(int i = 0; i < 4; i++) startPosition[i] = encoder[i].getPosition();
         hasTilted = false;
     }
     @Override
     public void execute() {
-        
-        m_drive.setChassisSpeeds(.075, 0, 0);
-        if(Math.abs(SwerveDrive.m_gyro.getPitch()) > 2 && !hasTilted){
+        if(!hasTilted){
+            m_drive.setChassisSpeeds(.5, 0, 0);
+        }else{
+            m_drive.setChassisSpeeds(.3, 0, 0);
+        }
+        if(Math.abs(SwerveDrive.m_gyro.getPitch()) > 14.27 && !hasTilted){
             hasTilted = true;
-            for(int i = 0; i< 4; i++)   startPosition[i] = encoder[i].getPosition();
+            for(int i = 0; i< 4; i++){
+                startPosition[i] = encoder[i].getPosition();
+            }   
         }
     }
     double traveled;
@@ -42,9 +48,10 @@ public class balance_alt extends CommandBase{
         // TODO Auto-generated method stub = m_drive.getBRModule().getEncoder();
         for(int i = 0; i < 4; i++){
             traveled = encoder[i].getPosition() - startPosition[i];
-            hasTraveledToEnd[i] = Math.abs(encoder[i].getPosition() - startPosition[i]) > 34/2;
-            System.out.println("What is my mans doing" + ", " + SwerveDrive.m_gyro.getPitch() + ", " + traveled + ", " + encoder[i].getPosition());
+            hasTraveledToEnd[i] = Math.abs(encoder[i].getPosition() - startPosition[i]) > .955;
+            //System.out.println("What is my mans doing" + ", " + SwerveDrive.m_gyro.getPitch() + ", " + traveled + ", " + encoder[i].getPosition());
         }
+        System.out.println(traveled);
         return  hasTilted && hasTraveledToEnd[0] && hasTraveledToEnd[1] &&  hasTraveledToEnd[2] && hasTraveledToEnd[3];
     }
 

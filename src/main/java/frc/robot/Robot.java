@@ -108,7 +108,8 @@ public class Robot extends TimedRobot {
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
         // this line or comment it out.
-
+        NetworkTableInstance.getDefault().getTable("Bruh").getEntry("Distance").setDouble(RobotContainer.getInstance().getSwerve().getBRModule().getEncoder().getPosition());
+        NetworkTableInstance.getDefault().getTable("Bruh").getEntry("DistanceConversion").setDouble(RobotContainer.getInstance().getSwerve().getBRModule().getEncoder().getPositionConversionFactor());
         if (m_autonomousCommand != null) {
             m_autonomousCommand.cancel();
         }

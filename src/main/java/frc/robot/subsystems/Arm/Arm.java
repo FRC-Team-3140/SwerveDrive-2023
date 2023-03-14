@@ -157,6 +157,16 @@ public class Arm extends SubsystemBase {
     }
   }
 
+  public void setArmSpeed(double armSpeed) {
+    if(!limitSwitchArmUpper.get()){
+      ArmSparkMax.set(Math.min(armSpeed, 0));
+    }else if(!limitSwitchLower.get()){
+      ArmSparkMax.set(Math.max(armSpeed, 0));
+    }else{
+      ArmSparkMax.set(armSpeed);
+    }
+  }
+
   // Getter Methods
   public RelativeEncoder getArmEncoder() {
     return ArmSparkMax.getEncoder();
