@@ -144,6 +144,30 @@ public class SwerveDrive extends SubsystemBase {
         FRPosition = m_swerveModule_fr.driveSparkMax.getEncoder().getPosition();
     }
 
+    public void updateNavX() {
+        // System.out.println("Update NAVX");
+        DataNAVX.getEntry("navx_yaw").setNumber(m_gyro.getYaw());
+        DataNAVX.getEntry("navx_pitch").setNumber(m_gyro.getPitch());
+        DataNAVX.getEntry("navx_roll").setNumber(m_gyro.getRoll());
+        DataNAVX.getEntry("navx_compass").setNumber(m_gyro.getCompassHeading());
+
+        DataNAVX.getEntry("navx_x_pos").setNumber(m_gyro.getDisplacementX());
+
+        DataNAVX.getEntry("navx_gyrox").setNumber(m_gyro.getRawGyroX());
+        DataNAVX.getEntry("navx_gyroy").setNumber(m_gyro.getRawGyroY());
+        DataNAVX.getEntry("navx_gyroz").setNumber(m_gyro.getRawGyroZ());
+
+        double filtered_pitch = angle_filter.calculate(m_gyro.getPitch());
+        DataNAVX.getEntry("navx_filtered_pitch").setNumber(filtered_pitch);
+
+        double pitch_change = Math.abs(50.0 * (filtered_pitch - m_last_pitch)); // Estimate the pitch change per second
+        m_last_pitch = filtered_pitch;
+
+        DataNAVX.getEntry("navx_pitch_change").setNumber(pitch_change);
+
+    }
+
+
     // ----------------- Setter Methods ----------------- \\
     public void setChassisSpeeds(double x_vel, double y_vel, double r_vel) {
 
@@ -151,6 +175,11 @@ public class SwerveDrive extends SubsystemBase {
         x_velocity.setDouble(x_vel);
         y_velocity.setDouble(y_vel);
         r_velocity.setDouble(r_vel);
+
+    }
+
+    public void arcadeDrive(double x_vel, double r_vel){
+        setChassisSpeeds(x_vel, 0, r_vel);
 
     }
 
@@ -175,6 +204,20 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     // ----------------- Getter Methods ----------------- \\
+
+    public double getPosition(){
+        RelativeEncoder[] encoders = getEncoders();
+
+        encoders[0].getCountsPerRevolution();
+        encoders[0].getPosition();
+        m_swerveModule_fl.getAngle();
+        m_swerveModule_fl.getEncoder();
+        encoders[0].getCountsPerRevolution();
+        encoders[0].getCountsPerRevolution();
+        encoders[0].getCountsPerRevolution();
+
+        return 0.0;
+    }
 
     public boolean getLocked() {
         return locked;

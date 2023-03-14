@@ -34,9 +34,9 @@ public class ArmPosition extends CommandBase{
         double diff = Functions.angleDiff(ArmAngle, currentAngle);
         System.out.println("diff = "+diff);
         if (diff > 0)
-             arm.ArmSparkMax.setVoltage(.5);
+             arm.ArmSparkMax.setVoltage(1);
         else
-            arm.ArmSparkMax.setVoltage(-.5);
+            arm.ArmSparkMax.setVoltage(-1);
     }
 
     @Override
