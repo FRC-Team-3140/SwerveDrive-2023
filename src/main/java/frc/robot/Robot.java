@@ -88,6 +88,7 @@ public class Robot extends TimedRobot {
     // This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
     @Override
     public void autonomousInit() {
+        m_robotContainer.zeroNavX();
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
         // schedule the autonomous command (example)
@@ -99,6 +100,7 @@ public class Robot extends TimedRobot {
     // This function is called periodically during autonomous.
     @Override
     public void autonomousPeriodic() {
+         m_robotContainer.updateNavX();
     }
 
     @Override
@@ -137,7 +139,7 @@ public class Robot extends TimedRobot {
         NetworkTableInstance.getDefault().getTable("Velocity").getEntry("FrPosition").setDouble(SwerveDrive.getFRPosition());
         NetworkTableInstance.getDefault().getTable("Position").getEntry("X position").setDouble(position);
         
-    //50.9047 + 75 arm, 203.2 wrist
+        //50.9047 + 75 arm, 203.2 wrist
 
         // DigitalInput limitSwitchArmUpper = RobotContainer.getLimitSwitchUper();
         // DigitalInput limitSwitchLower = RobotContainer.getLimitSwitchLower();
@@ -156,17 +158,11 @@ public class Robot extends TimedRobot {
             m_robotContainer.getArm().setArmVoltage(0);
         }
 
-        
-
-   
-
-
-
         //Arm Stuff
         
         // NetworkTableInstance.getDefault().getTable("ARM").getEntry("ArmEncoder").setDouble(Arm1.getArmEncoder());}
         // XboxController Control1 = m_robotContainer.getController1();
-}
+    }
 
     @Override
     public void testInit() {
@@ -187,14 +183,6 @@ public class Robot extends TimedRobot {
     m_robotContainer.getWrist().setWristVoltage(5 * -(m_robotContainer.getController2().getRightY()) * wristDampener);
     m_robotContainer.getArm().setArmVoltage((5 * -(m_robotContainer.getController2().getLeftY()) * armDampener));
            
-
-
-
-    
-
-    
-       
-        
     }
 
 }

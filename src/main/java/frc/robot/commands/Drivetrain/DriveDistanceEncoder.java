@@ -27,6 +27,7 @@ public class DriveDistanceEncoder extends CommandBase{
     }
     @Override
     public boolean isFinished() {
+        //change the == to a >
         return Math.abs(swerve.getPosition())  == distance ? true : false;
     }
     @Override
