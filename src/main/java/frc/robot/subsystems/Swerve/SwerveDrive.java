@@ -211,15 +211,21 @@ public class SwerveDrive extends SubsystemBase {
     public double getPosition(){
         RelativeEncoder[] encoders = getEncoders();
 
-        encoders[0].getCountsPerRevolution();
-        encoders[0].getPosition();
-        m_swerveModule_fl.getAngle();
-        m_swerveModule_fl.getEncoder();
-        encoders[0].getCountsPerRevolution();
-        encoders[0].getCountsPerRevolution();
-        encoders[0].getCountsPerRevolution();
+        // encoders[0].getCountsPerRevolution();
+        // encoders[0].getPosition();
+        // m_swerveModule_fl.getAngle();
+        // m_swerveModule_fl.getEncoder();
+        // encoders[0].getCountsPerRevolution();
+        // encoders[0].getCountsPerRevolution();
+        // encoders[0].getCountsPerRevolution();
+        //Math.min(encoders[3].getPosition(),Math.min( encoders[2].getPosition() ,Math.min(encoders[0].getPosition(), encoders[1].getPosition())));
 
-        return 0.0;
+        
+
+        return Math.min(encoders[3].getPosition(),Math.min( encoders[2].getPosition() ,Math.min(encoders[0].getPosition(), encoders[1].getPosition())));
+    }
+    public double getPos(){
+        return 2;
     }
 
     public boolean getLocked() {

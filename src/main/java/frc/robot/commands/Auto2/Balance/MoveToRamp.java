@@ -23,6 +23,6 @@ public class MoveToRamp extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return SwerveDrive.m_gyro.getPitch() > stopAngle;
+        return SwerveDrive.m_gyro.getRoll() > stopAngle;
     }
 }

@@ -22,7 +22,7 @@ public class BalanceAndEngage extends CommandBase{
     
     @Override
     public void initialize() {
-   //     stopPosition = swerveDrive.getPosition();
+        stopPosition = swerveDrive.getPosition();
     }
 
     @Override

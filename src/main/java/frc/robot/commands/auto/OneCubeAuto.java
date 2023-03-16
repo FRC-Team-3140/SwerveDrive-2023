@@ -1,6 +1,7 @@
 package frc.robot.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
@@ -22,13 +23,14 @@ public class OneCubeAuto extends CommandBase {
     Arm arm;
     Wrist wrist;
     
-    public OneCubeAuto(SwerveDrive swerveDrive, Claw claw, Arm arm, Wrist wrist){
+    public OneCubeAuto(SwerveDrive swerveDrive, Claw claw, Arm arm, Wrist wrist, boolean headless){
         addRequirements(swerveDrive, arm, claw);
         m_drive = swerveDrive;
         this.claw = claw;
         this.arm = arm;
         this.wrist = wrist;
-        
+
+        SwerveDrive.headless = headless;
     }
     @Override
     public void initialize() {
@@ -66,11 +68,7 @@ public class OneCubeAuto extends CommandBase {
             
         ).schedule();
     }
-    @Override
-    public boolean isFinished() {
-        return true;
-    }
-    
+
 
 
 }

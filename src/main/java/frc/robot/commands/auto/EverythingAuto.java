@@ -27,7 +27,7 @@ public class EverythingAuto extends CommandBase{
     public void initialize() {
        new SequentialCommandGroup(
    
-            new OneCubeAuto(swerve, claw, arm, wrist),
+            new OneCubeAuto(swerve, claw, arm, wrist, SwerveDrive.headless),
             new DriveDistance(swerve, -1, 0, -.3),
             new balance_alt(swerve)
 

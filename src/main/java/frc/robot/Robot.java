@@ -124,6 +124,7 @@ public class Robot extends TimedRobot {
     // This function is called periodically during operator control.
     @Override
     public void teleopPeriodic() {
+    double position = m_robotContainer.getSwerve().getPosition();
 
         // This command will schedule the robot to drive via teleop if
         // setDefaultCommand isn't used in RobotContainer
@@ -134,6 +135,8 @@ public class Robot extends TimedRobot {
         NetworkTableInstance.getDefault().getTable("Velocity").getEntry("BRDriveVelocity").setDouble(SwerveDrive.getBRVelocity());
         NetworkTableInstance.getDefault().getTable("Velocity").getEntry("BlDriveVelocity").setDouble(SwerveDrive.getBLVelocity());
         NetworkTableInstance.getDefault().getTable("Velocity").getEntry("FrPosition").setDouble(SwerveDrive.getFRPosition());
+        NetworkTableInstance.getDefault().getTable("Position").getEntry("X position").setDouble(position);
+        
     //50.9047 + 75 arm, 203.2 wrist
 
         // DigitalInput limitSwitchArmUpper = RobotContainer.getLimitSwitchUper();

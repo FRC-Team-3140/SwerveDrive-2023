@@ -3,13 +3,7 @@
     "Persistent Values": {
       "open": false
     },
-    "Retained Values": {
-      "open": false
-    },
     "transitory": {
-      "Angle": {
-        "open": true
-      },
       "Arm": {
         "open": true
       },
@@ -21,18 +15,15 @@
       "PID": {
         "open": true
       },
+      "Position": {
+        "open": true
+      },
       "SmartDashboard": {
         "Auto Mode": {
           "open": true
         }
       },
       "swerve_chassis": {
-        "module_bl": {
-          "open": true
-        },
-        "module_fr": {
-          "open": true
-        },
         "open": true
       }
     },
