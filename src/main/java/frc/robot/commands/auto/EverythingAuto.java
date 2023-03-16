@@ -28,8 +28,9 @@ public class EverythingAuto extends CommandBase{
        new SequentialCommandGroup(
    
             new OneCubeAuto(swerve, claw, arm, wrist, SwerveDrive.headless),
-            new DriveDistance(swerve, -1, 0, -.3),
-            new balance_alt(swerve)
+            new DriveDistance(swerve, -1, 0, -.3)
+            //Need to add balance together when it is found to be functional
+            //new balance_alt(swerve)
 
        ).schedule();
     }

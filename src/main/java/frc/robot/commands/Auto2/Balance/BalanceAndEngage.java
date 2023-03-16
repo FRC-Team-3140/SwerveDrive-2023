@@ -48,7 +48,7 @@ public class BalanceAndEngage extends CommandBase{
 
         System.out.printf("set_pos:%.3f  pos:%.3f  angle:%.3f  power:%.3f\n", stopPosition, position, roll, power);
 
-        swerveDrive.setChassisSpeeds(0, 0, 0);
+        swerveDrive.setChassisSpeeds(power, 0, 0);
     }
 
     @Override
