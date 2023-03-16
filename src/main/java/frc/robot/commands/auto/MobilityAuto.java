@@ -13,15 +13,18 @@ public class MobilityAuto extends CommandBase{
         
 
 
-        }
-        @Override
-        public void initialize() {
-            new SequentialCommandGroup(
-               new DriveDistance(swerve, 1, .3, 0) 
+    }
+    @Override
+    public void initialize() {
+        new SequentialCommandGroup(
+            new DriveDistance(swerve, 1, .3, 0) 
 
-            );
-        }
-    
+        );
+    }
+     @Override
+     public boolean isFinished() {
+         return true;
+     }
 
     
 }
