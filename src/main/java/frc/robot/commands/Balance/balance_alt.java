@@ -34,7 +34,7 @@ public class balance_alt extends CommandBase{
         }else{
             m_drive.setChassisSpeeds(.3, 0, 0);
         }
-        if(Math.abs(SwerveDrive.m_gyro.getPitch()) > 14.27 && !hasTilted){
+        if(Math.abs(SwerveDrive.m_gyro.getRoll()) > 11.27 && !hasTilted){
             hasTilted = true;
             for(int i = 0; i< 4; i++){
                 startPosition[i] = encoder[i].getPosition();
@@ -48,11 +48,11 @@ public class balance_alt extends CommandBase{
         // TODO Auto-generated method stub = m_drive.getBRModule().getEncoder();
         for(int i = 0; i < 4; i++){
             traveled = encoder[i].getPosition() - startPosition[i];
-            hasTraveledToEnd[i] = Math.abs(encoder[i].getPosition() - startPosition[i]) > .955;
+            hasTraveledToEnd[i] = Math.abs(encoder[i].getPosition() - startPosition[i]) > .975;
             //System.out.println("What is my mans doing" + ", " + SwerveDrive.m_gyro.getPitch() + ", " + traveled + ", " + encoder[i].getPosition());
         }
         System.out.println(traveled);
-        return  hasTilted && hasTraveledToEnd[0] && hasTraveledToEnd[1] &&  hasTraveledToEnd[2] && hasTraveledToEnd[3];
+        return  hasTilted && hasTraveledToEnd[0] && hasTraveledToEnd[1] &&  hasTraveledToEnd[2] && hasTraveledToEnd[3] || traveled >= 3;
     }
 
     @Override

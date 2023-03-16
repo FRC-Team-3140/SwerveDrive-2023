@@ -39,6 +39,7 @@ import frc.robot.subsystems.Arm.Wrist;
 import frc.robot.subsystems.Swerve.SwerveDrive;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.SPI.Port;
@@ -355,6 +356,7 @@ public class RobotContainer {
 
     new JoystickButton(m_xbox_cotroller_2, Button.kLeftBumper.value).onTrue(new InstantCommand(() -> led.toggleLED()));
     
+    new JoystickButton(m_xbox_cotroller, Button.kStart.value).whileTrue(new BalanceTogether(swerveDrive));
 
   }
     public void zeroNavX() {

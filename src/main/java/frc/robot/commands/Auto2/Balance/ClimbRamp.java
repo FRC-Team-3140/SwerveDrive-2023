@@ -27,9 +27,9 @@ public class ClimbRamp extends CommandBase {
     public void execute() {
         double angle = SwerveDrive.m_gyro.getRoll();
         if(angle<0){
-            m_drive.setChassisSpeeds(0.5, 0, 0);
+            m_drive.setChassisSpeeds(0.2, 0, 0);
         }else{
-            m_drive.setChassisSpeeds(-0.5, 0, 0);
+            m_drive.setChassisSpeeds(-0.2, 0, 0);
         }
     }
 
