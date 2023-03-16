@@ -22,6 +22,10 @@ public class ClimbRamp extends CommandBase {
         m_drive = swerveDrive;
         
     }
+    @Override
+    public void initialize() {
+        System.out.println("Climbing");
+    }
 
     @Override
     public void execute() {

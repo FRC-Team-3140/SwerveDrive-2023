@@ -697,6 +697,18 @@
       "window": {
         "visible": false
       }
+    },
+    "Plot <4>": {
+      "plots": [
+        {
+          "height": 338
+        }
+      ]
+    },
+    "Plot <5>": {
+      "window": {
+        "visible": false
+      }
     }
   }
 }

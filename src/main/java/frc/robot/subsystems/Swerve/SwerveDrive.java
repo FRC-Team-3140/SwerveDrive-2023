@@ -148,7 +148,7 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public void updateNavX() {
-        // System.out.println("Update NAVX");
+        System.out.println("Update NAVX");
         DataNAVX.getEntry("navx_yaw").setNumber(m_gyro.getYaw());
         DataNAVX.getEntry("navx_pitch").setNumber(m_gyro.getPitch());
         DataNAVX.getEntry("navx_roll").setNumber(m_gyro.getRoll());
@@ -162,6 +162,8 @@ public class SwerveDrive extends SubsystemBase {
 
         double filtered_pitch = angle_filter.calculate(m_gyro.getPitch());
         DataNAVX.getEntry("navx_filtered_pitch").setNumber(filtered_pitch);
+        double filtered_roll = angle_filter.calculate(m_gyro.getRoll());
+        DataNAVX.getEntry("navx_filtered_roll").setNumber(filtered_roll);
 
         double pitch_change = Math.abs(50.0 * (filtered_pitch - m_last_pitch)); // Estimate the pitch change per second
         m_last_pitch = filtered_pitch;

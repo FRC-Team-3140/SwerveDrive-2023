@@ -15,6 +15,10 @@ public class MoveToRamp extends CommandBase {
         m_drive = swerveDrive;
         //AHRS navx = SwerveDrive.m_gyro;
     }
+    @Override
+    public void initialize() {
+        System.out.println("Moveto ramp");
+    }
 
     @Override
     public void execute() {
@@ -24,5 +28,9 @@ public class MoveToRamp extends CommandBase {
     @Override
     public boolean isFinished() {
         return SwerveDrive.m_gyro.getRoll() > stopAngle;
+    }
+    @Override
+    public void end(boolean interrupted) {
+        m_drive.setChassisSpeeds(0, 0, 0);
     }
 }
