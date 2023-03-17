@@ -81,7 +81,7 @@ public class Wrist extends SubsystemBase {
       motorVoltage = Math.signum(motorVoltage)*maxVoltage;
     }
 
-    wristSparkMax.setVoltage(motorVoltage);
+    //wristSparkMax.setVoltage(motorVoltage);
   }
 
   // Getter methods

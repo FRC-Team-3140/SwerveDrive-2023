@@ -8,7 +8,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class BalanceAndEngage extends CommandBase {
     public double stopPosition = 0.0;
-    public double m_max_speed = 0.2;
+    public double m_max_speed = 0.4;
     public int m_count = 0;
     private NetworkTable m_navx_table;
     private double balanceP;
@@ -41,9 +41,9 @@ public class BalanceAndEngage extends CommandBase {
         m_count++;
         if (m_count % 100 == 0) {
             if (pitch > 2.0)
-                stopPosition -= 0.1;
-            else if (pitch < -2.0)
                 stopPosition += 0.1;
+            else if (pitch < -2.0)
+                stopPosition -= 0.1;
         }
 
         double power = pid.calculate(position - stopPosition);
