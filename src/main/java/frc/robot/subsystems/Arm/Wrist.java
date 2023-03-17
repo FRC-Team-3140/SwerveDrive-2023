@@ -42,8 +42,8 @@ public class Wrist extends SubsystemBase {
     wristSparkMax.getEncoder().setPosition(0.0);
 
     // Initial P and D values for the PID Controller
-    NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist P").setDouble(0.3);
-    NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist D").setDouble(0.2);
+    NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist P").setDouble(0.03);
+    NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist D").setDouble(0.02);
 
   }
 
@@ -80,7 +80,7 @@ public class Wrist extends SubsystemBase {
       motorVoltage = Math.signum(motorVoltage)*maxVoltage;
     }
 
-    wristSparkMax.setVoltage(motorVoltage);
+    // wristSparkMax.setVoltage(motorVoltage);
   }
 
   // Getter methods

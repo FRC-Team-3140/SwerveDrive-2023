@@ -8,8 +8,8 @@ import frc.robot.subsystems.Swerve.SwerveDrive;
 public class MoveToRamp extends CommandBase {
     SwerveDrive m_drive;
     NetworkTable navxTable;
-    double stopAngle = 12; 
-    double rampApproachVelocity = 0.3; // percentage multiplier for the NEO
+    double stopAngle; 
+    double rampApproachVelocity; // percentage multiplier for the NEO
 
     public MoveToRamp(SwerveDrive swerveDrive){
         addRequirements(swerveDrive);
@@ -24,6 +24,8 @@ public class MoveToRamp extends CommandBase {
 
     @Override
     public void execute() {
+        stopAngle = NetworkTableInstance.getDefault().getTable("Balance").getEntry("Approach Ramp Stop Angle").getDouble(0.0);
+        rampApproachVelocity = NetworkTableInstance.getDefault().getTable("Balance").getEntry("Approach Ramp Velocity").getDouble(0.0);
         m_drive.setChassisSpeeds(rampApproachVelocity, 0, 0);
     }
 

@@ -12,6 +12,7 @@
 
 package frc.robot.commands.Balance;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 //import java.util.function.DoubleSupplier;
 
@@ -35,9 +36,11 @@ public class ParkingBrake extends CommandBase {
     
     private double m_stop_position = 0.0;
     private double m_max_speed = 0.2;
+    private double parkingP;
+    private double parkingD;
 
     // Tune this until the robot stops nicely while on the incline
-    PIDController pid = new PIDController(.08,0.00,0.00);
+    PIDController pid = new PIDController(parkingP,0.00,parkingD);
 
     public ParkingBrake(SwerveDrive subsystem) {
         m_driveTrain = subsystem;
@@ -54,7 +57,9 @@ public class ParkingBrake extends CommandBase {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        
+        parkingP = NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance P").getDouble(0.0);
+        parkingD = NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance D").getDouble(0.0);
+
         double position = m_driveTrain.getPosition();
         double speed = pid.calculate(position - m_stop_position);
 
