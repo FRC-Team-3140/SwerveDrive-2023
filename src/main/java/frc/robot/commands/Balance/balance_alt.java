@@ -17,11 +17,14 @@ public class balance_alt extends CommandBase{
         encoder = m_drive.getEncoders();
         addRequirements(swerveDrive);
     }
-     
+    doubl angle = 0;
+    double dist = .0927
     boolean hasTilted = false;
     @Override
     public void initialize() {
-        SwerveDrive.m_gyro.reset();
+        angle = NetworkTableInstance.getDefault().getTable("Extra Support").getEntry("Angle (Alt)").
+        dist = NetworkTableInstance.getDefault().getTable("Extra Support").getEntry("Distance (Alt)").getDouble(0.0);
+        SwerveDrive.m_gyro.zeroYaw();
         // TODO Auto-generated method stub
         m_drive.setLocked(false);
         for(int i = 0; i < 4; i++) startPosition[i] = encoder[i].getPosition();
@@ -34,7 +37,8 @@ public class balance_alt extends CommandBase{
         }else{
             m_drive.setChassisSpeeds(.3, 0, 0);
         }
-        if(Math.abs(SwerveDrive.m_gyro.getRoll()) > 11.27 && !hasTilted){
+        
+        if(Math.abs(SwerveDrive.m_gyro.getRoll()) > angle && !hasTilted){
             hasTilted = true;
             for(int i = 0; i< 4; i++){
                 startPosition[i] = encoder[i].getPosition();
@@ -48,7 +52,7 @@ public class balance_alt extends CommandBase{
         // TODO Auto-generated method stub = m_drive.getBRModule().getEncoder();
         for(int i = 0; i < 4; i++){
             traveled = encoder[i].getPosition() - startPosition[i];
-            hasTraveledToEnd[i] = Math.abs(encoder[i].getPosition() - startPosition[i]) > .975;
+            hasTraveledToEnd[i] = Math.abs(encoder[i].getPosition() - startPosition[i]) > dist;
             //System.out.println("What is my mans doing" + ", " + SwerveDrive.m_gyro.getPitch() + ", " + traveled + ", " + encoder[i].getPosition());
         }
         System.out.println(traveled);
@@ -59,6 +63,5 @@ public class balance_alt extends CommandBase{
     public void end(boolean interrupted) {
         // TODO Auto-generated method stub
         m_drive.setChassisSpeeds(0, 0, 0);
-        m_drive.setLocked(true);
     }
 }

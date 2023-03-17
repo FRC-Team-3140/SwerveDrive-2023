@@ -335,7 +335,7 @@ public class RobotContainer {
           }));
           
     new JoystickButton(m_xbox_cotroller, Button.kLeftBumper.value)
-      .onTrue(new TurnDegrees(swerveDrive, 90, true));
+      .onTrue(new SequentialCommandGroup(new balance_alt(swerveDrive), new balance_alt_support(swerveDrive)));
 
       
       BooleanSupplier bruh = ()-> {return limitSwitchLower.get();}; 
