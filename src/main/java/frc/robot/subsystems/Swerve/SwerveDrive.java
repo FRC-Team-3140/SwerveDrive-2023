@@ -147,7 +147,7 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public void updateNavX() {
-        System.out.println("Update NAVX");
+        // System.out.println("Update NAVX");
         DataNAVX.getEntry("navx_yaw").setNumber(m_gyro.getYaw());
         DataNAVX.getEntry("navx_pitch").setNumber(m_gyro.getPitch());
         DataNAVX.getEntry("navx_roll").setNumber(m_gyro.getRoll());

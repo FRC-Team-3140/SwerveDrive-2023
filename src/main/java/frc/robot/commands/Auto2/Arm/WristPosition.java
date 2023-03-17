@@ -33,10 +33,11 @@ public class WristPosition extends CommandBase{
         this.currentAngle = wrist.getWristAngle();
         double diff = Functions.angleDiff(WristAngle, currentAngle);
         //System.out.println("diff = "+diff);
-        if (diff > 0)
-             wrist.setWristVoltage(2);
-        else
-            wrist.setWristVoltage(-2);
+        //TODO Uncomment and change setVoltage to setWristAngle
+        //if (diff > 0)
+            // wrist.setWristVoltage(2);
+        //else
+            //wrist.setWristVoltage(-2);
     }
 
     @Override
@@ -46,7 +47,7 @@ public class WristPosition extends CommandBase{
     }
     @Override
     public void end(boolean interrupted) {
-        wrist.setWristVoltage(0);
+        //wrist.setWristVoltage(0);
         System.out.println("Position reached");
 
         super.end(interrupted);

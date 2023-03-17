@@ -24,6 +24,9 @@ public class Wrist extends SubsystemBase {
   private PIDController wristPidController = new PIDController(wristP, 0, wristD);
   private double WristAngle;
   private double WristAngleSetPt;
+  // out of 12V
+  private double maxVoltage = 4;
+  private double motorVoltage = 0;
 
   double wristLength = Units.feetToMeters(23.75 / 12);
   DigitalInput limitSwitchWrist = RobotContainer.getlimitSwitchWrist();
@@ -33,7 +36,7 @@ public class Wrist extends SubsystemBase {
 
     wristSparkMax.restoreFactoryDefaults();
     wristSparkMax.setSmartCurrentLimit(20);
-    wristSparkMax.setIdleMode(IdleMode.kBrake);
+    wristSparkMax.setIdleMode(IdleMode.kCoast);
     wristSparkMax.burnFlash();
 
     wristSparkMax.getEncoder().setPosition(0.0);
@@ -60,7 +63,7 @@ public class Wrist extends SubsystemBase {
     NetworkTableInstance.getDefault().getTable("Arm").getEntry("WristAngle").setDouble(getWristAngle());
     NetworkTableInstance.getDefault().getTable("Arm").getEntry("WristAngleSetPt").setDouble(WristAngleSetPt);
     NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist PID Output").setDouble(wristPidController.calculate(WristAngle));
-    NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist Voltage").setDouble(wristSparkMax.getBusVoltage());
+    NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist Voltage").setDouble(motorVoltage);
     wristP = NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist P").getDouble(0.0);
     wristD = NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist D").getDouble(0.0);
 
@@ -72,7 +75,12 @@ public class Wrist extends SubsystemBase {
     WristAngle = getWristAngle();
 
     wristPidController.setSetpoint(WristAngleSetPt);
-    wristPidController.calculate(WristAngle);
+    motorVoltage = wristPidController.calculate(WristAngle);
+    if(Math.abs(motorVoltage) > maxVoltage){
+      motorVoltage = Math.signum(motorVoltage)*maxVoltage;
+    }
+
+    wristSparkMax.setVoltage(motorVoltage);
   }
 
   // Getter methods

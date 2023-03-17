@@ -332,8 +332,10 @@ public class RobotContainer {
 
     new JoystickButton(m_xbox_cotroller, Button.kStart.value).whileTrue(new BalanceTogether(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
-    new JoystickButton(m_xbox_cotroller_2, Button.kA.value).onTrue(new InstantCommand(() -> wrist.setWristAngle(2)));
-    new JoystickButton(m_xbox_cotroller_2, Button.kB.value).onTrue(new InstantCommand(() -> wrist.setWristAngle(2)));
+    //Stow angle 
+    new JoystickButton(m_xbox_cotroller_2, Button.kA.value).onTrue(new InstantCommand(() -> wrist.setWristAngle(185)));
+    //Straight angle
+    new JoystickButton(m_xbox_cotroller_2, Button.kB.value).onTrue(new InstantCommand(() -> wrist.setWristAngle(58)));
 
   }
 
