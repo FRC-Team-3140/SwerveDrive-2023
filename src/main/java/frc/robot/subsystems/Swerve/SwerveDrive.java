@@ -39,8 +39,6 @@ public class SwerveDrive extends SubsystemBase {
 
     public static AHRS m_gyro = new AHRS(SPI.Port.kMXP);
     NetworkTable DataNAVX = NetworkTableInstance.getDefault().getTable("SmartDashboard").getSubTable("DataNAVX");
-    LinearFilter angle_filter2 = LinearFilter.singlePoleIIR(0.1, 0.02);
-    LinearFilter angle_filter3 = LinearFilter.singlePoleIIR(.1,.02 );
     double m_last_pitch = 0.0;
     
 
@@ -60,9 +58,10 @@ public class SwerveDrive extends SubsystemBase {
     // Get Angle Filtered
     double accel_angle = 0.0;
     double angle_filtered = 0.0;
-    LinearFilter angle_filter;
-    double afpc = 0.02;
-    double aftc = 0.2;
+    LinearFilter angle_filter = LinearFilter.singlePoleIIR(0.2, 0.02);; // for get velocity function
+    LinearFilter angle_filter2 = LinearFilter.singlePoleIIR(0.1, 0.02); //for pitch
+    LinearFilter angle_filter3 = LinearFilter.singlePoleIIR(.1,.02 ); // for roll
+    
     private Accelerometer accelerometer;
 
     // Get Velocity
@@ -89,7 +88,6 @@ public class SwerveDrive extends SubsystemBase {
         drive_enabled.setBoolean(true);
 
         accelerometer = new BuiltInAccelerometer();
-        angle_filter = LinearFilter.singlePoleIIR(aftc, afpc);
     }
 
     // This method will run repetitively while the robot is running
@@ -161,7 +159,7 @@ public class SwerveDrive extends SubsystemBase {
         DataNAVX.getEntry("navx_gyroy").setNumber(m_gyro.getRawGyroY());
         DataNAVX.getEntry("navx_gyroz").setNumber(m_gyro.getRawGyroZ());
 
-        double filtered_pitch = angle_filter.calculate(m_gyro.getPitch());
+        double filtered_pitch = angle_filter2.calculate(m_gyro.getPitch());
         DataNAVX.getEntry("navx_filtered_pitch").setNumber(filtered_pitch);
         double filtered_roll = angle_filter3.calculate(m_gyro.getRoll());
         

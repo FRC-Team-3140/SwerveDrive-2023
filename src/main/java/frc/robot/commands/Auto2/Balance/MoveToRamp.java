@@ -10,7 +10,9 @@ import frc.robot.subsystems.Swerve.SwerveDrive;
 public class MoveToRamp extends CommandBase {
     SwerveDrive m_drive;
     NetworkTable navxTable;
-    double stopAngle = 7; 
+    double stopAngle = 12; 
+    double rampApproachVelocity = 0.3; // percentage multiplier for NEO
+
     public MoveToRamp(SwerveDrive swerveDrive){
         addRequirements(swerveDrive);
         m_drive = swerveDrive;
@@ -24,12 +26,12 @@ public class MoveToRamp extends CommandBase {
 
     @Override
     public void execute() {
-        m_drive.setChassisSpeeds(0.5, 0, 0);
+        m_drive.setChassisSpeeds(rampApproachVelocity, 0, 0);
     }
 
     @Override
     public boolean isFinished() {
-        return navxTable.getEntry("navx_filtered_pitch").getDouble(0.0) > stopAngle;
+        return Math.abs(navxTable.getEntry("navx_filtered_pitch").getDouble(0.0)) > stopAngle;
     }
     @Override
     public void end(boolean interrupted) {

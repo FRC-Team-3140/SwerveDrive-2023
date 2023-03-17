@@ -17,7 +17,10 @@ import frc.robot.subsystems.Swerve.SwerveDrive;
 public class ClimbRamp extends CommandBase {
     SwerveDrive m_drive;
     NetworkTable navxTable;
-    double stopAngle = 10; 
+    double stopAngle = 10; // Needs to be less than the MoveToRamp stop angle!
+    double climbSpeed = 0.2; // Needs to be slow and controlled! 
+    double angle = stopAngle + 1; // Greater than stopAngle so that it doesn't stop instantly - JIC
+
     public ClimbRamp(SwerveDrive swerveDrive){
         addRequirements(swerveDrive);
         m_drive = swerveDrive;
@@ -32,11 +35,11 @@ public class ClimbRamp extends CommandBase {
 
     @Override
     public void execute() {
-        double angle = navxTable.getEntry("navx_filtered_pitch").getDouble(0.0);
+        angle = navxTable.getEntry("navx_filtered_pitch").getDouble(0.0);
         if(angle<0){
-            m_drive.setChassisSpeeds(0.2, 0, 0);
+            m_drive.setChassisSpeeds(climbSpeed, 0, 0);
         }else{
-            m_drive.setChassisSpeeds(-0.2, 0, 0);
+            m_drive.setChassisSpeeds(-climbSpeed, 0, 0);
         }
     }
 
@@ -47,7 +50,6 @@ public class ClimbRamp extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        double angle = SwerveDrive.m_gyro.getRoll();
         return Math.abs(angle) < stopAngle;
     }
 }
