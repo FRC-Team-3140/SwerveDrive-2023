@@ -76,11 +76,12 @@ public class Wrist extends SubsystemBase {
 
     wristPidController.setSetpoint(WristAngleSetPt);
     motorVoltage = wristPidController.calculate(WristAngle);
+    //cap output to +/- maxvoltage
     if(Math.abs(motorVoltage) > maxVoltage){
       motorVoltage = Math.signum(motorVoltage)*maxVoltage;
     }
 
-    // wristSparkMax.setVoltage(motorVoltage);
+    wristSparkMax.setVoltage(motorVoltage);
   }
 
   // Getter methods
