@@ -24,7 +24,7 @@ public class BalanceAndEngage extends CommandBase {
         this.swerveDrive = swerveDrive;
         addRequirements(swerveDrive);
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
-        m_navx_table = inst.getTable("SmartDashboard").getSubTable("DataNAVX");
+        m_navx_table = inst.getTable("Balance").getSubTable("DataNAVX");
 
     }
 
@@ -39,7 +39,7 @@ public class BalanceAndEngage extends CommandBase {
         double pitch = m_navx_table.getEntry("navx_filtered_pitch").getDouble(0.0);
 
         m_count++;
-        if (m_count % 100 == 0) {
+        if (m_count % 50 == 0) {
             if (pitch > 2.0)
                 stopPosition += 0.1;
             else if (pitch < -2.0)
@@ -53,6 +53,7 @@ public class BalanceAndEngage extends CommandBase {
         System.out.printf("set_pos:%.3f  pos:%.3f  angle:%.3f  power:%.3f\n", stopPosition, position, pitch, power);
 
         swerveDrive.setChassisSpeeds(power, 0, 0);
+        
         if (pid.getP() != balanceP || pid.getD() != balanceD) {
             balanceP = NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance P").getDouble(0.0);
             balanceD = NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance D").getDouble(0.0);

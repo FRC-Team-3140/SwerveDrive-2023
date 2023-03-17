@@ -52,10 +52,10 @@ public class Robot extends TimedRobot {
         NetworkTableInstance.getDefault().getTable("Extra Support").getEntry("Speed (Support)").setDouble(.08);
         NetworkTableInstance.getDefault().getTable("PID").getEntry("P").setDouble(.0075000);
         NetworkTableInstance.getDefault().getTable("PID").getEntry("I").setDouble(0);
-        NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance P").setDouble(0.4);
+        NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance P").setDouble(0.7);
         NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance D").setDouble(0.0);
-        NetworkTableInstance.getDefault().getTable("Balance").getEntry("Approach Ramp Stop Angle").setDouble(10);
-        NetworkTableInstance.getDefault().getTable("Balance").getEntry("Approach Ramp Velocity").setDouble(0.4);
+        NetworkTableInstance.getDefault().getTable("Balance").getEntry("Approach Ramp Stop Angle").setDouble(9);
+        NetworkTableInstance.getDefault().getTable("Balance").getEntry("Approach Ramp Velocity").setDouble(0.5);
         NetworkTableInstance.getDefault().getTable("Balance").getEntry("Climb Ramp Stop Angle").setDouble(8);
         NetworkTableInstance.getDefault().getTable("Balance").getEntry("Climb Speed").setDouble(0.2);
         //.025
