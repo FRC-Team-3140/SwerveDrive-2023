@@ -11,7 +11,7 @@ public class BalanceAndEngage extends CommandBase{
     public double m_max_power = 0.7;
     public int m_count = 0;
     private NetworkTable m_navx_table;
-    PIDController pid = new PIDController(0,0,0);
+    PIDController pid = new PIDController(.05,0,0);
 
     // Compute how much the angle is changing
     double last_angle = 0.0;
@@ -33,20 +33,20 @@ public class BalanceAndEngage extends CommandBase{
     @Override
     public void execute() {
         double position = swerveDrive.getPosition();
-        double roll = m_navx_table.getEntry("navx_filtered_roll").getDouble(0.0);
+        double pitch = m_navx_table.getEntry("navx_filtered_pitch").getDouble(0.0);
         //SwerveDrive.m_gyro.getRoll();
         //.getEntry("navx_filtered_roll").getDouble(0.0);
         m_count++;
         if(m_count % 100 == 0){
-            if(roll > 2.0) stopPosition -= 0.1;
-            else if(roll < -2.0) stopPosition+= 0.1;
+            if(pitch > 2.0) stopPosition -= 0.1;
+            else if(pitch < -2.0) stopPosition+= 0.1;
         }
         
         double power = pid.calculate(position - stopPosition);
 
         power = Math.min(Math.max(power,-m_max_power), m_max_power); // limit the speed
 
-        System.out.printf("set_pos:%.3f  pos:%.3f  angle:%.3f  power:%.3f\n", stopPosition, position, roll, power);
+        System.out.printf("set_pos:%.3f  pos:%.3f  angle:%.3f  power:%.3f\n", stopPosition, position, pitch, power);
 
         swerveDrive.setChassisSpeeds(power, 0, 0);
     }

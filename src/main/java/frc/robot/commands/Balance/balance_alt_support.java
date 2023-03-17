@@ -21,8 +21,8 @@ public class balance_alt_support extends CommandBase{
     
     @Override
     public void initialize() {
-        speed = NetworkTableInstance.getDefault().getTable("Extra Support").getEntry("Speed (Support)").getDouble(0.0);
-        speed = SwerveDrive.m_gyro.getRoll() > Threshold ? speed : -speed;
+        speed = NetworkTableInstance.getDefault().getTable("Extra Support").getEntry("Speed (Support)").getDouble(0.8);
+        speed = SwerveDrive.m_gyro.getPitch() > Threshold ? speed : -speed;
         m_drive.setLocked(false);
     }
     
@@ -32,7 +32,7 @@ public class balance_alt_support extends CommandBase{
     }
     
     public boolean isFinished(){
-        return Math.abs(SwerveDrive.m_gyro.getRoll()) < Threshold;
+        return Math.abs(SwerveDrive.m_gyro.getPitch()) < Threshold;
     }
 
     public void end(boolean interrupted){

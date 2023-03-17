@@ -39,7 +39,7 @@ public class balance_alt extends CommandBase{
             m_drive.setChassisSpeeds(.3, 0, 0);
         }
         
-        if(Math.abs(SwerveDrive.m_gyro.getRoll()) > angle && !hasTilted){
+        if(Math.abs(SwerveDrive.m_gyro.getPitch()) > angle && !hasTilted){
             hasTilted = true;
             for(int i = 0; i< 4; i++){
                 startPosition[i] = encoder[i].getPosition();

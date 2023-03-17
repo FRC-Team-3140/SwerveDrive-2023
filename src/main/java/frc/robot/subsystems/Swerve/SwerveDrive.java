@@ -40,6 +40,7 @@ public class SwerveDrive extends SubsystemBase {
     public static AHRS m_gyro = new AHRS(SPI.Port.kMXP);
     NetworkTable DataNAVX = NetworkTableInstance.getDefault().getTable("SmartDashboard").getSubTable("DataNAVX");
     LinearFilter angle_filter2 = LinearFilter.singlePoleIIR(0.1, 0.02);
+    LinearFilter angle_filter3 = LinearFilter.singlePoleIIR(.1,.02 );
     double m_last_pitch = 0.0;
     
 
@@ -129,12 +130,12 @@ public class SwerveDrive extends SubsystemBase {
             m_swerveModule_fr.periodic();
         }
         
-        angle_filtered = angle_filter.calculate(accel_angle);
-        accel_angle = -Math.atan2(accelerometer.getX(), accelerometer.getY()) * 180 / Math.PI;
-        if (angle_filtered > 15)
-            angle_filtered = 15;
-        if (angle_filtered < -15)
-            angle_filtered = -15;
+        // angle_filtered = angle_filter.calculate(accel_angle);
+        // accel_angle = -Math.atan2(accelerometer.getX(), accelerometer.getY()) * 180 / Math.PI;
+        // if (angle_filtered > 15)
+        //     angle_filtered = 15;
+        // if (angle_filtered < -15)
+        //     angle_filtered = -15;
 
         avgVelocity = (m_swerveModule_bl.driveSparkMax.getEncoder().getVelocity()
                 + m_swerveModule_br.driveSparkMax.getEncoder().getVelocity()
@@ -162,7 +163,7 @@ public class SwerveDrive extends SubsystemBase {
 
         double filtered_pitch = angle_filter.calculate(m_gyro.getPitch());
         DataNAVX.getEntry("navx_filtered_pitch").setNumber(filtered_pitch);
-        double filtered_roll = angle_filter.calculate(m_gyro.getRoll());
+        double filtered_roll = angle_filter3.calculate(m_gyro.getRoll());
         
         DataNAVX.getEntry("navx_filtered_roll").setNumber(filtered_roll);
 
@@ -172,7 +173,10 @@ public class SwerveDrive extends SubsystemBase {
         DataNAVX.getEntry("navx_pitch_change").setNumber(pitch_change);
 
     }
-
+    public static void zeroNavx(){
+        m_gyro.calibrate();
+        m_gyro.reset();
+    }
 
     // ----------------- Setter Methods ----------------- \\
     public void setChassisSpeeds(double x_vel, double y_vel, double r_vel) {
