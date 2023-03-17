@@ -300,10 +300,10 @@ public class RobotContainer {
     // .onTrue(new SequentialCommandGroup(new balance_alt(swerveDrive), new
     // balance_alt_support(swerveDrive)));
 
-    BooleanSupplier bruh = () -> {
+    BooleanSupplier lowerLimit = () -> {
       return limitSwitchLower.get();
     };
-    new Trigger(bruh).onFalse(new InstantCommand(() -> {
+    new Trigger(lowerLimit).onFalse(new InstantCommand(() -> {
       arm.getArmEncoder().setPosition(0);
     }));
 
@@ -331,6 +331,9 @@ public class RobotContainer {
     // BalanceAndEngage(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
     new JoystickButton(m_xbox_cotroller, Button.kStart.value).whileTrue(new BalanceTogether(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+
+    new JoystickButton(m_xbox_cotroller_2, Button.kA.value).onTrue(new InstantCommand(() -> wrist.setWristAngle(2)));
+    new JoystickButton(m_xbox_cotroller_2, Button.kB.value).onTrue(new InstantCommand(() -> wrist.setWristAngle(2)));
 
   }
 

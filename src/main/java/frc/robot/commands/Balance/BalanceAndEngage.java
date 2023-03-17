@@ -11,7 +11,7 @@ public class BalanceAndEngage extends CommandBase{
     public double m_max_speed = 0.2;
     public int m_count = 0;
     private NetworkTable m_navx_table;
-    PIDController pid = new PIDController(.05,0,0);
+    PIDController pid = new PIDController(.4,0,0);
 
     // Compute how much the angle is changing
     double last_angle = 0.0;

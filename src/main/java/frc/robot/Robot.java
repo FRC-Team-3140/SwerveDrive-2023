@@ -111,8 +111,8 @@ public class Robot extends TimedRobot {
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
         // this line or comment it out.
-        NetworkTableInstance.getDefault().getTable("Bruh").getEntry("Distance").setDouble(RobotContainer.getInstance().getSwerve().getBRModule().getEncoder().getPosition());
-        NetworkTableInstance.getDefault().getTable("Bruh").getEntry("DistanceConversion").setDouble(RobotContainer.getInstance().getSwerve().getBRModule().getEncoder().getPositionConversionFactor());
+        NetworkTableInstance.getDefault().getTable("BotPosBR").getEntry("Distance").setDouble(RobotContainer.getInstance().getSwerve().getBRModule().getEncoder().getPosition());
+        NetworkTableInstance.getDefault().getTable("BotPosBR").getEntry("DistanceConversion").setDouble(RobotContainer.getInstance().getSwerve().getBRModule().getEncoder().getPositionConversionFactor());
         if (m_autonomousCommand != null) {
             m_autonomousCommand.cancel();
         }
@@ -147,17 +147,21 @@ public class Robot extends TimedRobot {
         // DigitalInput limitSwitchWrist = RobotContainer.getlimitSwitchWrist();
 
 
-        if(Math.abs(m_robotContainer.getController2().getRightY()) >= .05 ){
-            m_robotContainer.getWrist().setWristVoltage(5 * -(m_robotContainer.getController2().getRightY()) * wristDampener);
-        }else{
-            m_robotContainer.getWrist().setWristVoltage(0);
-        } 
-        if(Math.abs(m_robotContainer.getController2().getLeftY()) >= .05){
-            m_robotContainer.getArm().setArmVoltage((5 * -(m_robotContainer.getController2().getLeftY()) * armDampener));
+        /**************************************************************************************************************************************/
+
+        // if(Math.abs(m_robotContainer.getController2().getRightY()) >= .05 ){
+        //     m_robotContainer.getWrist().setWristVoltage(5 * -(m_robotContainer.getController2().getRightY()) * wristDampener);
+        // }else{
+        //     m_robotContainer.getWrist().setWristVoltage(0);
+        // } 
+        // if(Math.abs(m_robotContainer.getController2().getLeftY()) >= .05){
+        //     m_robotContainer.getArm().setArmVoltage((5 * -(m_robotContainer.getController2().getLeftY()) * armDampener));
            
-        }else{
-            m_robotContainer.getArm().setArmVoltage(0);
-        }
+        // }else{
+        //     m_robotContainer.getArm().setArmVoltage(0);
+        // }
+
+        /**************************************************************************************************************************************/
 
         //Arm Stuff
         
@@ -181,7 +185,8 @@ public class Robot extends TimedRobot {
     // m_robotContainer.getArm().setArmVoltage((1 * armDampener));
     // m_robotContainer.getArm().setWristVoltage((1 * wristDampener));
 
-    m_robotContainer.getWrist().setWristVoltage(5 * -(m_robotContainer.getController2().getRightY()) * wristDampener);
+    //TODO Fix wrist setVoltage below to setWristAngle and remove Dampner multiplier
+    // m_robotContainer.getWrist().setWristVoltage(5 * -(m_robotContainer.getController2().getRightY()) * wristDampener);
     m_robotContainer.getArm().setArmVoltage((5 * -(m_robotContainer.getController2().getLeftY()) * armDampener));
            
     }

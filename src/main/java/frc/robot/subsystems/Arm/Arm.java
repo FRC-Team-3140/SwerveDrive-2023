@@ -51,11 +51,6 @@ public class Arm extends SubsystemBase {
     ArmSparkMax.burnFlash();
   }
 
-  // .035 P only arm
-  //
-  double lastP = .0075;
-  double lastI = .025;
-
   @Override
   public void periodic() {
     // Update the arm and wrist setpoints
@@ -92,27 +87,21 @@ public class Arm extends SubsystemBase {
   }
 
   // private void wristAngleFromCoords(double xCoord, double yCoord) {
-  //   double bruh = Math
-  //       .acos((sqr(xCoord) + sqr(yCoord) - sqr(armLength) - sqr(wristLength)) / (2 * armLength * wristLength));
+  //   double bruh = Math.acos((sqr(xCoord) + sqr(yCoord) - sqr(armLength) - sqr(wristLength)) / (2 * armLength * wristLength));
   //   WristAngle = bruh + 36;
   //   ArmAngle = Math.atan2(wristLength * Math.sin(bruh) * yCoord + (armLength + wristLength * Math.cos(bruh)) * xCoord,
   //       (armLength + wristLength * Math.cos(bruh)) * yCoord - wristLength * Math.sin(bruh) * xCoord);
   // }
-
-  private double sqr(double valToBeSquared) {
-    return valToBeSquared * valToBeSquared;
-  }
+  //
+  // private double sqr(double valToBeSquared) {
+  //   return valToBeSquared * valToBeSquared;
+  // }
 
   // Setter Methods
   public void setArmAngle(double aAngle) {
     ArmAngle = Math.min(Math.max(aAngle, minAngleArm), maxAngleArm);
   }
-
-
-  // mechanical was here
  
-  
-
   public void setArmVoltage(double armVoltage) {
     if(!limitSwitchArmUpper.get()){
       ArmSparkMax.setVoltage(Math.min(armVoltage, 0));

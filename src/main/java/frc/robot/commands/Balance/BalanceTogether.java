@@ -29,8 +29,8 @@ public class BalanceTogether extends SequentialCommandGroup {
              */
 
             // new MoveToRamp(swerve).withInterruptBehavior(InterruptionBehavior.kCancelSelf)
-            new ClimbRamp(swerve).withInterruptBehavior(InterruptionBehavior.kCancelSelf)
-            // new BalanceAndEngage(swerve).withInterruptBehavior(InterruptionBehavior.kCancelSelf)
+            // new ClimbRamp(swerve).withInterruptBehavior(InterruptionBehavior.kCancelSelf)
+            new BalanceAndEngage(swerve).withInterruptBehavior(InterruptionBehavior.kCancelSelf)
             );
     }
 }
