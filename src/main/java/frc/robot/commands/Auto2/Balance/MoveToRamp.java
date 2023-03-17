@@ -9,7 +9,7 @@ import frc.robot.subsystems.Swerve.SwerveDrive;
 public class MoveToRamp extends CommandBase {
     SwerveDrive m_drive;
     NetworkTable navxTable;
-    double stopAngle = 7;
+    double stopAngle = 7; 
     public MoveToRamp(SwerveDrive swerveDrive){
         addRequirements(swerveDrive);
         m_drive = swerveDrive;
@@ -17,7 +17,7 @@ public class MoveToRamp extends CommandBase {
     }
     @Override
     public void initialize() {
-        System.out.println("Moveto ramp");
+        System.out.println("Move to ramp");
     }
 
     @Override

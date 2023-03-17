@@ -21,7 +21,11 @@
       "SmartDashboard": {
         "Auto Mode": {
           "open": true
-        }
+        },
+        "DataNAVX": {
+          "open": true
+        },
+        "open": true
       },
       "swerve_chassis": {
         "open": true
@@ -701,7 +705,18 @@
     "Plot <4>": {
       "plots": [
         {
-          "height": 338
+          "height": 338,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/SmartDashboard/DataNAVX/navx_roll"
+            }
+          ]
         }
       ]
     },
@@ -709,6 +724,13 @@
       "window": {
         "visible": false
       }
+    },
+    "Plot <6>": {
+      "plots": [
+        {
+          "height": 338
+        }
+      ]
     }
   }
 }

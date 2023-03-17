@@ -49,7 +49,9 @@ public class Robot extends TimedRobot {
     public void robotInit() {  
         System.out.println("AVE CHRISTUS REX but in spanish");
         System.out.println("SANCTA MARIA, MATER DEI, ORA PRO NOBIS PECCATORIBUS ET NOBIS VICTORIAM REDDE but in spanish");
-        NetworkTableInstance.getDefault().getTable("Arm").getEntry("Arm Angle").setDouble(0);
+        NetworkTableInstance.getDefault().getTable("Extra Support").getEntry("Distance (Alt)").setDouble(.975);
+        NetworkTableInstance.getDefault().getTable("Extra Support").getEntry("Angle (Alt)").setDouble(11.27);
+        NetworkTableInstance.getDefault().getTable("Extra Support").getEntry("Speed (Support)").setDouble(.08);
         NetworkTableInstance.getDefault().getTable("PID").getEntry("P").setDouble(.0075000);
         NetworkTableInstance.getDefault().getTable("PID").getEntry("I").setDouble(0);
         //.025

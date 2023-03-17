@@ -30,6 +30,7 @@ import frc.robot.commands.Auto2.Balance.MoveToRamp;
 import frc.robot.commands.Auto2.Balance.ParkingBrake;
 import frc.robot.commands.Balance.balance;
 import frc.robot.commands.Balance.balance_alt;
+import frc.robot.commands.Balance.balance_alt_support;
 import frc.robot.commands.Drivetrain.SwerveController;
 import frc.robot.commands.Drivetrain.TurnDegrees;
 import frc.robot.commands.Vision.TargetAlign;
@@ -335,7 +336,7 @@ public class RobotContainer {
           }));
           
     new JoystickButton(m_xbox_cotroller, Button.kLeftBumper.value)
-      .onTrue(new TurnDegrees(swerveDrive, 90, true));
+      .onTrue(new SequentialCommandGroup(new balance_alt(swerveDrive), new balance_alt_support(swerveDrive)));
 
       
       BooleanSupplier bruh = ()-> {return limitSwitchLower.get();}; 

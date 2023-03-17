@@ -163,6 +163,7 @@ public class SwerveDrive extends SubsystemBase {
         double filtered_pitch = angle_filter.calculate(m_gyro.getPitch());
         DataNAVX.getEntry("navx_filtered_pitch").setNumber(filtered_pitch);
         double filtered_roll = angle_filter.calculate(m_gyro.getRoll());
+        
         DataNAVX.getEntry("navx_filtered_roll").setNumber(filtered_roll);
 
         double pitch_change = Math.abs(50.0 * (filtered_pitch - m_last_pitch)); // Estimate the pitch change per second

@@ -36,7 +36,7 @@ public class BalanceAndEngage extends CommandBase{
         double roll = m_navx_table.getEntry("navx_filtered_roll").getDouble(0.0);
         //SwerveDrive.m_gyro.getRoll();
         //.getEntry("navx_filtered_roll").getDouble(0.0);
-        m_count += 1;
+        m_count++;
         if(m_count % 100 == 0){
             if(roll > 2.0) stopPosition -= 0.1;
             else if(roll < -2.0) stopPosition+= 0.1;
