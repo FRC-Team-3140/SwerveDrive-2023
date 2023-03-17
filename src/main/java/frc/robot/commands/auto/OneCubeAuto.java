@@ -1,16 +1,12 @@
 package frc.robot.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Drivetrain.DriveDistance;
-import frc.robot.commands.Drivetrain.TurnDegrees;
 import frc.robot.commands.Auto2.Arm.ArmPosition;
-import frc.robot.commands.Auto2.Arm.ArmTopAuto;
 import frc.robot.commands.Auto2.Arm.WristPosition;
 import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Arm.Wrist;

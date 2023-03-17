@@ -1,5 +1,4 @@
 package frc.robot.commands.Auto2.Arm;
-import frc.robot.Functions;
 import frc.robot.subsystems.Arm.Wrist;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -31,7 +30,7 @@ public class WristPosition extends CommandBase{
 
 
         this.currentAngle = wrist.getWristAngle();
-        double diff = Functions.angleDiff(WristAngle, currentAngle);
+        //double diff = Functions.angleDiff(WristAngle, currentAngle);
         //System.out.println("diff = "+diff);
         //TODO Uncomment and change setVoltage to setWristAngle
         //if (diff > 0)
