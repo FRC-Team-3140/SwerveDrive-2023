@@ -16,7 +16,7 @@ import frc.robot.subsystems.Swerve.SwerveDrive;
 public class ClimbRamp extends CommandBase {
     SwerveDrive m_drive;
     NetworkTable navxTable;
-    double stopAngle = 10;
+    double stopAngle = 10; 
     public ClimbRamp(SwerveDrive swerveDrive){
         addRequirements(swerveDrive);
         m_drive = swerveDrive;
