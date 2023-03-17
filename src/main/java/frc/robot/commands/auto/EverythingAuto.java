@@ -2,13 +2,11 @@ package frc.robot.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.Balance.balance_alt;
 import frc.robot.commands.Drivetrain.DriveDistance;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Arm.Wrist;
 import frc.robot.subsystems.Swerve.SwerveDrive;
-import frc.robot.commands.auto.OneCubeAuto;
 
 public class EverythingAuto extends CommandBase{
     SwerveDrive swerve;

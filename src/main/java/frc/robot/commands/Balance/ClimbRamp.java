@@ -5,9 +5,7 @@
 // }
 
 
-package frc.robot.commands.Auto2.Balance;
-
-import com.kauailabs.navx.frc.AHRS;
+package frc.robot.commands.Balance;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
