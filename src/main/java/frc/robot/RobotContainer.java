@@ -37,7 +37,6 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -330,10 +329,8 @@ public class RobotContainer {
     // ClimbRamp(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
     // new
     // BalanceAndEngage(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
-    Command auto_balance = new SequentialCommandGroup(
-        new BalanceTogether(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
-    new JoystickButton(m_xbox_cotroller, Button.kStart.value).whileTrue(auto_balance);
+    new JoystickButton(m_xbox_cotroller, Button.kStart.value).whileTrue(new BalanceTogether(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
   }
 

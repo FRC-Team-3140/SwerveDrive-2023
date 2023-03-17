@@ -9,7 +9,7 @@ public class MoveToRamp extends CommandBase {
     SwerveDrive m_drive;
     NetworkTable navxTable;
     double stopAngle = 12; 
-    double rampApproachVelocity = 0.3; // percentage multiplier for NEO
+    double rampApproachVelocity = 0.3; // percentage multiplier for the NEO
 
     public MoveToRamp(SwerveDrive swerveDrive){
         addRequirements(swerveDrive);
