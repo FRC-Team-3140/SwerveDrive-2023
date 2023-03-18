@@ -330,7 +330,8 @@ public class RobotContainer {
     // new
     // BalanceAndEngage(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
-    new JoystickButton(m_xbox_cotroller, Button.kStart.value).whileTrue(new BalanceTogether(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    new JoystickButton(m_xbox_cotroller, Button.kStart.value)
+        .whileTrue(new BalanceTogether(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
   }
 
