@@ -1,11 +1,11 @@
 package frc.robot.subsystems.Swerve;
+
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
-
 
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -40,8 +40,6 @@ public class SwerveDrive extends SubsystemBase {
     public static AHRS m_gyro = new AHRS(SPI.Port.kMXP);
     NetworkTable DataNAVX = NetworkTableInstance.getDefault().getTable("SmartDashboard").getSubTable("DataNAVX");
     double m_last_pitch = 0.0;
-    
-
 
     // Creating my kinematics object using the module locations
     SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(m_frontLeftLocation, m_frontRightLocation,
@@ -59,9 +57,9 @@ public class SwerveDrive extends SubsystemBase {
     double accel_angle = 0.0;
     double angle_filtered = 0.0;
     LinearFilter angle_filter = LinearFilter.singlePoleIIR(0.2, 0.02);; // for get velocity function
-    LinearFilter angle_filter2 = LinearFilter.singlePoleIIR(0.1, 0.02); //for pitch
-    LinearFilter angle_filter3 = LinearFilter.singlePoleIIR(.1,.02 ); // for roll
-    
+    LinearFilter angle_filter2 = LinearFilter.singlePoleIIR(0.1, 0.02); // for pitch
+    LinearFilter angle_filter3 = LinearFilter.singlePoleIIR(.1, .02); // for roll
+
     private Accelerometer accelerometer;
 
     // Get Velocity
@@ -75,7 +73,7 @@ public class SwerveDrive extends SubsystemBase {
     private static double FRPosition = 0.0;
 
     public SwerveDrive() {
-        
+
         m_gyro.reset();
         swerve_table = NetworkTableInstance.getDefault().getTable("swerve_chassis");
         x_velocity = swerve_table.getEntry("x_velocity");
@@ -94,14 +92,15 @@ public class SwerveDrive extends SubsystemBase {
     @Override
     public void periodic() {
         updateNavX();
-        // TODO Auto-generated method stub        
+
         double dx = x_velocity.getDouble(0);
         double dy = y_velocity.getDouble(0);
         double rads_per_sec = r_velocity.getDouble(0);
 
         ChassisSpeeds fieldSpeeds = new ChassisSpeeds(dx, dy, rads_per_sec);
         ChassisSpeeds botSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(dx, dy, rads_per_sec, m_gyro.getRotation2d());
-        SwerveModuleState[] states = headless ? m_kinematics.toSwerveModuleStates(botSpeeds): m_kinematics.toSwerveModuleStates(fieldSpeeds);
+        SwerveModuleState[] states = headless ? m_kinematics.toSwerveModuleStates(botSpeeds)
+                : m_kinematics.toSwerveModuleStates(fieldSpeeds);
 
         // int angleBL = (int)
         // NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_BL").getInteger(0);
@@ -111,10 +110,14 @@ public class SwerveDrive extends SubsystemBase {
         // NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_FL").getInteger(0);
         // int angleFR = (int)
         // NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_FR").getInteger(0);
-        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Pos_BL").setDouble(m_swerveModule_bl.getEncoder().getPosition());
-        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Pos_BR").setDouble(m_swerveModule_br.getEncoder().getPosition());
-        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Pos_FL").setDouble(m_swerveModule_fl.getEncoder().getPosition());
-        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Pos_FR").setDouble(m_swerveModule_fr.getEncoder().getPosition());
+        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Pos_BL")
+                .setDouble(m_swerveModule_bl.getEncoder().getPosition());
+        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Pos_BR")
+                .setDouble(m_swerveModule_br.getEncoder().getPosition());
+        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Pos_FL")
+                .setDouble(m_swerveModule_fl.getEncoder().getPosition());
+        NetworkTableInstance.getDefault().getTable("Angle").getEntry("Pos_FR")
+                .setDouble(m_swerveModule_fr.getEncoder().getPosition());
         if (drive_enabled.getBoolean(true)) {
             SwerveDriveKinematics.desaturateWheelSpeeds(states, SwerveModule.maxDriveSpeed);
             m_swerveModule_fl.setStates(states[0], locked);
@@ -127,13 +130,14 @@ public class SwerveDrive extends SubsystemBase {
             m_swerveModule_fl.periodic();
             m_swerveModule_fr.periodic();
         }
-        
+
         // angle_filtered = angle_filter.calculate(accel_angle);
-        // accel_angle = -Math.atan2(accelerometer.getX(), accelerometer.getY()) * 180 / Math.PI;
+        // accel_angle = -Math.atan2(accelerometer.getX(), accelerometer.getY()) * 180 /
+        // Math.PI;
         // if (angle_filtered > 15)
-        //     angle_filtered = 15;
+        // angle_filtered = 15;
         // if (angle_filtered < -15)
-        //     angle_filtered = -15;
+        // angle_filtered = -15;
 
         avgVelocity = (m_swerveModule_bl.driveSparkMax.getEncoder().getVelocity()
                 + m_swerveModule_br.driveSparkMax.getEncoder().getVelocity()
@@ -162,7 +166,7 @@ public class SwerveDrive extends SubsystemBase {
         double filtered_pitch = angle_filter2.calculate(m_gyro.getPitch());
         DataNAVX.getEntry("navx_filtered_pitch").setNumber(filtered_pitch);
         double filtered_roll = angle_filter3.calculate(m_gyro.getRoll());
-        
+
         DataNAVX.getEntry("navx_filtered_roll").setNumber(filtered_roll);
 
         double pitch_change = Math.abs(50.0 * (filtered_pitch - m_last_pitch)); // Estimate the pitch change per second
@@ -171,7 +175,8 @@ public class SwerveDrive extends SubsystemBase {
         DataNAVX.getEntry("navx_pitch_change").setNumber(pitch_change);
 
     }
-    public static void zeroNavx(){
+
+    public static void zeroNavx() {
         m_gyro.calibrate();
         m_gyro.reset();
     }
@@ -179,14 +184,14 @@ public class SwerveDrive extends SubsystemBase {
     // ----------------- Setter Methods ----------------- \\
     public void setChassisSpeeds(double x_vel, double y_vel, double r_vel) {
 
-        //If val < deadband then set it to 0, else ignore
+        // If val < deadband then set it to 0, else ignore
         x_velocity.setDouble(x_vel);
         y_velocity.setDouble(y_vel);
         r_velocity.setDouble(r_vel);
 
     }
 
-    public void arcadeDrive(double x_vel, double r_vel){
+    public void arcadeDrive(double x_vel, double r_vel) {
         setChassisSpeeds(x_vel, 0, r_vel);
 
     }
@@ -213,7 +218,7 @@ public class SwerveDrive extends SubsystemBase {
 
     // ----------------- Getter Methods ----------------- \\
 
-    public double getPosition(){
+    public double getPosition() {
         RelativeEncoder[] encoders = getEncoders();
 
         // encoders[0].getCountsPerRevolution();
@@ -223,13 +228,14 @@ public class SwerveDrive extends SubsystemBase {
         // encoders[0].getCountsPerRevolution();
         // encoders[0].getCountsPerRevolution();
         // encoders[0].getCountsPerRevolution();
-        //Math.min(encoders[3].getPosition(),Math.min( encoders[2].getPosition() ,Math.min(encoders[0].getPosition(), encoders[1].getPosition())));
+        // Math.min(encoders[3].getPosition(),Math.min( encoders[2].getPosition()
+        // ,Math.min(encoders[0].getPosition(), encoders[1].getPosition())));
 
-        
-
-        return Math.min(encoders[3].getPosition(),Math.min( encoders[2].getPosition() ,Math.min(encoders[0].getPosition(), encoders[1].getPosition())));
+        return Math.min(encoders[3].getPosition(),
+                Math.min(encoders[2].getPosition(), Math.min(encoders[0].getPosition(), encoders[1].getPosition())));
     }
-    public double getPos(){
+
+    public double getPos() {
         return 2;
     }
 
@@ -284,18 +290,19 @@ public class SwerveDrive extends SubsystemBase {
     public boolean hasTarget() {
         return aprilTagCamera.getLatestResult().hasTargets();
     }
+
     public boolean hasColor() {
         return colorCam.getLatestResult().hasTargets();
     }
 
-    public SwerveModule getBRModule(){
+    public SwerveModule getBRModule() {
         return m_swerveModule_br;
     }
 
-    public Accelerometer getAccelerometer(){
+    public Accelerometer getAccelerometer() {
         return accelerometer;
     }
 
 }
 
-//rotatation/ gear ratio
+// rotatation/ gear ratio

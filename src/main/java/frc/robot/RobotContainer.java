@@ -37,7 +37,6 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.auto.DoNothingAuto;
@@ -258,21 +257,7 @@ public class RobotContainer {
           SwerveDrive.headless = false;
           System.out.println("Headed orientation");
         }));
-    // .whileTrue(new RunCommand(()->{
-    // if(rumble < 0.075 && rumble > -0.1) {
-    // m_xbox_cotroller.setRumble(RumbleType.kBothRumble, rumble);
-    // rumble += 0.001;
-    // } else {
-    // if(rumble > -1) SwerveDrive.m_gyro.zeroYaw();
-    // rumble = -1;
-    // m_xbox_cotroller.setRumble(RumbleType.kBothRumble, 0);
 
-    // }
-    // }))
-    // .onFalse(new InstantCommand(()->{
-    // m_xbox_cotroller.setRumble(RumbleType.kBothRumble, 0);
-    // rumble = 0;
-    // }));
     BooleanSupplier clawButtonPressedSupplier = () -> m_xbox_cotroller_2.getRightBumper();
     new JoystickButton(m_xbox_cotroller_2, Button.kRightBumper.value)
         .onTrue(new RunCommand(() -> {
@@ -330,11 +315,12 @@ public class RobotContainer {
     // new
     // BalanceAndEngage(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
-    //new JoystickButton(m_xbox_cotroller, Button.kStart.value).whileTrue(new BalanceTogether(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    // new JoystickButton(m_xbox_cotroller, Button.kStart.value).whileTrue(new
+    // BalanceTogether(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
-    //Stow angle 
+    // Stow angle
     new JoystickButton(m_xbox_cotroller_2, Button.kA.value).onTrue(new InstantCommand(() -> wrist.setWristAngle(185)));
-    //Straight angle
+    // Straight angle
     new JoystickButton(m_xbox_cotroller_2, Button.kB.value).onTrue(new InstantCommand(() -> wrist.setWristAngle(58)));
 
   }

@@ -9,11 +9,10 @@ public class BalanceTogether extends SequentialCommandGroup {
 
     public BalanceTogether(SwerveDrive swerve) {
         addCommands(
-            //Modify Speeds in the Commands below so that the robot doen't move too fast!
+                // Modify Speeds in the Commands below so that the robot doen't move too fast!
 
-            new MoveToRamp(swerve).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
-            new ClimbRamp(swerve).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
-            new BalanceAndEngage(swerve).withInterruptBehavior(InterruptionBehavior.kCancelSelf)
-            );
+                new MoveToRamp(swerve).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
+                new ClimbRamp(swerve).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
+                new BalanceAndEngage(swerve).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     }
 }

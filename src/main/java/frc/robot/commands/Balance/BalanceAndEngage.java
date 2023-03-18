@@ -54,13 +54,13 @@ public class BalanceAndEngage extends CommandBase {
         System.out.printf("set_pos:%.3f  pos:%.3f  angle:%.3f  power:%.3f\n", stopPosition, position, pitch, power);
 
         swerveDrive.setChassisSpeeds(power, 0, 0);
-        
+
         balanceP = NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance P").getDouble(0.0);
         balanceD = NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance D").getDouble(0.0);
 
         if (pid.getP() != balanceP || pid.getD() != balanceD) {
             pid.setP(balanceP);
-            pid.setD(balanceD); 
+            pid.setD(balanceD);
         }
 
         NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance Position").setDouble(position);

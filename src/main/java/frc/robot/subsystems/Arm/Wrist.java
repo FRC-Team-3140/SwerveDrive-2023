@@ -62,7 +62,8 @@ public class Wrist extends SubsystemBase {
   public void periodic() {
     NetworkTableInstance.getDefault().getTable("Arm").getEntry("WristAngle").setDouble(getWristAngle());
     NetworkTableInstance.getDefault().getTable("Arm").getEntry("WristAngleSetPt").setDouble(WristAngleSetPt);
-    NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist PID Output").setDouble(wristPidController.calculate(WristAngle));
+    NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist PID Output")
+        .setDouble(wristPidController.calculate(WristAngle));
     NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist Voltage").setDouble(motorVoltage);
     wristP = NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist P").getDouble(0.0);
     wristD = NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist D").getDouble(0.0);
@@ -76,9 +77,9 @@ public class Wrist extends SubsystemBase {
 
     wristPidController.setSetpoint(WristAngleSetPt);
     motorVoltage = wristPidController.calculate(WristAngle);
-    //cap output to +/- maxvoltage
-    if(Math.abs(motorVoltage) > maxVoltage){
-      motorVoltage = Math.signum(motorVoltage)*maxVoltage;
+    // cap output to +/- maxvoltage
+    if (Math.abs(motorVoltage) > maxVoltage) {
+      motorVoltage = Math.signum(motorVoltage) * maxVoltage;
     }
 
     // wristSparkMax.setVoltage(motorVoltage);

@@ -100,9 +100,9 @@ public class Arm extends SubsystemBase {
 
     armPidController.setSetpoint(ArmAngleSetPt);
     ArmMotorVoltage = armPidController.calculate(ArmAngle);
-    //cap output to +/- maxvoltage
-    if(Math.abs(ArmMotorVoltage) > maxVoltage){
-      ArmMotorVoltage = Math.signum(ArmMotorVoltage)*maxVoltage;
+    // cap output to +/- maxvoltage
+    if (Math.abs(ArmMotorVoltage) > maxVoltage) {
+      ArmMotorVoltage = Math.signum(ArmMotorVoltage) * maxVoltage;
     }
 
     // ArmSparkMax.setVoltage(ArmMotorVoltage);
