@@ -4,7 +4,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -19,9 +18,6 @@ public class Wrist extends SubsystemBase{
     // Wrist Absolute Encoder
     public final DutyCycleEncoder wristEncoder = new DutyCycleEncoder(1);
     public final CANSparkMax wristSparkMax;
-    private PIDController wristPidController = new PIDController(0, 0, 0);
-    private double WristAngle;
-
     double wristLength = Units.feetToMeters(23.75 / 12);
     DigitalInput limitSwitchWrist = RobotContainer.getlimitSwitchWrist();
 
@@ -42,7 +38,7 @@ public class Wrist extends SubsystemBase{
 
 
     public void setWristAngle(double angle) {
-        WristAngle = Math.min(Math.max(angle, minAngleWrist), maxAngleWrist);
+        Math.min(Math.max(angle, minAngleWrist), maxAngleWrist);
     }
     public void setWristVoltage(double wristVoltage) {
         System.out.println(getWristAngle());

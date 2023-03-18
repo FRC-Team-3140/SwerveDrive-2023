@@ -9,7 +9,6 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -24,16 +23,13 @@ public class Arm extends SubsystemBase {
   
   // Arm and wrist motor and pid controller definitions
   public final CANSparkMax ArmSparkMax;
-  private PIDController armPidController = new PIDController(.035, 0, 0);
+  
 
   // private final DigitalInput limitSwitch = RobotContainer.getLimitSwitch();
 
   // 0.473388 max wrist encoder output(top) 0.892239 (bottom)
   // Yay!
 
-  // Set Angles
-  private double ArmAngle;
-  
   double xCoord;
   double yCoord;
   double armLength = Units.feetToMeters(31 / 12);
@@ -98,14 +94,14 @@ public class Arm extends SubsystemBase {
   //   ArmAngle = Math.atan2(wristLength * Math.sin(bruh) * yCoord + (armLength + wristLength * Math.cos(bruh)) * xCoord,
   //       (armLength + wristLength * Math.cos(bruh)) * yCoord - wristLength * Math.sin(bruh) * xCoord);
   // }
-
-  private double sqr(double valToBeSquared) {
-    return valToBeSquared * valToBeSquared;
-  }
+  //
+  // private double sqr(double valToBeSquared) {
+  //   return valToBeSquared * valToBeSquared;
+  // }
 
   // Setter Methods
   public void setArmAngle(double aAngle) {
-    ArmAngle = Math.min(Math.max(aAngle, minAngleArm), maxAngleArm);
+    Math.min(Math.max(aAngle, minAngleArm), maxAngleArm);
   }
 
 

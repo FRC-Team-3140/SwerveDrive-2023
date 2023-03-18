@@ -229,9 +229,6 @@ public class SwerveDrive extends SubsystemBase {
 
         return Math.min(encoders[3].getPosition(),Math.min( encoders[2].getPosition() ,Math.min(encoders[0].getPosition(), encoders[1].getPosition())));
     }
-    public double getPos(){
-        return 2;
-    }
 
     public boolean getLocked() {
         return locked;
