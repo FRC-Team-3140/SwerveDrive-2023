@@ -13,6 +13,7 @@ public class BalanceAndEngage extends CommandBase {
     private NetworkTable m_navx_table;
     private double balanceP;
     private double balanceD;
+    private double power;
     PIDController pid = new PIDController(balanceP, 0, balanceD);
 
     // Compute how much the angle is changing
@@ -24,7 +25,7 @@ public class BalanceAndEngage extends CommandBase {
         this.swerveDrive = swerveDrive;
         addRequirements(swerveDrive);
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
-        m_navx_table = inst.getTable("Balance").getSubTable("DataNAVX");
+        m_navx_table = inst.getTable("SmartDashboard").getSubTable("DataNAVX");
 
     }
 
@@ -41,12 +42,12 @@ public class BalanceAndEngage extends CommandBase {
         m_count++;
         if (m_count % 50 == 0) {
             if (pitch > 2.0)
-                stopPosition += 0.1;
+                stopPosition = position - 0.1;
             else if (pitch < -2.0)
-                stopPosition -= 0.1;
+                stopPosition = position + 0.1;
         }
 
-        double power = pid.calculate(position - stopPosition);
+        power = pid.calculate(position - stopPosition);
 
         power = Math.min(Math.max(power, -m_max_speed), m_max_speed); // limit the speed
 
@@ -54,10 +55,17 @@ public class BalanceAndEngage extends CommandBase {
 
         swerveDrive.setChassisSpeeds(power, 0, 0);
         
+        balanceP = NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance P").getDouble(0.0);
+        balanceD = NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance D").getDouble(0.0);
+
         if (pid.getP() != balanceP || pid.getD() != balanceD) {
-            balanceP = NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance P").getDouble(0.0);
-            balanceD = NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance D").getDouble(0.0);
+            pid.setP(balanceP);
+            pid.setD(balanceD); 
         }
+
+        NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance Position").setDouble(position);
+        NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance stopPosition").setDouble(stopPosition);
+        NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance Power").setDouble(power);
     }
 
     @Override

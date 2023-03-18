@@ -25,7 +25,7 @@ public class Wrist extends SubsystemBase {
   private double WristAngle;
   private double WristAngleSetPt = getWristAngle();
   // out of 12V
-  private double maxVoltage = 4;
+  private double maxVoltage = 7;
   private double motorVoltage = 0;
 
   double wristLength = Units.feetToMeters(23.75 / 12);
@@ -81,7 +81,7 @@ public class Wrist extends SubsystemBase {
       motorVoltage = Math.signum(motorVoltage)*maxVoltage;
     }
 
-    //wristSparkMax.setVoltage(motorVoltage);
+    // wristSparkMax.setVoltage(motorVoltage);
   }
 
   // Getter methods
