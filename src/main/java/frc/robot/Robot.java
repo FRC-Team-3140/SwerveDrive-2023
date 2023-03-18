@@ -96,6 +96,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         SwerveDrive.zeroNavx();
+        SwerveDrive.headless = false;
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
         // schedule the autonomous command (example)
@@ -126,7 +127,7 @@ public class Robot extends TimedRobot {
         // m_robotContainer.getArm().ArmSparkMax.getReverseLimitSwitch(Type.kNormallyClosed);
         // m_robotContainer.getArm().wristSparkMax.getForwardLimitSwitch(Type.kNormallyClosed);
 
-
+        SwerveDrive.headless = true;
     }
     public static double wristDampener = 0.5;
     public static double armDampener = 1;
