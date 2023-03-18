@@ -37,7 +37,7 @@ public class AutoOvershootEStop extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(timer.hasElapsed(3)){
+    if(timer.hasElapsed(1.5)){
       if(Math.abs(swerve.getPosition()) > (stopPos + lastPos)){
         return true;
       } else {
