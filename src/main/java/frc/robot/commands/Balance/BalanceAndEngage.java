@@ -22,8 +22,9 @@ public class BalanceAndEngage extends CommandBase {
     SwerveDrive swerveDrive;
 
     public BalanceAndEngage(SwerveDrive swerveDrive) {
-        this.swerveDrive = swerveDrive;
         addRequirements(swerveDrive);
+        this.swerveDrive = swerveDrive;
+        
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
         m_navx_table = inst.getTable("SmartDashboard").getSubTable("DataNAVX");
 

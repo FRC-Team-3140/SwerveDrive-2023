@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 //impirt edu.wpi.first.math.controller.Bang;
-
+ 
 public class Arm extends SubsystemBase {
   // Min and Max angle || NOT SET YET DON'T USE!!!
   private final double minAngleArm = 0;
