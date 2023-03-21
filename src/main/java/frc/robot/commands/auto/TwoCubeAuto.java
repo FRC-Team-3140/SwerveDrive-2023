@@ -1,9 +1,10 @@
 package frc.robot.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.TurnAndDrive;
 import frc.robot.commands.Drivetrain.EncoderDriveDistance;
-import frc.robot.commands.Drivetrain.TurnDegrees;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Arm.Wrist;
@@ -26,8 +27,11 @@ public class TwoCubeAuto extends CommandBase{
     public void initialize() {
         new SequentialCommandGroup(
             new ScoreGamePieceTop(swerve, arm, wrist, claw),
-            new TurnDegrees(swerve, 180, false),
-            new EncoderDriveDistance(swerve, 1, 0.5,0)
+            new TurnAndDrive(swerve, 0, 0, 0, 0),
+            new InstantCommand(() -> claw.clawClosed()),
+            new TurnAndDrive(swerve, 0, 0, 0, 0),
+            new EncoderDriveDistance(swerve, 0.3, 0, 0.5),
+            new ScoreGamePieceTop(swerve, arm, wrist, claw)
         );
     }
 
