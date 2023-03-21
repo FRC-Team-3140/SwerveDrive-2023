@@ -51,6 +51,7 @@ public class TurnAndDrive extends CommandBase {
     }
     swerve.setChassisSpeeds(xSpeed, ySpeed,turnSpeed);
   }
+  
   /*************************Random Comments From Random People That I Don't Know...*****************************************************/
   
   // I am your god, bow down to me my children - Joseph
@@ -59,6 +60,7 @@ public class TurnAndDrive extends CommandBase {
 
   /*************************End Of Random Comments From Random People That I Don't Know...**********************************************/
   
+
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
