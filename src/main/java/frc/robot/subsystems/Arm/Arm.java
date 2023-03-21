@@ -128,7 +128,7 @@ public class Arm extends SubsystemBase {
 
   // Setter Methods
   public void setArmAngle(double aAngle) {
-    ArmAngle = Math.min(Math.max(aAngle, minAngleArm), maxAngleArm);
+    ArmAngleSetPt = Math.min(Math.max(aAngle, minAngleArm), maxAngleArm);
   }
 
   public void setArmVoltage(double armVoltage) {
