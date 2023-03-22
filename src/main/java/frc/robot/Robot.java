@@ -52,7 +52,7 @@ public class Robot extends TimedRobot {
         NetworkTableInstance.getDefault().getTable("Extra Support").getEntry("Speed (Support)").setDouble(.08);
         NetworkTableInstance.getDefault().getTable("PID").getEntry("P").setDouble(.0075000);
         NetworkTableInstance.getDefault().getTable("PID").getEntry("I").setDouble(0);
-        NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance P").setDouble(3.5);
+        NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance P").setDouble(6);
         NetworkTableInstance.getDefault().getTable("Balance").getEntry("Balance D").setDouble(0.0);
         NetworkTableInstance.getDefault().getTable("Balance").getEntry("Approach Ramp Stop Angle").setDouble(9);
         NetworkTableInstance.getDefault().getTable("Balance").getEntry("Approach Ramp Velocity").setDouble(0.5);
@@ -102,7 +102,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         SwerveDrive.zeroNavx();
-        SwerveDrive.headless = true;
+        SwerveDrive.headless = false;
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
         // schedule the autonomous command (example)

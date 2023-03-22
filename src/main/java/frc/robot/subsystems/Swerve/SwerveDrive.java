@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.Comms3140;
 
 public class SwerveDrive extends SubsystemBase {
     // Cameras
@@ -148,6 +149,8 @@ public class SwerveDrive extends SubsystemBase {
         BRVelocity = m_swerveModule_br.driveSparkMax.getEncoder().getVelocity();
         BLVelocity = m_swerveModule_bl.driveSparkMax.getEncoder().getVelocity();
         FRPosition = m_swerveModule_fr.driveSparkMax.getEncoder().getPosition();
+
+        Comms3140.getInstance().sendDoubleTelemetry("SwerveDrive", "Position", getPosition());
     }
 
     public void updateNavX() {
@@ -231,8 +234,8 @@ public class SwerveDrive extends SubsystemBase {
         // Math.min(encoders[3].getPosition(),Math.min( encoders[2].getPosition()
         // ,Math.min(encoders[0].getPosition(), encoders[1].getPosition())));
 
-        return Math.min(encoders[3].getPosition(),
-                Math.min(encoders[2].getPosition(), Math.min(encoders[0].getPosition(), encoders[1].getPosition())));
+        // return Math.min(encoders[3].getPosition(), Math.min(encoders[2].getPosition(), Math.min(encoders[0].getPosition(), encoders[1].getPosition())));
+        return (encoders[0].getPosition());
     }
 
     public boolean getLocked() {

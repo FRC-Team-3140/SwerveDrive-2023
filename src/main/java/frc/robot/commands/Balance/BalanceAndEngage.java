@@ -2,6 +2,7 @@ package frc.robot.commands.Balance;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Comms3140;
 import frc.robot.subsystems.Swerve.SwerveDrive;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -23,6 +24,7 @@ public class BalanceAndEngage extends CommandBase {
 
     public BalanceAndEngage(SwerveDrive swerveDrive) {
         addRequirements(swerveDrive);
+        Comms3140.getInstance().sendDoubleTelemetry("Balance","be_state", 0);
         this.swerveDrive = swerveDrive;
         
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -32,16 +34,20 @@ public class BalanceAndEngage extends CommandBase {
 
     @Override
     public void initialize() {
+        Comms3140.getInstance().sendDoubleTelemetry("Balance","be_state", 1);
+
         stopPosition = swerveDrive.getPosition();
     }
 
     @Override
     public void execute() {
+        Comms3140.getInstance().sendDoubleTelemetry("Balance","be_state", 2);
         double position = swerveDrive.getPosition();
         double pitch = m_navx_table.getEntry("navx_filtered_pitch").getDouble(0.0);
 
         m_count++;
-        if (m_count % 50 == 0) {
+        Comms3140.getInstance().sendDoubleTelemetry("Balance","be_m_count", m_count);
+        if (m_count % 100 == 0) {
             if (pitch > 2.0)
                 stopPosition = position - 0.1;
             else if (pitch < -2.0)
@@ -77,6 +83,7 @@ public class BalanceAndEngage extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
+        Comms3140.getInstance().sendDoubleTelemetry("Balance","be_state", 3);
 
     }
 
