@@ -3,7 +3,6 @@ package frc.robot.commands.Balance;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Comms3140;
-import frc.robot.subsystems.SwerveOdometer;
 import frc.robot.subsystems.Swerve.SwerveDrive;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
