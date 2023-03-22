@@ -47,40 +47,40 @@ public class Wrist extends SubsystemBase {
 
   }
 
-  // public void setWristVoltage(double wristVoltage) {
-  // System.out.println(getWristAngle());
-  // if (!limitSwitchWrist.get()) {
-  // wristSparkMax.setVoltage(Math.min(wristVoltage, 0));
-  // } else if (getWristAngle() < 2) {
-  // wristSparkMax.setVoltage(Math.max(wristVoltage, 0));
-  // } else {
-  // wristSparkMax.setVoltage(wristVoltage);
-  // }
-  // }
+  public void setWristVoltage(double wristVoltage) {
+  System.out.println(getWristAngle());
+  if (!limitSwitchWrist.get()) {
+  wristSparkMax.setVoltage(Math.min(wristVoltage, 0));
+  } else if (getWristAngle() < 2) {
+  wristSparkMax.setVoltage(Math.max(wristVoltage, 0));
+  } else {
+  wristSparkMax.setVoltage(wristVoltage);
+  }
+  }
 
   @Override
   public void periodic() {
-    NetworkTableInstance.getDefault().getTable("Arm").getEntry("WristAngle").setDouble(getWristAngle());
-    NetworkTableInstance.getDefault().getTable("Arm").getEntry("WristAngleSetPt").setDouble(WristAngleSetPt);
-    NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist PID Output")
-        .setDouble(wristPidController.calculate(WristAngle));
-    NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist Voltage").setDouble(motorVoltage);
-    wristP = NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist P").getDouble(0.0);
-    wristD = NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist D").getDouble(0.0);
+    // NetworkTableInstance.getDefault().getTable("Arm").getEntry("WristAngle").setDouble(getWristAngle());
+    // NetworkTableInstance.getDefault().getTable("Arm").getEntry("WristAngleSetPt").setDouble(WristAngleSetPt);
+    // NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist PID Output")
+    //     .setDouble(wristPidController.calculate(WristAngle));
+    // NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist Voltage").setDouble(motorVoltage);
+    // wristP = NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist P").getDouble(0.0);
+    // wristD = NetworkTableInstance.getDefault().getTable("Arm").getEntry("Wrist D").getDouble(0.0);
 
-    if (wristP != wristPidController.getP() || wristD != wristPidController.getD()) {
-      wristPidController.setP(wristP);
-      wristPidController.setD(wristD);
-    }
+    // if (wristP != wristPidController.getP() || wristD != wristPidController.getD()) {
+    //   wristPidController.setP(wristP);
+    //   wristPidController.setD(wristD);
+    // }
 
-    WristAngle = getWristAngle();
+    // WristAngle = getWristAngle();
 
-    wristPidController.setSetpoint(WristAngleSetPt);
-    motorVoltage = wristPidController.calculate(WristAngle);
-    // cap output to +/- maxvoltage
-    if (Math.abs(motorVoltage) > maxVoltage) {
-      motorVoltage = Math.signum(motorVoltage) * maxVoltage;
-    }
+    // wristPidController.setSetpoint(WristAngleSetPt);
+    // motorVoltage = wristPidController.calculate(WristAngle);
+    // // cap output to +/- maxvoltage
+    // if (Math.abs(motorVoltage) > maxVoltage) {
+    //   motorVoltage = Math.signum(motorVoltage) * maxVoltage;
+    // }
 
     //wristSparkMax.setVoltage(motorVoltage);
   }

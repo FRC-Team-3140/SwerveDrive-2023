@@ -57,7 +57,7 @@ public class Robot extends TimedRobot {
         NetworkTableInstance.getDefault().getTable("Balance").getEntry("Approach Ramp Stop Angle").setDouble(9);
         NetworkTableInstance.getDefault().getTable("Balance").getEntry("Approach Ramp Velocity").setDouble(0.5);
         NetworkTableInstance.getDefault().getTable("Balance").getEntry("Climb Ramp Stop Angle").setDouble(8);
-        NetworkTableInstance.getDefault().getTable("Balance").getEntry("Climb Speed").setDouble(0.2);
+        NetworkTableInstance.getDefault().getTable("Balance").getEntry("Climb Speed").setDouble(0.5);
         // .025
         // Instantiate our RobotContainer. This will perform all our button bindings,
         // and put our
@@ -183,6 +183,14 @@ public class Robot extends TimedRobot {
 
         } else {
             m_robotContainer.getArm().setArmVoltage(0);
+        }
+
+        if (Math.abs(m_robotContainer.getController2().getRightY()) >= .05) {
+            m_robotContainer.getWrist()
+                    .setWristVoltage((5 * -(m_robotContainer.getController2().getRightY()) * wristDampener));
+
+        } else {
+            m_robotContainer.getWrist().setWristVoltage(0);
         }
 
         /**************************************************************************************************************************************/

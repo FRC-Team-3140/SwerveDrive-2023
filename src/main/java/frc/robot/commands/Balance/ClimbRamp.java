@@ -10,6 +10,7 @@ package frc.robot.commands.Balance;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.commands.Drivetrain.EncoderDriveDistance;
 import frc.robot.subsystems.Swerve.SwerveDrive;
 
 public class ClimbRamp extends CommandBase {
@@ -37,9 +38,9 @@ public class ClimbRamp extends CommandBase {
         climbSpeed = NetworkTableInstance.getDefault().getTable("Balance").getEntry("Climb Speed").getDouble(0.0);
         angle = navxTable.getEntry("navx_filtered_pitch").getDouble(0.0);
         if(angle<0){
-            m_drive.setChassisSpeeds(climbSpeed, 0, 0);
+            new EncoderDriveDistance(m_drive, 2, climbSpeed, 0).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
         }else{
-            m_drive.setChassisSpeeds(-climbSpeed, 0, 0);
+            new EncoderDriveDistance(m_drive, 2, -climbSpeed, 0).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
         }
     }
 

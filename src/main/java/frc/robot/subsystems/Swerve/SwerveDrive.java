@@ -51,6 +51,7 @@ public class SwerveDrive extends SubsystemBase {
     final private NetworkTableEntry y_velocity;
     final private NetworkTableEntry r_velocity;
     final private NetworkTableEntry drive_enabled;
+    final private NetworkTableEntry position; 
 
     private boolean locked = false;
 
@@ -85,6 +86,8 @@ public class SwerveDrive extends SubsystemBase {
         r_velocity.setDouble(0.0);
         drive_enabled = swerve_table.getEntry("enabled");
         drive_enabled.setBoolean(true);
+        position = swerve_table.getEntry("Position Thing");
+        position.setDouble(0.0);
 
         accelerometer = new BuiltInAccelerometer();
     }
@@ -112,13 +115,16 @@ public class SwerveDrive extends SubsystemBase {
         // int angleFR = (int)
         // NetworkTableInstance.getDefault().getTable("Angle").getEntry("Angle_FR").getInteger(0);
         NetworkTableInstance.getDefault().getTable("Angle").getEntry("Pos_BL")
-                .setDouble(m_swerveModule_bl.getEncoder().getPosition());
+                .setDouble(-(m_swerveModule_bl.getEncoder().getPosition()));
         NetworkTableInstance.getDefault().getTable("Angle").getEntry("Pos_BR")
                 .setDouble(m_swerveModule_br.getEncoder().getPosition());
         NetworkTableInstance.getDefault().getTable("Angle").getEntry("Pos_FL")
-                .setDouble(m_swerveModule_fl.getEncoder().getPosition());
+                .setDouble(-(m_swerveModule_fl.getEncoder().getPosition()));
         NetworkTableInstance.getDefault().getTable("Angle").getEntry("Pos_FR")
                 .setDouble(m_swerveModule_fr.getEncoder().getPosition());
+
+        NetworkTableInstance.getDefault().getTable("swerve_chassis").getEntry("Position Thing").setDouble(getPosition());
+        
         if (drive_enabled.getBoolean(true)) {
             SwerveDriveKinematics.desaturateWheelSpeeds(states, SwerveModule.maxDriveSpeed);
             m_swerveModule_fl.setStates(states[0], locked);
@@ -223,19 +229,12 @@ public class SwerveDrive extends SubsystemBase {
 
     public double getPosition() {
         RelativeEncoder[] encoders = getEncoders();
-
-        // encoders[0].getCountsPerRevolution();
-        // encoders[0].getPosition();
-        // m_swerveModule_fl.getAngle();
-        // m_swerveModule_fl.getEncoder();
-        // encoders[0].getCountsPerRevolution();
-        // encoders[0].getCountsPerRevolution();
-        // encoders[0].getCountsPerRevolution();
-        // Math.min(encoders[3].getPosition(),Math.min( encoders[2].getPosition()
-        // ,Math.min(encoders[0].getPosition(), encoders[1].getPosition())));
-
-        // return Math.min(encoders[3].getPosition(), Math.min(encoders[2].getPosition(), Math.min(encoders[0].getPosition(), encoders[1].getPosition())));
-        return (encoders[0].getPosition());
+        return 
+        Math.min(Math.abs(encoders[3].getPosition()), 
+        Math.min(Math.abs(encoders[2].getPosition()), 
+        Math.min(Math.abs(encoders[0].getPosition()), 
+        Math.abs(encoders[1].getPosition()))));
+        //return (encoders[0].getPosition());
     }
 
     public boolean getLocked() {

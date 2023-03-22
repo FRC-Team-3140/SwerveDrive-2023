@@ -20,8 +20,8 @@ package frc.robot;
 import java.util.function.BooleanSupplier;
 
 import frc.robot.commands.TurnAndDrive;
-import frc.robot.commands.Balance.BalanceAndEngage;
 import frc.robot.commands.Balance.BalanceTogether;
+import frc.robot.commands.Drivetrain.EncoderDriveDistance;
 import frc.robot.commands.Drivetrain.SwerveController;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Arm.Arm;
@@ -321,7 +321,7 @@ public class RobotContainer {
     // new
     // BalanceAndEngage(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
-     new JoystickButton(m_xbox_cotroller, Button.kStart.value).whileTrue(new BalanceAndEngage(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    new JoystickButton(m_xbox_cotroller, Button.kStart.value).onTrue(new EncoderDriveDistance(swerveDrive, 1, 0.5, 0).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
     // Stow angle
     new JoystickButton(m_xbox_cotroller_2, Button.kA.value).onTrue(new InstantCommand(() -> wrist.setWristAngle(185)));
