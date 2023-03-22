@@ -286,8 +286,8 @@ public class Comms3140 extends SubsystemBase {
     }
 
     private Comms3140() {
-        m_settings_table = NetworkTableInstance.getDefault().getTable("Comms3140").getSubTable("Settings");
-        m_telemetry_table = NetworkTableInstance.getDefault().getTable("Comms3140").getSubTable("Telemetry");
+        m_settings_table = NetworkTableInstance.getDefault().getTable("Settings3140");
+        m_telemetry_table = NetworkTableInstance.getDefault().getTable("Telemetry3140");
 
         // registerDoubleSetting("Test", "Tmp", () -> tmp, (t) -> {
         // tmp = t;
@@ -456,8 +456,24 @@ public class Comms3140 extends SubsystemBase {
         }
     }
 
+    // Send and update to the network table
     public void sendDoubleTelemetry(String subsystem, String entry, double value){
         m_telemetry_table.getSubTable(subsystem).getEntry(entry).setDouble(value);
+    }
+
+    // Send and update to the network table
+    public void sendIntegerTelemetry(String subsystem, String entry, int value){
+        m_telemetry_table.getSubTable(subsystem).getEntry(entry).setInteger(value);
+    }
+
+    // Send and update to the network table
+    public void sendStringTelemetry(String subsystem, String entry, String value){
+        m_telemetry_table.getSubTable(subsystem).getEntry(entry).setString(value);
+    }
+
+    // Send and update to the network table
+    public void sendBooleanTelemetry(String subsystem, String entry, boolean value){
+        m_telemetry_table.getSubTable(subsystem).getEntry(entry).setBoolean(value);
     }
 
 }

@@ -117,6 +117,8 @@ public class RobotContainer {
   // SwerveModule("bl",13,7,8,187.0 + 225);
 
   public SwerveDrive swerveDrive = new SwerveDrive();
+  public SwerveOdometer swerveOdometer = new SwerveOdometer(swerveDrive);
+  
   public boolean aDown = false;
 
   public Claw claw = new Claw(2, 0, 1);

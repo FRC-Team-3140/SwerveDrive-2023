@@ -8,9 +8,11 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -28,7 +30,7 @@ public class SwerveDrive extends SubsystemBase {
 
     private final SwerveModule m_swerveModule_fr = new SwerveModule("fr", 10, 1, 2, 131, 86);
     private final SwerveModule m_swerveModule_fl = new SwerveModule("fl", 13, 3, 4, 308, 171);
-    private static final SwerveModule m_swerveModule_br = new SwerveModule("br", 11, 5, 6, 140, 183);
+    private final SwerveModule m_swerveModule_br = new SwerveModule("br", 11, 5, 6, 140, 183);
     private final SwerveModule m_swerveModule_bl = new SwerveModule("bl", 12, 7, 8, 295, 249);
     public static boolean headless = true;
     // Locations for the swerve drive modules relative to the robot center.
@@ -299,6 +301,31 @@ public class SwerveDrive extends SubsystemBase {
 
     public Accelerometer getAccelerometer() {
         return accelerometer;
+    }
+
+    // Added to support odometer
+    public SwerveDriveKinematics getKinematics() {
+        return m_kinematics;
+    }
+
+    // Added to support odometer
+    public Rotation2d getYaw() {
+        return new Rotation2d(Math.PI*m_gyro.getYaw()/180.0);
+    }
+
+    // Added to support odometer
+    public SwerveModulePosition[] getModulePositions() {
+        // m_frontLeftLocation,
+        // m_frontRightLocation,
+        // m_backLeftLocation,
+        // m_backRightLocation
+        SwerveModulePosition pose_fl = m_swerveModule_fl.getSwerveModulePosition();
+        SwerveModulePosition pose_fr = m_swerveModule_fr.getSwerveModulePosition();
+        SwerveModulePosition pose_bl = m_swerveModule_bl.getSwerveModulePosition();
+        SwerveModulePosition pose_br = m_swerveModule_br.getSwerveModulePosition();
+        
+        SwerveModulePosition[] positions = {pose_fl, pose_fr, pose_bl, pose_br};
+        return positions;
     }
 
 }
