@@ -231,11 +231,25 @@ public class SwerveDrive extends SubsystemBase {
 
     public double getPosition() {
         RelativeEncoder[] encoders = getEncoders();
-        return 
-        Math.min(Math.abs(encoders[3].getPosition()), 
-        Math.min(Math.abs(encoders[2].getPosition()), 
-        Math.min(Math.abs(encoders[0].getPosition()), 
-        Math.abs(encoders[1].getPosition()))));
+        double[] signs = new double[4];
+        double[] encoderPositions = new double[4];
+        double smallestDistTraveled = 999;
+        int encoderIndex = 0;
+        
+        for (int i = 0; i < encoders.length; i++){
+            signs[i] = Math.signum(encoders[i].getPosition());
+            encoderPositions[i] = Math.abs(encoders[i].getPosition());
+            if (encoderPositions[i] < smallestDistTraveled){
+                smallestDistTraveled = encoderPositions[i];
+                encoderIndex = i;
+            }
+        }   
+
+        for (int i = 0; i < encoders.length; i++){
+            smallestDistTraveled = signs[encoderIndex] * encoderPositions[encoderIndex];
+        }
+
+        return smallestDistTraveled;
         //return (encoders[0].getPosition());
     }
 

@@ -58,9 +58,9 @@ public class BalanceAndEngage extends CommandBase {
         Comms3140.getInstance().sendDoubleTelemetry("Balance","be_m_count", m_count);
         if (m_count % 25 == 0) {
             if (pitch > 2.0)
-                stopPosition = position + 0.08;
-            else if (pitch < -2.0)
                 stopPosition = position - 0.08;
+            else if (pitch < -2.0)
+                stopPosition = position + 0.08;
         }
 
         power = pid.calculate(position - stopPosition);
