@@ -32,6 +32,7 @@ public class TurnAndDrive extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    //arc length formula (theta * radius where radius is half of the diagonal of the robot)
     distance = distance + targetAngle/180 * Math.PI * Math.sqrt(.3302 * .3302 +  .2794 * .2794)/2;
     SwerveDrive.m_gyro.zeroYaw();
     startPosition = swerve.getPosition();
@@ -42,7 +43,7 @@ public class TurnAndDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(Math.abs(swerve.getPosition() - startPosition) == Math.abs(distance)){
+    if(Math.abs(swerve.getPosition() - startPosition) > Math.abs(distance)){
       xSpeed = 0;
       ySpeed = 0;
     }
@@ -70,6 +71,6 @@ public class TurnAndDrive extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(targetAngle - (SwerveDrive.m_gyro.getYaw() + 180)) <= 3 && Math.abs(swerve.getPosition() - startPosition) == Math.abs(distance);
+    return Math.abs(targetAngle - (SwerveDrive.m_gyro.getYaw() + 180)) <= 3 && Math.abs(swerve.getPosition() - startPosition) > Math.abs(distance);
   }
 }

@@ -222,6 +222,8 @@ public class RobotContainer {
    */
 
   private void configureButtonBindings() {
+    //wrist.setDefaultCommand(new RunCommand(() -> wrist.setWristAngle(5), wrist));
+
     drive_robot = new SwerveController(swerveDrive,
         () -> {
           return -m_xbox_cotroller.getLeftY();
@@ -334,9 +336,10 @@ public class RobotContainer {
         .whileTrue(new ResetNavigation(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
     // Stow angle
-    new JoystickButton(m_xbox_cotroller_2, Button.kA.value).onTrue(new InstantCommand(() -> wrist.setWristAngle(185)));
+    new JoystickButton(m_xbox_cotroller_2, Button.kA.value).onTrue(new InstantCommand(() -> wrist.setWristAngle(120)));
     // Straight angle
-    new JoystickButton(m_xbox_cotroller_2, Button.kB.value).onTrue(new InstantCommand(() -> wrist.setWristAngle(58)));
+    new JoystickButton(m_xbox_cotroller_2, Button.kB.value).onTrue(new InstantCommand(() -> wrist.setWristAngle(20)));
+    new JoystickButton(m_xbox_cotroller_2, Button.kX.value).onTrue(new InstantCommand(() -> wrist.setWristAngle(50)));
 
   }
 

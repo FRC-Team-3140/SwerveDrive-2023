@@ -185,13 +185,13 @@ public class Robot extends TimedRobot {
             m_robotContainer.getArm().setArmVoltage(0);
         }
 
-        if (Math.abs(m_robotContainer.getController2().getRightY()) >= .05) {
-            m_robotContainer.getWrist()
-                    .setWristVoltage((5 * -(m_robotContainer.getController2().getRightY()) * wristDampener));
+        // if (Math.abs(m_robotContainer.getController2().getRightY()) >= .05) {
+        //     m_robotContainer.getWrist()
+        //             .setWristVoltage((5 * -(m_robotContainer.getController2().getRightY()) * wristDampener));
 
-        } else {
-            m_robotContainer.getWrist().setWristVoltage(0);
-        }
+        // } else {
+        //     m_robotContainer.getWrist().setWristVoltage(0);
+        // }
 
         /**************************************************************************************************************************************/
 

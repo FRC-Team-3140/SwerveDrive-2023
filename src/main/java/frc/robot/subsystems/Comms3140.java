@@ -14,35 +14,35 @@ public class Comms3140 extends SubsystemBase {
 
     static final double kEpsilon = 1e-5; // Threshold for double equals comparisons
 
-    interface DoubleGetter {
+    public interface DoubleGetter {
         double run();
     }
 
-    interface DoubleSetter {
+    public interface DoubleSetter {
         void run(double value);
     }
 
-    interface IntGetter {
+    public interface IntGetter {
         int run();
     }
 
-    interface IntSetter {
+    public interface IntSetter {
         void run(int value);
     }
 
-    interface BooleanGetter {
+    public interface BooleanGetter {
         boolean run();
     }
 
-    interface BooleanSetter {
+    public interface BooleanSetter {
         void run(boolean value);
     }
 
-    interface StringGetter {
+    public interface StringGetter {
         String run();
     }
 
-    interface StringSetter {
+    public interface StringSetter {
         void run(String value);
     }
 
