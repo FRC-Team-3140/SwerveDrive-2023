@@ -253,6 +253,14 @@ public class SwerveDrive extends SubsystemBase {
         //return (encoders[0].getPosition());
     }
 
+
+    public void homeWheels(){
+        m_swerveModule_fl.setAngle(0, false);
+        m_swerveModule_fr.setAngle(0, false);
+        m_swerveModule_bl.setAngle(0, false);
+        m_swerveModule_br.setAngle(0, false);
+    }
+
     public boolean getLocked() {
         return locked;
     }

@@ -3,6 +3,7 @@ package frc.robot.commands.Balance;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Comms3140;
+import frc.robot.subsystems.SwerveOdometer;
 import frc.robot.subsystems.Swerve.SwerveDrive;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -37,10 +38,10 @@ public class BalanceAndEngage extends CommandBase {
         Comms3140.getInstance().sendDoubleTelemetry("Balance","be_state", 1);
 
         // TODO: switch to odometer if it is tested and values are correct
-        //SwerveOdometer.getInstance().reset(); // Reset should zero the position of the robot at this location
-        //stopPosition = SwerveOdometer.getInstance().getX(); // Robot should now just move in the x dimension relative to the current position
+        SwerveOdometer.getInstance().reset(); // Reset should zero the position of the robot at this location
+        stopPosition = SwerveOdometer.getInstance().getX(); // Robot should now just move in the x dimension relative to the current position
 
-        stopPosition = swerveDrive.getPosition();
+        //stopPosition = swerveDrive.getPosition();
     }
 
     @Override
@@ -48,19 +49,19 @@ public class BalanceAndEngage extends CommandBase {
         Comms3140.getInstance().sendDoubleTelemetry("Balance","be_state", 2);
 
         // TODO: switch to odometer if it is tested and values are correct
-        //double position = SwerveOdometer.getInstance().getX();
+        double position = SwerveOdometer.getInstance().getX();
 
-        double position = swerveDrive.getPosition();
+        //double position = swerveDrive.getPosition();
 
         double pitch = m_navx_table.getEntry("navx_filtered_pitch").getDouble(0.0);
 
         m_count++;
         Comms3140.getInstance().sendDoubleTelemetry("Balance","be_m_count", m_count);
-        if (m_count % 25 == 0) {
+        if (m_count % 100 == 0) {
             if (pitch > 2.0)
-                stopPosition = position - 0.08;
+                stopPosition = position - 0.15;
             else if (pitch < -2.0)
-                stopPosition = position + 0.08;
+                stopPosition = position + 0.15;
         }
 
         power = pid.calculate(position - stopPosition);

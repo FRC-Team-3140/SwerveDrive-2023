@@ -37,6 +37,7 @@ public class ClimbRamp extends CommandBase {
         stopAngle = NetworkTableInstance.getDefault().getTable("Balance").getEntry("Approach Ramp Stop Angle").getDouble(0.0);
         climbSpeed = NetworkTableInstance.getDefault().getTable("Balance").getEntry("Climb Speed").getDouble(0.0);
         angle = navxTable.getEntry("navx_filtered_pitch").getDouble(0.0);
+        System.out.printf("Stop Angle %f angle %f/n",stopAngle,angle);
         if(angle<0){
             new EncoderDriveDistance(m_drive, 2, climbSpeed, 0).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
         }else{

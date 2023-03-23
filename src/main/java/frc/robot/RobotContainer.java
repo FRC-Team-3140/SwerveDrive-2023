@@ -20,7 +20,11 @@ package frc.robot;
 import java.util.function.BooleanSupplier;
 
 import frc.robot.commands.TurnAndDrive;
+import frc.robot.commands.Balance.BalanceAndEngage;
 import frc.robot.commands.Balance.BalanceTogether;
+import frc.robot.commands.Balance.ClimbRamp;
+import frc.robot.commands.Balance.MoveToRamp;
+import frc.robot.commands.Balance.ResetNavigation;
 import frc.robot.commands.Drivetrain.EncoderDriveDistance;
 import frc.robot.commands.Drivetrain.SwerveController;
 import frc.robot.subsystems.*;
@@ -39,6 +43,7 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -118,7 +123,7 @@ public class RobotContainer {
 
   public SwerveDrive swerveDrive = new SwerveDrive();
   public SwerveOdometer swerveOdometer = new SwerveOdometer(swerveDrive);
-  
+
   public boolean aDown = false;
 
   public Claw claw = new Claw(2, 0, 1);
@@ -315,15 +320,18 @@ public class RobotContainer {
 
     new JoystickButton(m_xbox_cotroller_2, Button.kLeftBumper.value).onTrue(new InstantCommand(() -> led.toggleLED()));
 
-    // Command auto_balance = new SequentialCommandGroup (
-    // new MoveToRamp(swerveDrive).withInterruptBehavior(InterruptionBehavior
-    // .kCancelSelf),
-    // new
-    // ClimbRamp(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
-    // new
-    // BalanceAndEngage(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    Command auto_balance = new SequentialCommandGroup(
+        new MoveToRamp(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
+        new ClimbRamp(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
+        new BalanceAndEngage(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
-    new JoystickButton(m_xbox_cotroller, Button.kStart.value).onTrue(new EncoderDriveDistance(swerveDrive, 1, 0.5, 0).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    // new JoystickButton(m_xbox_cotroller, Button.kStart.value).onTrue(new
+    // EncoderDriveDistance(swerveDrive, 1, 0.5,
+    // 0).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    new JoystickButton(m_xbox_cotroller, Button.kStart.value)
+        .whileTrue(auto_balance.withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    new JoystickButton(m_xbox_cotroller, Button.kBack.value)
+        .whileTrue(new ResetNavigation(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
     // Stow angle
     new JoystickButton(m_xbox_cotroller_2, Button.kA.value).onTrue(new InstantCommand(() -> wrist.setWristAngle(185)));

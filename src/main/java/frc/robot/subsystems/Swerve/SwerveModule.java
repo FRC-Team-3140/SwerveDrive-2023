@@ -20,6 +20,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.Constants;
+import frc.robot.subsystems.Comms3140;
 
 import com.revrobotics.RelativeEncoder;
 
@@ -102,9 +103,9 @@ public class SwerveModule {
         // TODO: Double check these conversion factors - dsb
         // converts inches to meters
         double wheel_cer = 4.0 * 0.0254 * Math.PI;
-        driveSparkMax.getEncoder().setVelocityConversionFactor(gear_rat * wheel_cer);
+        driveSparkMax.getEncoder().setVelocityConversionFactor(1.0/19.85);
         //divided by Gear ratio multiplied by circumference of the swerve wheels time inches to meters conversion 
-        driveSparkMax.getEncoder().setPositionConversionFactor(((4* Math.PI)/ 6.12) * .0254);
+        driveSparkMax.getEncoder().setPositionConversionFactor(1.0/19.85);
 
         driveSparkMax.burnFlash();
 
@@ -174,6 +175,13 @@ public class SwerveModule {
 
         double ds = drive_setpoint.getDouble(0.0);
         setDriveSpeed(ds);
+
+        Comms3140 comms = Comms3140.getInstance();
+        comms.sendDoubleTelemetry("SwerveDrive", module_id + "_angle", Rotation2d.fromDegrees(cANCoder.getAbsolutePosition()-base_angle).getDegrees());
+        comms.sendDoubleTelemetry("SwerveDrive", module_id + "_angle_cancoder", cANCoder.getAbsolutePosition());
+        comms.sendDoubleTelemetry("SwerveDrive", module_id + "_angle_base", base_angle);
+        comms.sendDoubleTelemetry("SwerveDrive", module_id + "_position", driveEncoder.getPosition());
+        comms.sendDoubleTelemetry("SwerveDrive", module_id + "_position_conversion", driveEncoder.getPositionConversionFactor());
     }
 
     // Make sure the angle is not greater than 360 or less than 0
@@ -314,9 +322,9 @@ public class SwerveModule {
     }
 
     public SwerveModulePosition getSwerveModulePosition(){
-        double angle = cANCoder.getAbsolutePosition();
+        double angle = cANCoder.getAbsolutePosition()-base_angle;
         double distance = driveEncoder.getPosition();
-        return new SwerveModulePosition(distance, new Rotation2d(angle));
+        return new SwerveModulePosition(distance, new Rotation2d(Math.PI*angle/180.0));
     }
 
 }
