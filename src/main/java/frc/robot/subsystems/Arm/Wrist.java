@@ -142,7 +142,7 @@ public class Wrist extends SubsystemBase {
     
 
     comms.sendDoubleTelemetry("Wrist", "Voltage", motorVoltage);
-    setWristVoltage(motorVoltage);
+    //setWristVoltage(motorVoltage);
   }
 
   // Getter methods
@@ -159,18 +159,18 @@ public class Wrist extends SubsystemBase {
 
   // Setter methods
   public void setWristAngle(double angle) {
-    //WristAngleSetPt = Math.min(Math.max(angle, minAngleWrist), maxAngleWrist);
-    //wristPidController.setTolerance(3);
-    //WristAngle = getWristAngle();
+    WristAngleSetPt = Math.min(Math.max(angle, minAngleWrist), maxAngleWrist);
+    wristPidController.setTolerance(3);
+    WristAngle = getWristAngle();
 
-    //wristPidController.setSetpoint(WristAngleSetPt);
-    //motorVoltage = wristPidController.calculate(WristAngle);
-    // cap output to +/- maxvoltage
-    //if (Math.abs(motorVoltage) > maxVoltage) {
-    //  motorVoltage = Math.signum(motorVoltage) * maxVoltage;
-    //}
+    wristPidController.setSetpoint(WristAngleSetPt);
+    motorVoltage = wristPidController.calculate(WristAngle);
+    //cap output to +/- maxvoltage
+    if (Math.abs(motorVoltage) > maxVoltage) {
+     motorVoltage = Math.signum(motorVoltage) * maxVoltage;
+    }
 
-    //setWristVoltage(motorVoltage);
+   // setWristVoltage(motorVoltage);
 
   }
 }

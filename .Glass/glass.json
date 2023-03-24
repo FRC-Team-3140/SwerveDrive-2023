@@ -14,25 +14,27 @@
         "open": true
       }
     },
+    "retained": {
+      "SmartDashboard": {
+        "open": true
+      }
+    },
     "transitory": {
+      "AngelTesting": {
+        "open": true
+      },
       "LiveWindow": {
         ".status": {
           "open": true
         }
       },
       "Telemetry3140": {
-        "Balance": {
+        "Wrist": {
           "open": true
         },
-        "BalanceClimb": {
-          "open": true
-        },
-        "Odometer": {
-          "open": true
-        },
-        "SwerveDrive": {
-          "open": true
-        },
+        "open": true
+      },
+      "swerve_chassis": {
         "open": true
       }
     },

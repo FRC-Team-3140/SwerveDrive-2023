@@ -47,6 +47,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.auto.AllAuto;
 import frc.robot.commands.auto.DoNothingAuto;
 import frc.robot.commands.auto.EverythingAuto;
 import frc.robot.commands.auto.MobilityAuto;
@@ -177,7 +178,11 @@ public class RobotContainer {
     m_chooser.addOption("Ported Balance", new BalanceTogether(swerveDrive));
     m_chooser.addOption("Do Nothing Auto", new DoNothingAuto());
     m_chooser.addOption("One Cube Auto ", new OneCubeAuto(swerveDrive, claw, arm, wrist, SwerveDrive.headless));
-    m_chooser.addOption("Everything", new EverythingAuto(swerveDrive, arm, wrist, claw));
+
+
+    m_chooser.addOption("Everything", new AllAuto(swerveDrive, claw, arm, wrist, SwerveDrive.headless));
+
+
     m_chooser.addOption("Mobility", new MobilityAuto(swerveDrive));
     m_chooser.addOption("Turn And Drive BETA", new TurnAndDrive(swerveDrive, 3, 180, 0.5, 0));
     m_chooser.addOption("Two Cube Auto BETA", new TwoCubeAuto(swerveDrive, arm, wrist, claw));

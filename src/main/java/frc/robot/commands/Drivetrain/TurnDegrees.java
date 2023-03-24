@@ -1,5 +1,6 @@
 package frc.robot.commands.Drivetrain;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Swerve.SwerveDrive;
 
@@ -26,11 +27,11 @@ public class TurnDegrees extends CommandBase {
     @Override
     public void initialize() {
         if(resetGyro){
-            SwerveDrive.m_gyro.reset();
+            SwerveDrive.m_gyro.zeroYaw();
         }
 
         m_drive.setLocked(false);
-        speed = Math.copySign(.2, targetAngle - currentAngle);
+        speed = Math.copySign(.4, targetAngle - currentAngle);
     }
 
     @Override
@@ -46,6 +47,9 @@ public class TurnDegrees extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(targetAngle - (SwerveDrive.m_gyro.getYaw() + 180)) <= 3;
+        NetworkTableInstance.getDefault().getTable("AngelTesting").getEntry("Bruh").setDouble(targetAngle);
+        NetworkTableInstance.getDefault().getTable("AngelTesting").getEntry("Bruh2"
+        ).setDouble(SwerveDrive.m_gyro.getYaw() + 180);
+        return Math.abs(targetAngle - (NetworkTableInstance.getDefault().getTable("SmartDashboard").getSubTable("DataNAVX").getEntry("navx_yaw").getDouble(currentAngle))) <= 3;
     }
 }
