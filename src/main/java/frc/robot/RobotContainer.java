@@ -325,13 +325,15 @@ public class RobotContainer {
     Command auto_balance = new SequentialCommandGroup(
         new MoveToRamp(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
         new ClimbRamp(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
-        new BalanceAndEngage(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+        new BalanceAndEngage(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf)
+        );
 
     // new JoystickButton(m_xbox_cotroller, Button.kStart.value).onTrue(new
     // EncoderDriveDistance(swerveDrive, 1, 0.5,
     // 0).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
     new JoystickButton(m_xbox_cotroller, Button.kStart.value)
         .whileTrue(auto_balance.withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+
     new JoystickButton(m_xbox_cotroller, Button.kBack.value)
         .whileTrue(new ResetNavigation(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
