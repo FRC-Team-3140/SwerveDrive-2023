@@ -40,8 +40,8 @@ public class Wrist extends SubsystemBase {
   // TODO: we should implement these controls
   double maxAngle=170;
   double minAngle=15;
-  double maxUpVoltage = 7.0;
-  double minDownVoltage = 7.0;
+  //double maxUpVoltage = 7.0;
+  //double minDownVoltage = 7.0;
   
   // TODO: This did not work remove it
   //LinearFilter angle_filter = LinearFilter.singlePoleIIR(3.0,0.02 );

@@ -22,27 +22,32 @@ public class ClimbRamp extends CommandBase {
 
     Comms3140 comms = Comms3140.getInstance();
 
-    public ClimbRamp(SwerveDrive swerveDrive){
+    public ClimbRamp(SwerveDrive swerveDrive) {
         addRequirements(swerveDrive);
+
         m_drive = swerveDrive;
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
         navxTable = inst.getTable("SmartDashboard").getSubTable("DataNAVX");
-        comms.sendBooleanTelemetry("BalanceClimb", "ClimbRampCreate",true);
+
+        comms.registerDoubleSetting("BalanceClimb", "speed", () -> climbSpeed, (value) -> {
+            climbSpeed = value;
+        }, 0.25);
+        comms.registerDoubleSetting("BalanceClimb", "stopAngle", () -> stopAngle, (value) -> {
+            stopAngle = value;
+        }, 8.0);
+        comms.sendStringTelemetry("BalanceClimb", "State", "Off");
     }
 
     public void initialize() {
-        comms.sendBooleanTelemetry("BalanceClimb", "ClimbRampInit",true);
-        System.out.println("Climbing");
+        comms.sendStringTelemetry("BalanceClimb", "State", "Initialize");
     }
 
     @Override
     public void execute() {
-        comms.sendBooleanTelemetry("BalanceClimb", "ClimbRampExecute",true);
-        stopAngle = NetworkTableInstance.getDefault().getTable("Balance").getEntry("Approach Ramp Stop Angle")
-                .getDouble(0.0);
-        climbSpeed = 0.25; 
+        comms.sendStringTelemetry("BalanceClimb", "State", "Execute");
+
         angle = navxTable.getEntry("navx_filtered_pitch").getDouble(0.0);
-        System.out.printf("Stop Angle %f angle %f/n", stopAngle, angle);
+
         if (angle < 0) {
             m_drive.arcadeDrive(climbSpeed, 0);
 
@@ -53,18 +58,20 @@ public class ClimbRamp extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        comms.sendBooleanTelemetry("BalanceClimb", "ClimbRampEnd",true);
+        comms.sendStringTelemetry("BalanceClimb", "State", "Off");
 
         m_drive.setChassisSpeeds(0, 0, 0);
     }
 
     @Override
     public boolean isFinished() {
-        comms.sendDoubleTelemetry("BalanceClimb", "Angle Stop", stopAngle);
-        comms.sendDoubleTelemetry("BalanceClimb", "Angle F",angle);
-        comms.sendBooleanTelemetry("BalanceClimb", "Is Finished",Math.abs(angle) < stopAngle);
+        boolean is_finished = Math.abs(angle) < stopAngle;
 
-        return Math.abs(angle) < stopAngle;
+        comms.sendDoubleTelemetry("BalanceClimb", "Angle Stop", stopAngle);
+        comms.sendDoubleTelemetry("BalanceClimb", "Angle Filtered", angle);
+        comms.sendBooleanTelemetry("BalanceClimb", "Is Finished", is_finished);
+
+        return is_finished;
     }
 
 }

@@ -14,7 +14,7 @@ public class BalanceTogether extends ParallelRaceGroup {
 
         SequentialCommandGroup balance = new SequentialCommandGroup(
             // Modify Speeds in the Commands below so that the robot doen't move too fast!
-            new MoveToRamp(swerve).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
+            new MoveToRamp(swerve,MoveToRamp.kForward).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
             new ClimbRamp(swerve).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
             new BalanceAndEngage(swerve).withInterruptBehavior(InterruptionBehavior.kCancelSelf)
         );

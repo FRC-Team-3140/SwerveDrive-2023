@@ -47,7 +47,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.auto.AllAuto;
 import frc.robot.commands.auto.DoNothingAuto;
 import frc.robot.commands.auto.EverythingAuto;
 import frc.robot.commands.auto.MobilityAuto;
@@ -180,7 +179,7 @@ public class RobotContainer {
     m_chooser.addOption("One Cube Auto ", new OneCubeAuto(swerveDrive, claw, arm, wrist, SwerveDrive.headless));
 
 
-    m_chooser.addOption("Everything", new AllAuto(swerveDrive, claw, arm, wrist, SwerveDrive.headless));
+    //m_chooser.addOption("Everything", new AllAuto(swerveDrive, claw, arm, wrist, SwerveDrive.headless));
 
 
     m_chooser.addOption("Mobility", new MobilityAuto(swerveDrive));
@@ -328,7 +327,7 @@ public class RobotContainer {
     new JoystickButton(m_xbox_cotroller_2, Button.kLeftBumper.value).onTrue(new InstantCommand(() -> led.toggleLED()));
 
     Command auto_balance = new SequentialCommandGroup(
-        new MoveToRamp(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
+        new MoveToRamp(swerveDrive,MoveToRamp.kBackward).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
         new ClimbRamp(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
         new BalanceAndEngage(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf)
         );
