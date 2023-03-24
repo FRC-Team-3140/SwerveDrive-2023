@@ -229,7 +229,7 @@ public class Robot extends TimedRobot {
         // multiplier
         // m_robotContainer.getWrist().setWristVoltage(5 *
         // -(m_robotContainer.getController2().getRightY()) * wristDampener);
-        m_robotContainer.getArm().setArmVoltage((5 * -(m_robotContainer.getController2().getLeftY()) * armDampener));
+        // m_robotContainer.getArm().setArmVoltage((5 * -(m_robotContainer.getController2().getLeftY()) * armDampener));
 
     }
 
