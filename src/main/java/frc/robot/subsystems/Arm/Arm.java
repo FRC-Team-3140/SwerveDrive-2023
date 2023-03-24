@@ -9,6 +9,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -16,7 +17,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 //impirt edu.wpi.first.math.controller.Bang;
- 
+
 public class Arm extends SubsystemBase {
   // Min and Max angle || NOT SET YET DON'T USE!!!
   private final double minAngleArm = 0;
@@ -54,8 +55,8 @@ public class Arm extends SubsystemBase {
     ArmSparkMax.setIdleMode(IdleMode.kBrake);
     ArmSparkMax.burnFlash();
 
-    NetworkTableInstance.getDefault().getTable("Arm").getEntry("Arm P").setDouble(0.0);
-    NetworkTableInstance.getDefault().getTable("Arm").getEntry("Arm D").setDouble(0.0);
+    NetworkTableInstance.getDefault().getTable("Arm").getEntry("Arm P").setDouble(0.37181);
+    NetworkTableInstance.getDefault().getTable("Arm").getEntry("Arm D").setDouble(0.058496);
   }
 
   @Override
@@ -98,14 +99,15 @@ public class Arm extends SubsystemBase {
 
     ArmAngle = getArmAngle();
 
-    armPidController.setSetpoint(ArmAngleSetPt);
-    ArmMotorVoltage = armPidController.calculate(ArmAngle);
+    // armPidController.setSetpoint(ArmAngleSetPt);
+    // ArmMotorVoltage = armPidController.calculate(ArmAngle);
+
     // cap output to +/- maxvoltage
     if (Math.abs(ArmMotorVoltage) > maxVoltage) {
       ArmMotorVoltage = Math.signum(ArmMotorVoltage) * maxVoltage;
     }
 
-    // ArmSparkMax.setVoltage(ArmMotorVoltage);
+   // ArmSparkMax.setVoltage(ArmMotorVoltage);
 
     NetworkTableInstance.getDefault().getTable("Arm").getEntry("ArmAngle").setDouble(getArmAngle());
     NetworkTableInstance.getDefault().getTable("Arm").getEntry("Arm Voltage").setDouble(ArmSparkMax.getBusVoltage());
@@ -127,11 +129,28 @@ public class Arm extends SubsystemBase {
   // }
 
   // Setter Methods
-  public void setArmAngle(double aAngle) {
-    ArmAngleSetPt = Math.min(Math.max(aAngle, minAngleArm), maxAngleArm);
-  }
+  // double kS = 0.097214;
+  // double kV = 0.097442;
+  // double kA = 0.001934;
+  // double kG = 0.34571;
+  // ArmFeedforward feedForward = new ArmFeedforward(kS, kG, kV, kA);
+  // double lastSetPoint;
+
+  // public void setArmAngle(double aAngle) {
+  //   ArmAngleSetPt = Math.min(Math.max(aAngle, minAngleArm), maxAngleArm);
+
+  //   // if (Math.abs(RobotContainer.getInstance().getController2().getLeftY()) >= .05) {
+  //   //   setArmVoltage((5 * -(RobotContainer.getInstance().getController2().getLeftY())));
+  //   //   lastSetPoint = getArmAngle();
+  //   // } else if (lastSetPoint - getArmAngle() > 5) {
+  //   //   setArmVoltage(armPidController.calculate(getArmAngle(), lastSetPoint));
+  //   // }
+
+  //   // lastSetPoint = ArmAngleSetPt;
+  // }
 
   public void setArmVoltage(double armVoltage) {
+
     if (!limitSwitchArmUpper.get()) {
       ArmSparkMax.setVoltage(Math.min(armVoltage, 0));
     } else if (!limitSwitchLower.get()) {

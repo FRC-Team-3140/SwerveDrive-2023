@@ -17,11 +17,9 @@ public class ArmTopAuto extends SequentialCommandGroup {
         this.wrist = wrist;
         addRequirements(arm, wrist);
 
-        addCommands(
-            new ParallelDeadlineGroup( 
+        addCommands( 
             new ArmPosition(arm, 155),
             new WristPosition(wrist, 58)
-            )
         );
     }
     

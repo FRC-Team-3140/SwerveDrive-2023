@@ -26,7 +26,7 @@ import frc.robot.subsystems.Comms3140;
 public class SwerveDrive extends SubsystemBase {
     // Cameras
     public static PhotonCamera aprilTagCamera = new PhotonCamera("Apriltag-Cam");
-    public static PhotonCamera colorCam = new PhotonCamera("Color-Cam");
+    public static PhotonCamera colorCam = new PhotonCamera("Wrist-Cam");
 
     private final SwerveModule m_swerveModule_fr = new SwerveModule("fr", 10, 1, 2, 131, 86);
     private final SwerveModule m_swerveModule_fl = new SwerveModule("fl", 13, 3, 4, 308, 171);
@@ -317,6 +317,15 @@ public class SwerveDrive extends SubsystemBase {
         return colorCam.getLatestResult().hasTargets();
     }
 
+    public double getDistanceToConeFromCamera(){
+        if(colorCam.getPipelineIndex() == 1){
+            colorCam.setPipelineIndex(0);
+        }
+        if(hasColor()){
+            return -1;
+        }
+        return 3.27975 * Math.pow(getColor().getArea(),-0.402222) - 0.520129;
+    }
     public SwerveModule getBRModule() {
         return m_swerveModule_br;
     }

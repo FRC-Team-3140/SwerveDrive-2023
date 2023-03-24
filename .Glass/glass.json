@@ -1,7 +1,16 @@
 {
   "NetworkTables": {
+    "Transitory Values": {
+      "open": false
+    },
     "persistent": {
       "Comms3140": {
+        "Settings": {
+          "Telemetry": {
+            "open": true
+          },
+          "open": true
+        },
         "open": true
       },
       "Settings3140": {
@@ -11,6 +20,9 @@
         "Wrist": {
           "open": true
         },
+        "open": true
+      },
+      "SmartDashboard": {
         "open": true
       }
     },
@@ -29,12 +41,9 @@
         }
       },
       "Telemetry3140": {
-        "Wrist": {
+        "Claw": {
           "open": true
         },
-        "open": true
-      },
-      "swerve_chassis": {
         "open": true
       }
     },
@@ -621,7 +630,7 @@
     }
   },
   "NetworkTables Settings": {
-    "mode": "Client (NT4)",
+    "mode": "Client (NT3)",
     "serverTeam": "3140"
   },
   "Plots": {

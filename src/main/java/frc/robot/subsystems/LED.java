@@ -43,6 +43,17 @@ public class LED  extends SubsystemBase{
         
     }
 
+    public void leftRightCenter(double distanceFromCenter){
+        if(distanceFromCenter > 0){
+            int AmountOfLEDSidk = 9;
+            
+
+            ledBuffer.setRGB(3, 240, 179, 12);
+
+        }
+        
+    }
+
     
 
     
