@@ -21,7 +21,16 @@
         }
       },
       "Telemetry3140": {
-        "Wrist": {
+        "Balance": {
+          "open": true
+        },
+        "BalanceClimb": {
+          "open": true
+        },
+        "Odometer": {
+          "open": true
+        },
+        "SwerveDrive": {
           "open": true
         },
         "open": true
