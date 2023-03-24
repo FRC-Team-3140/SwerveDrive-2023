@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Auto2.Arm.ArmPosition;
 import frc.robot.commands.Auto2.Arm.WristPosition;
 import frc.robot.commands.Balance.BalanceTogether;
-import frc.robot.commands.Drivetrain.TurnDegrees;
+//import frc.robot.commands.Drivetrain.TurnDegrees;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Arm.Wrist;
@@ -33,22 +33,22 @@ public class AllAuto extends CommandBase{
     }
     @Override
     public void initialize() {
-        new SequentialCommandGroup(
-            new ArmPosition(arm, 150),
-            new WristPosition(wrist, 58),
-            new InstantCommand(() -> claw.clawOpen()),
-            new ParallelCommandGroup(
-                new TurnDegrees(m_drive, 180, true),
-                new SequentialCommandGroup(new WaitCommand(.5),
-                    new ParallelCommandGroup(
-                        new ArmPosition(arm, 20),
-                        new WristPosition(wrist, 170)
-                    )
-                )
-                    
-            ),
-            new BalanceTogether(m_drive)
-        ).schedule();
+        //new SequentialCommandGroup(
+        //    new ArmPosition(arm, 150),
+        //    new WristPosition(wrist, 58),
+        //    new InstantCommand(() -> claw.clawOpen()),
+        //    new ParallelCommandGroup(
+        //        new TurnDegrees(m_drive, 180, true),
+        //        new SequentialCommandGroup(new WaitCommand(.5),
+        //            new ParallelCommandGroup(
+        //                new ArmPosition(arm, 20),
+        //                new WristPosition(wrist, 170)
+        //            )
+        //        )
+        //            
+        //    ),
+        //    new BalanceTogether(m_drive)
+        //).schedule();
     }
 
 }
