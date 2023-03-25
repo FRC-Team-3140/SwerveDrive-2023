@@ -16,6 +16,7 @@ public class BalanceAndEngage extends CommandBase {
     private double balanceP;
     private double balanceD;
     private double power;
+    private int direction;
     PIDController pid = new PIDController(balanceP, 0, balanceD);
 
     // Compute how much the angle is changing
@@ -23,13 +24,14 @@ public class BalanceAndEngage extends CommandBase {
 
     SwerveDrive swerveDrive;
 
-    public BalanceAndEngage(SwerveDrive swerveDrive) {
+    public BalanceAndEngage(SwerveDrive swerveDrive, int direction) {
         addRequirements(swerveDrive);
         Comms3140.getInstance().sendDoubleTelemetry("Balance","be_state", 0);
         this.swerveDrive = swerveDrive;
         
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
         m_navx_table = inst.getTable("SmartDashboard").getSubTable("DataNAVX");
+        this.direction = direction;
 
     }
 
@@ -38,8 +40,14 @@ public class BalanceAndEngage extends CommandBase {
         Comms3140.getInstance().sendDoubleTelemetry("Balance","be_state", 1);
 
         // TODO: switch to odometer if it is tested and values are correct
-        SwerveOdometer.getInstance().reset(); // Reset should zero the position of the robot at this location
-        stopPosition = SwerveOdometer.getInstance().getX(); // Robot should now just move in the x dimension relative to the current position
+        SwerveOdometer.getInstance().reset(); 
+        // Reset should zero the position of the robot at this location
+        if(direction == 1){
+            stopPosition = SwerveOdometer.getInstance().getX() + .25;
+        }else{
+            stopPosition = SwerveOdometer.getInstance().getX() - .25;
+        }
+         // Robot should now just move in the x dimension relative to the current position
 
         //stopPosition = swerveDrive.getPosition();
     }

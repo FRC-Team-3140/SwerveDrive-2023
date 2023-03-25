@@ -30,7 +30,7 @@ public class DriveToWall extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      m_drive.setChassisSpeeds(0.1, 0, 0);
+      m_drive.setChassisSpeeds(0.2, 0, 0);
       if(System.currentTimeMillis() - startTime > 200){
         hasMoved = true;
       }

@@ -13,4 +13,8 @@ public class OpenClaw extends CommandBase{
     public void initialize() {
         claw.clawOpen();
     }
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 }

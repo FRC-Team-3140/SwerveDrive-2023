@@ -13,4 +13,8 @@ public class CloseClaw extends CommandBase{
     public void initialize() {
         claw.clawClosed();
     }
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 }

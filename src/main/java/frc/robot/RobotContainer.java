@@ -48,6 +48,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.auto.AllAuto;
 import frc.robot.commands.auto.DoNothingAuto;
 import frc.robot.commands.auto.DriveToWall;
 import frc.robot.commands.auto.MobilityAuto;
@@ -178,6 +179,7 @@ public class RobotContainer {
     m_chooser.addOption("Ported Balance", new BalanceTogether(swerveDrive,MoveToRamp.kForward));
     m_chooser.addOption("Do Nothing Auto", new DoNothingAuto());
     m_chooser.addOption("One Cube Auto ", new OneCubeAuto(swerveDrive, claw, arm, wrist, SwerveDrive.headless));
+    m_chooser.addOption("Everything Auto", new AllAuto(swerveDrive, claw, arm, wrist, true ));
 
 
     //m_chooser.addOption("Everything", new AllAuto(swerveDrive, claw, arm, wrist, SwerveDrive.headless));
@@ -327,17 +329,17 @@ public class RobotContainer {
 
     new JoystickButton(m_xbox_cotroller_2, Button.kLeftBumper.value).onTrue(new InstantCommand(() -> led.toggleLED()));
 
-    Command auto_balance = new SequentialCommandGroup(
-        new MoveToRamp(swerveDrive,MoveToRamp.kBackward).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
-        new ClimbRamp(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
-        new BalanceAndEngage(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf)
-        );
+    // Command auto_balance = new SequentialCommandGroup(
+    //     new MoveToRamp(swerveDrive,MoveToRamp.kBackward).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
+    //     new ClimbRamp(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
+    //     new BalanceAndEngage(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf)
+    //     );
 
     // new JoystickButton(m_xbox_cotroller, Button.kStart.value).onTrue(new
     // EncoderDriveDistance(swerveDrive, 1, 0.5,
     // 0).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
-    new JoystickButton(m_xbox_cotroller, Button.kStart.value)
-        .whileTrue(auto_balance.withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    // new JoystickButton(m_xbox_cotroller, Button.kStart.value)
+    //     .whileTrue(auto_balance.withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
     new JoystickButton(m_xbox_cotroller, Button.kBack.value)
         .whileTrue(new ResetNavigation(swerveDrive).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
