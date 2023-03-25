@@ -33,7 +33,9 @@ public class TurnAndDrive extends CommandBase {
   @Override
   public void initialize() {
     //arc length formula (theta * radius where radius is half of the diagonal of the robot)
-    distance = distance + targetAngle/180 * Math.PI * Math.sqrt(.3302 * .3302 +  .2794 * .2794)/2;
+    double bot_length = .3302;
+    double bot_width = .2794;
+    distance = distance + targetAngle/180 * Math.PI * Math.hypot(bot_length, bot_width)/2;
     SwerveDrive.m_gyro.zeroYaw();
     startPosition = swerve.getPosition();
     swerve.setLocked(false);
