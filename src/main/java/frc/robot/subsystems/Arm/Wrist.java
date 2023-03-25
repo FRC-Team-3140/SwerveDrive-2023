@@ -86,7 +86,7 @@ public class Wrist extends SubsystemBase {
     }
     if (!limitSwitchWrist.get()) {
     wristSparkMax.setVoltage(Math.min(wristVoltage, 0));
-    } else if (getWristAngle() < 2 || getWristAngle() > 270) {
+    } else if (getWristAngle() < 300 && getWristAngle() > 210) {//|| 
     wristSparkMax.setVoltage(Math.max(wristVoltage, 0));
     } else {
     wristSparkMax.setVoltage(wristVoltage);
