@@ -32,19 +32,21 @@ public class ScoreGamePieceTop extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    
+    new SequentialCommandGroup(
+      new ArmTopAuto(arm, wrist),
+      new OpenClaw(claw),
+      new ParallelCommandGroup(
+        new RetractArm(arm, wrist), 
+        new EncoderDriveDistance(swerve, 1, -0.6, 0)
+      )
+    ).schedule();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    new SequentialCommandGroup(
-      new ArmTopAuto(arm, wrist),
-      new InstantCommand(() -> claw.clawOpen()),
-      new ParallelCommandGroup(
-        new RetractArm(arm, wrist), 
-        new EncoderDriveDistance(swerve, -1, 0.6, 0)
-      )
-    );
   }
 
   // Called once the command ends or is interrupted.
@@ -54,6 +56,6 @@ public class ScoreGamePieceTop extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

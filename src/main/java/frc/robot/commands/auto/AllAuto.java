@@ -41,7 +41,7 @@ public class AllAuto extends CommandBase{
                 new WaitCommand(1.2),
                 new WristPosition(wrist, 58))
             ),
-           // new DriveToWall(m_drive),
+           new DriveToWall(m_drive),
            new OpenClaw(claw),
            new ParallelCommandGroup(
                //new TurnDegrees(m_drive, 180, true),

@@ -13,7 +13,7 @@ public class TargetAlign extends CommandBase {
     }
 
     double setpoint;
-    double deadband = .05;
+    double deadband = .01;
 
     @Override
     public void initialize() {
@@ -43,7 +43,7 @@ public class TargetAlign extends CommandBase {
     public boolean isFinished() {
         if (m_Drive.getTarget() != null) {
             if (Math.abs(m_Drive.getTarget().getBestCameraToTarget().getY()) < deadband) {
-                m_Drive.setLocked(true);
+               // m_Drive.setLocked(true);
                 return true;
             }
             return false;

@@ -1,8 +1,22 @@
 package frc.robot.commands.auto;
 
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.Auto2.Arm.ArmPosition;
+import frc.robot.commands.Auto2.Arm.ArmTopAuto;
+import frc.robot.commands.Auto2.Arm.WristPosition;
+import frc.robot.commands.Drivetrain.EncoderDriveDistance;
 import frc.robot.commands.Drivetrain.TurnAndDrive;
+import frc.robot.commands.Vision.TargetAlign;
+import frc.robot.commands.Vision.TurnToObject;
+import frc.robot.commands.Vision.VisionDistance;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Arm.Wrist;
@@ -12,7 +26,8 @@ public class TwoCubeAuto extends CommandBase{
     SwerveDrive swerve;
     Arm arm;
     Wrist wrist;
-    Claw claw; 
+    Claw claw;
+    NetworkTableEntry Stage =  NetworkTableInstance.getDefault().getTable("2-CubeAuto").getEntry("Stage");
     public TwoCubeAuto(SwerveDrive swerve, Arm arm, Wrist wrist, Claw claw){
         this.swerve = swerve;
         this.arm = arm;
@@ -23,16 +38,71 @@ public class TwoCubeAuto extends CommandBase{
     }
     @Override
     public void initialize() {
-        new SequentialCommandGroup(
-        //    new ScoreGamePieceTop(swerve, arm, wrist, claw),
-        //    new TurnAndDrive(swerve, 0, 0, 0, 0),
-        //    new InstantCommand(() -> claw.clawClosed()),
-           new TurnAndDrive(swerve, 1, 180, .5, 0)//,
-        //    new EncoderDriveDistance(swerve, 0.3, .3, 0),
-        //    new ScoreGamePieceTop(swerve, arm, wrist, claw)
-        );
-    }
 
+        new SequentialCommandGroup(
+            new TargetAlign(swerve),
+             new InstantCommand(()-> {Stage.setString("Started");}),
+             new WristPosition(wrist, 190),
+            new ParallelCommandGroup(
+                new ArmPosition(arm, 157),
+                new SequentialCommandGroup(
+                    new WaitCommand(1.2),
+                    new WristPosition(wrist, 58)
+                )
+            ),
+            new InstantCommand(()-> {Stage.setString("DriveToWallStart");}),
+           new DriveToWall(swerve).withTimeout(1),
+           new WaitCommand(.05),
+        //Make sure turn and drive works
+        //    new ArmTopAuto(arm, wrist),
+           new OpenClaw(claw),
+           new VisionDistance(swerve, Units.inchesToMeters(23)), //new EncoderDistance(swerve, .05, -.1, 0).withTimeout(1),
+           new InstantCommand(()-> {Stage.setString("Retract Arm");}),
+           new ParallelCommandGroup(
+            new SequentialCommandGroup( 
+                new WristPosition(wrist, 84),
+                new ParallelCommandGroup(
+                  new ArmPosition(arm, 39),
+                  new WristPosition(wrist, 168)
+            ))),
+            
+                //new RetractArm(arm, wrist), 
+                new TargetAlign(swerve),
+                new InstantCommand(()-> {Stage.setString("Move Back");}),
+                new EncoderDriveDistance(swerve, 1, -0.6, .135),
+          //  ).withTimeout(3),
+          new InstantCommand(()-> {Stage.setString("Turn n drive");}),
+           new TurnAndDrive(swerve, 1.2, 180, -.6, -.002).withTimeout(4), //.withTimeout(3),
+           //new InstantCommand(()-> {Stage.setString("turn to bject");}),
+           //new TurnToObject(swerve),
+           new InstantCommand(()-> {Stage.setString("Mvoe and pick up");}),
+           new ArmPosition(arm, 54),
+           new WristPosition(wrist, 130),
+           new ParallelDeadlineGroup(
+            new SensorCloseClaw(claw),
+            new TurnAndDrive(swerve, 1, 180, -.5,0)
+           ),
+           new WristPosition(wrist, 190),//.withTimeout(5),
+           new InstantCommand(()-> {Stage.setString("turn n drive 2");}),
+
+                new TurnAndDrive(swerve, 4.2,0, .5, 0)
+                //new ArmTopAuto(arm, wrist)
+           ,
+           
+           new InstantCommand(()-> {Stage.setString("Driving time");}),
+           new ArmTopAuto(arm, wrist).withTimeout(1),
+           new EncoderDriveDistance(swerve, 2.2, 0, -.5),  //Might have to change speed on this one
+           
+           new TargetAlign(swerve),
+           
+           new InstantCommand(()-> {Stage.setString("Drive To Wall");}),
+
+           new DriveToWall(swerve),
+           new InstantCommand(()-> {Stage.setString("Score Game Piece");}),
+           new ArmTopAuto(arm, wrist),
+            new OpenClaw(claw)
+        ).schedule();
+    }
     @Override
     public void end(boolean interrupted) {
         

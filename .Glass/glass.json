@@ -29,7 +29,13 @@
       }
     },
     "transitory": {
+      "2-CubeAuto": {
+        "open": true
+      },
       "AngelTesting": {
+        "open": true
+      },
+      "Arm": {
         "open": true
       },
       "LiveWindow": {
@@ -37,10 +43,34 @@
           "open": true
         }
       },
+      "NAVX Angle": {
+        "open": true
+      },
+      "Position": {
+        "open": true
+      },
+      "SmartDashboard": {
+        "Auto Mode": {
+          "open": true
+        },
+        "DataNAVX": {
+          "open": true
+        },
+        "open": true
+      },
       "Telemetry3140": {
+        "Balance": {
+          "open": true
+        },
         "Claw": {
           "open": true
         },
+        "Wrist": {
+          "open": true
+        },
+        "open": true
+      },
+      "swerve_chassis": {
         "open": true
       }
     },
@@ -723,7 +753,7 @@
               "autoFit": true
             }
           ],
-          "height": 533,
+          "height": 0,
           "series": [
             {
               "color": [
@@ -794,7 +824,7 @@
     "Plot <7>": {
       "plots": [
         {
-          "height": 326,
+          "height": 370,
           "series": [
             {
               "color": [

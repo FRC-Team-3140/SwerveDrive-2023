@@ -43,9 +43,9 @@ public class BalanceAndEngage extends CommandBase {
         SwerveOdometer.getInstance().reset(); 
         // Reset should zero the position of the robot at this location
         if(direction == 1){
-            stopPosition = SwerveOdometer.getInstance().getX() + .25;
+            stopPosition = SwerveOdometer.getInstance().getX() + .15;
         }else{
-            stopPosition = SwerveOdometer.getInstance().getX() - .25;
+            stopPosition = SwerveOdometer.getInstance().getX() - .15;
         }
          // Robot should now just move in the x dimension relative to the current position
 

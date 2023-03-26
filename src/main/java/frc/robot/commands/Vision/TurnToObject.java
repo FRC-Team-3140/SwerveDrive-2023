@@ -20,6 +20,7 @@ public class TurnToObject extends CommandBase{
     public void initialize() {
         m_drive.setLocked(false);
         m_drive.setIdleModes(IdleMode.kBrake);
+        SwerveDrive.m_gyro.zeroYaw();
     }
 
     // Called every time the scheduler runs while the command is scheduled.

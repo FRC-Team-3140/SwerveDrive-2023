@@ -49,10 +49,12 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.auto.AllAuto;
+import frc.robot.commands.auto.CloseClaw;
 import frc.robot.commands.auto.DoNothingAuto;
 import frc.robot.commands.auto.DriveToWall;
 import frc.robot.commands.auto.MobilityAuto;
 import frc.robot.commands.auto.OneCubeAuto;
+import frc.robot.commands.auto.TestAuto;
 import frc.robot.commands.auto.TwoCubeAuto;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -69,6 +71,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
  * here.
  */
 public class RobotContainer {
+  static DigitalInput peSensor = new DigitalInput(5);
   private LED led = new LED();
   private static DigitalInput limitSwitchUpper = new DigitalInput(3);
   private static DigitalInput limitSwitchLower = new DigitalInput(2);
@@ -87,6 +90,9 @@ public class RobotContainer {
 
   public static DigitalInput getlimitSwitchWrist() {
     return limitSwitchWrist;
+  }
+  public static boolean getPhotoElectricSensorValue(){
+    return peSensor.get();
   }
   // public void updateNavX() {
   // // System.out.println("Update NAVX");
@@ -180,6 +186,8 @@ public class RobotContainer {
     m_chooser.addOption("Do Nothing Auto", new DoNothingAuto());
     m_chooser.addOption("One Cube Auto ", new OneCubeAuto(swerveDrive, claw, arm, wrist, SwerveDrive.headless));
     m_chooser.addOption("Everything Auto", new AllAuto(swerveDrive, claw, arm, wrist, true ));
+
+    m_chooser.addOption("Test Auto", new TestAuto(swerveDrive));
 
 
     //m_chooser.addOption("Everything", new AllAuto(swerveDrive, claw, arm, wrist, SwerveDrive.headless));
@@ -314,8 +322,8 @@ public class RobotContainer {
       arm.getArmEncoder().setPosition(0);
     }));
 
-    new JoystickButton(m_xbox_cotroller, Button.kRightBumper.value).onTrue(new SequentialCommandGroup(new TargetAlign(swerveDrive), new ArmTopAuto(arm, wrist), new DriveToWall(swerveDrive), 
-    new InstantCommand(() -> {claw.clawOpen();})));
+    new JoystickButton(m_xbox_cotroller_2, Button.kY.value).onTrue(new ArmTopAuto(arm, wrist)); 
+
     // new JoystickButton(m_xbox_cotroller, Button.kBack.value).onTrue(new
     // TargetAlign(swerveDrive)); //window button (two rectangles)
     // This command schedules the drive_robot method
@@ -347,10 +355,16 @@ public class RobotContainer {
     // // Stow angle
     // new JoystickButton(m_xbox_cotroller_2, Button.kA.value).onTrue(new InstantCommand(() -> wrist.setWristAngle(120)));
     // // Straight angle
-    // new JoystickButton(m_xbox_cotroller_2, Button.kB.value).onTrue(new InstantCommand(() -> wrist.setWristAngle(20)));
+    // new Joy  stickButton(m_xbox_cotroller_2, Button.kB.value).onTrue(new InstantCommand(() -> wrist.setWristAngle(20)));
     // new JoystickButton(m_xbox_cotroller_2, Button.kX.value).onTrue(new InstantCommand(() -> wrist.setWristAngle(50)));
 
+    //Photo electric sensor to close claw when an object is detected
+    // BooleanSupplier detect = ()->{return peSensor.get();};
+    // Trigger PESensorClose= new Trigger(detect).onTrue(new CloseClaw(claw));
+
+
   }
+  
 
   /*
    * What Controller Button Does What!

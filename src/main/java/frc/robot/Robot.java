@@ -102,7 +102,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         SwerveDrive.zeroNavx();
-        SwerveDrive.headless = false;
+        SwerveDrive.headless = true;// false
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
         // schedule the autonomous command (example)
@@ -114,6 +114,8 @@ public class Robot extends TimedRobot {
     // This function is called periodically during autonomous.
     @Override
     public void autonomousPeriodic() {
+        NetworkTableInstance.getDefault().getTable("NAVX Angle").getEntry("Yaw")
+                .setDouble(SwerveDrive.m_gyro.getYaw());
         // m_robotContainer.updateNavX();
     }
 
@@ -144,6 +146,7 @@ public class Robot extends TimedRobot {
     // This function is called periodically during operator control.
     @Override
     public void teleopPeriodic() {
+
         double position = m_robotContainer.getSwerve().getPosition();
 
         // This command will schedule the robot to drive via teleop if
