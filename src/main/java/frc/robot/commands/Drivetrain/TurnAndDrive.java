@@ -42,7 +42,7 @@ public class TurnAndDrive extends CommandBase {
 
     startPosition = swerve.getPosition();
     swerve.setLocked(false);
-    turnSpeed = Math.copySign(.3, targetAngle - SwerveDrive.m_gyro.getAngle());
+    turnSpeed = Math.copySign(.35, targetAngle - SwerveDrive.m_gyro.getAngle());
 
   }
 

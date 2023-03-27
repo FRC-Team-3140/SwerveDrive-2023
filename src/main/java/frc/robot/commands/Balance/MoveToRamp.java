@@ -24,7 +24,7 @@ public class MoveToRamp extends CommandBase {
 
         comms.registerDoubleSetting("BalanceMove", "Speed", () -> rampApproachVelocity, (value) -> {
             rampApproachVelocity = value;
-        }, 0.5);
+        }, 0.52);
         comms.registerDoubleSetting("BalanceMove", "Stop Angle", () -> stopAngle, (value) -> {
             stopAngle = value;
         }, 0.5);

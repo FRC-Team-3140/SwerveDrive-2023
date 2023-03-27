@@ -7,6 +7,7 @@ public class LED  extends SubsystemBase{
     static AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(43);
     static AddressableLED led;
     static boolean yellowPurple;
+    private int m_rainbowFirstPixelHue = 0;
 
     public LED(){
         led = new AddressableLED(1);
@@ -43,9 +44,50 @@ public class LED  extends SubsystemBase{
         
     }
 
+
+    public void flagship(){
+        for(int i = 0; i < ledBuffer.getLength(); i++){
+            if(i % 2 == 0){
+                ledBuffer.setRGB(i, 195, 193, 193);
+                
+            }else {
+                ledBuffer.setRGB(i, 1, 12, 22); 
+            }
+            
+            
+        }
+        led.setData(ledBuffer);
+    }
+
+    public void rainbow() {
+        for (var i = 0; i < ledBuffer.getLength(); i++) {
+          int hue;
+          if (i<55){
+            hue = (m_rainbowFirstPixelHue + (i * 180 / ledBuffer.getLength())) % 180; 
+            ledBuffer.setHSV(i, hue, 255, 128);
+          }
+          else
+          {
+            hue=0;
+           if ((m_rainbowFirstPixelHue%20)<10)
+           {
+            ledBuffer.setHSV(i, hue, 255, 0);
+           }
+            else
+            {
+            ledBuffer.setHSV(i, hue, 255, 128);
+            }
+    
+          }
+        }
+        m_rainbowFirstPixelHue += 3;
+        m_rainbowFirstPixelHue %= 180;
+        led.setData(ledBuffer);
+      }
+
     public void leftRightCenter(double distanceFromCenter){
         if(distanceFromCenter > 0){
-            int AmountOfLEDSidk = 9;
+           // int AmountOfLEDSidk = 9;
             
 
             ledBuffer.setRGB(3, 240, 179, 12);

@@ -13,6 +13,7 @@ public class SensorCloseClaw extends CommandBase{
     long startTime;
     @Override
     public void initialize() {
+        claw.clawOpen();
         startTime = System.currentTimeMillis();
     }
     @Override

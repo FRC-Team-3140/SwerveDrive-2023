@@ -9,7 +9,7 @@ public class TurnToObject extends CommandBase{
     
     SwerveDrive m_drive;
     double objectAngle;
-    
+    double startAngle;
     public TurnToObject(SwerveDrive swerveDrive){
         addRequirements(swerveDrive);
         m_drive = swerveDrive;
@@ -18,28 +18,32 @@ public class TurnToObject extends CommandBase{
     
     @Override
     public void initialize() {
+        startAngle = SwerveDrive.m_gyro.getAngle();
         m_drive.setLocked(false);
         m_drive.setIdleModes(IdleMode.kBrake);
-        SwerveDrive.m_gyro.zeroYaw();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         if(m_drive.getColor() != null){
-            objectAngle = m_drive.getColor().getYaw();
-            if(objectAngle<0){
-                m_drive.setChassisSpeeds(0, 0, 0.1);
-            }else{
+            try {
+                objectAngle = m_drive.getColor().getYaw();
+            if(objectAngle - startAngle<0){
                 m_drive.setChassisSpeeds(0, 0, -0.1);
+            }else{
+                m_drive.setChassisSpeeds(0, 0, 0.1);
+            }    
+            } catch (Exception e) {
+                System.out.println("he balling");
             }
+            
         }
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        m_drive.setLocked(true);
         m_drive.setChassisSpeeds(0, 0, 0);
     }
 
@@ -47,7 +51,7 @@ public class TurnToObject extends CommandBase{
     @Override
     public boolean isFinished() {
         if(m_drive.getColor() != null){
-        return Math.abs(objectAngle) <= 2;
+        return Math.abs(objectAngle) <= 1;
         }else{return true;}
     }
 

@@ -10,6 +10,7 @@ public class TestAuto extends CommandBase {
     SwerveDrive swerve;
     public TestAuto(SwerveDrive swerve){
         this.swerve = swerve;
+       // swerve.h
 
 
     }
@@ -17,7 +18,8 @@ public class TestAuto extends CommandBase {
     public void initialize() {
         new SequentialCommandGroup(
             //Turns Woo
-            new TurnAndDrive(swerve, 1, 180, .5, 0)
+            // new TurnAndDrive(swerve, 1, 180, .5, 0)
+            new TurnAndDrive(swerve, 4.1,180, -.5, 0)
             //new TurnAndDrive(swerve, 1, 180, -.5, 0)
 
 

@@ -13,7 +13,7 @@ public class TargetAlign extends CommandBase {
     }
 
     double setpoint;
-    double deadband = .01;
+    double deadband = .07;
 
     @Override
     public void initialize() {
@@ -32,7 +32,12 @@ public class TargetAlign extends CommandBase {
             // driving_pid.setIntegratorRange(-turnIntegratorRange, turnIntegratorRange);
             // hi
             //
-            m_Drive.setChassisSpeeds(0, Math.copySign(.15, relativePosition.getY()), 0);
+            try {
+                m_Drive.setChassisSpeeds(0, Math.copySign(.15, relativePosition.getY()), 0);              
+            } catch (Exception bruh) {
+                System.out.println("This fricken failed man");
+            }
+            
             // double drivingVelocity = Math.pow(DIST,2) * 5;
             // m_Drive.setChassisSpeeds(0, Math.copySign(drivingVelocity,
             // relativePosition.getY()),0);
