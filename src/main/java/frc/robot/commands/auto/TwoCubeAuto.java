@@ -39,7 +39,6 @@ public class TwoCubeAuto extends CommandBase{
     }
     @Override
     public void initialize() {
-
         new SequentialCommandGroup(
             new TargetAlign(swerve),
             new ParallelRaceGroup(
@@ -61,22 +60,20 @@ public class TwoCubeAuto extends CommandBase{
       
            new InstantCommand(()-> {Stage.setString("Retract Arm");}),
            new ParallelDeadlineGroup(
-            new SequentialCommandGroup(
-                new TargetAlign(swerve),
-                new EncoderDriveDistance(swerve, 1.2, -0.67, .1443)),
-            new SequentialCommandGroup( 
-                new WristPosition(wrist, 84),
-                new ParallelCommandGroup(
-                  new ArmPosition(arm, 39),
-                  new WristPosition(wrist, 168)
-            ))),
-
-                //new RetractArm(arm, wrist), 
-                
-                new InstantCommand(()-> {Stage.setString("Move Back");}),
-                
-          //  ).withTimeout(3),
-          new InstantCommand(()-> {Stage.setString("Turn n drive");}),
+                new SequentialCommandGroup(
+                    new TargetAlign(swerve),
+                    new EncoderDriveDistance(swerve, 1.2, -0.67, .1443)
+                    ),
+                new SequentialCommandGroup( 
+                    new WristPosition(wrist, 84),
+                    new ParallelCommandGroup(
+                        new ArmPosition(arm, 39),
+                        new WristPosition(wrist, 168)
+                    )
+                )
+            ),
+            new InstantCommand(()-> {Stage.setString("Move Back");}),
+            new InstantCommand(()-> {Stage.setString("Turn n drive");}),
         new ParallelCommandGroup(
           new TurnAndDrive(swerve, 1.21, 180, -.65, -.003467), //.withTimeout(3),
           new ArmPosition(arm, 54),
@@ -87,13 +84,14 @@ public class TwoCubeAuto extends CommandBase{
            new InstantCommand(()-> {Stage.setString("Mvoe and pick up");}),
            new TurnToObject(swerve).withTimeout(.15),
            new ParallelDeadlineGroup(
-            new SensorCloseClaw(claw),
-            new EncoderDriveDistance(swerve, 1.5, -.23, 0)
+                new SensorCloseClaw(claw),
+                new EncoderDriveDistance(swerve, 1.5, -.23, 0)
            ).withTimeout(2),
+
            new WristPosition(wrist, 190),//.withTimeout(5),
            new InstantCommand(()-> {Stage.setString("turn n drive 2");}),
 
-                new TurnAndDrive(swerve, 3.2, -1, .6, 0)
+            new TurnAndDrive(swerve, 3.2, -1, .6, 0)
                 //new ArmTopAuto(arm, wrist),
            
            /* 

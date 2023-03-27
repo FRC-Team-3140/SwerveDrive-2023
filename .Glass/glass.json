@@ -65,6 +65,9 @@
         "Claw": {
           "open": true
         },
+        "Wrist": {
+          "open": true
+        },
         "open": true
       },
       "swerve_chassis": {

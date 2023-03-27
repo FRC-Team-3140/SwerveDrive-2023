@@ -68,6 +68,7 @@ public class Robot extends TimedRobot {
         m_robotContainer = RobotContainer.getInstance();
         HAL.report(tResourceType.kResourceType_Framework, tInstances.kFramework_RobotBuilder);
         SwerveDrive.zeroNavx();
+        
     }
 
     /**
@@ -89,6 +90,7 @@ public class Robot extends TimedRobot {
         // robot's periodic
         // block in order for anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
+        m_robotContainer.getLED().rainbow();
     }
 
     // This function is called once each time the robot enters Disabled mode.
@@ -119,6 +121,7 @@ public class Robot extends TimedRobot {
     public void autonomousPeriodic() {
         NetworkTableInstance.getDefault().getTable("NAVX Angle").getEntry("Yaw")
                 .setDouble(SwerveDrive.m_gyro.getYaw());
+                
         // m_robotContainer.updateNavX();
     }
 
