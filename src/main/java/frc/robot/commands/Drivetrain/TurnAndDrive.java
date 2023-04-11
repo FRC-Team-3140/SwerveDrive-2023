@@ -18,6 +18,7 @@ public class TurnAndDrive extends CommandBase {
   double distance;
   double xSpeed;
   double ySpeed;
+  boolean headless = true;
 
   public TurnAndDrive(SwerveDrive swerve, double dist, double turnDegrees, double xSpeed, double ySpeed) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -27,6 +28,8 @@ public class TurnAndDrive extends CommandBase {
     this.distance = dist;
     this.xSpeed = xSpeed;
     this.ySpeed = ySpeed;
+    SwerveDrive.headless = headless;
+
   }
 
   // Called when the command is initially scheduled.
@@ -36,10 +39,11 @@ public class TurnAndDrive extends CommandBase {
     double bot_length = .3302;
     double bot_width = .2794;
     distance = distance + targetAngle/180 * Math.PI * Math.hypot(bot_length, bot_width)/2;
-    SwerveDrive.m_gyro.zeroYaw();
+
     startPosition = swerve.getPosition();
     swerve.setLocked(false);
-    turnSpeed = Math.copySign(.2, targetAngle - SwerveDrive.m_gyro.getAngle());
+    turnSpeed = Math.copySign(.35, targetAngle - SwerveDrive.m_gyro.getAngle());
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -48,9 +52,11 @@ public class TurnAndDrive extends CommandBase {
     if(Math.abs(swerve.getPosition() - startPosition) > Math.abs(distance)){
       xSpeed = 0;
       ySpeed = 0;
+      System.out.println("Reached Didstance");
     }
-    if(Math.abs(targetAngle - (SwerveDrive.m_gyro.getYaw() + 180)) <= 3){
+    if(Math.abs(targetAngle - (SwerveDrive.m_gyro.getYaw())) <= 5){
       turnSpeed = 0;
+      System.out.println("Reached ngle");
     }
     swerve.setChassisSpeeds(xSpeed, ySpeed,turnSpeed);
   }
@@ -73,6 +79,6 @@ public class TurnAndDrive extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(targetAngle - (SwerveDrive.m_gyro.getYaw() + 180)) <= 3 && Math.abs(swerve.getPosition() - startPosition) > Math.abs(distance);
+    return Math.abs(targetAngle - (SwerveDrive.m_gyro.getYaw())) <= 5 && Math.abs(swerve.getPosition() - startPosition) > Math.abs(distance);
   }
 }

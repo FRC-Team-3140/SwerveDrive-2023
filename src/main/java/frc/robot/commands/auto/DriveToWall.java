@@ -10,7 +10,7 @@ import frc.robot.subsystems.Swerve.SwerveDrive;
 
 public class DriveToWall extends CommandBase {
   SwerveDrive m_drive;
-  double Threshold = 0.05;
+  double Threshold = 1;
   boolean hasMoved = false;
   
   /** Creates a new DriveToEnd. */
@@ -23,6 +23,7 @@ public class DriveToWall extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_drive.setLocked(false);
     startTime = System.currentTimeMillis();
     
   }
@@ -45,7 +46,7 @@ public class DriveToWall extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(SwerveDrive.m_gyro.getRawAccelX() > Threshold && hasMoved == true){
+    if((SwerveDrive.m_gyro.getRawAccelY() * 9.8 > Threshold && hasMoved == true)){
       return true;
     }else{return false;}
   }

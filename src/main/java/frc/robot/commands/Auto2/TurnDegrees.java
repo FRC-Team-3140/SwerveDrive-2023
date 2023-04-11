@@ -31,7 +31,7 @@ public class TurnDegrees extends CommandBase {
         }
 
         m_drive.setLocked(false);
-        speed = Math.copySign(.4, targetAngle - currentAngle);
+        speed = Math.copySign(.5, targetAngle - currentAngle);
     }
 
     @Override

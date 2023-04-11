@@ -7,19 +7,19 @@ package frc.robot.subsystems.Arm;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Ultrasonic;
+// import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.Comms3140;
+// import frc.robot.subsystems.Comms3140;
 
 public class Claw extends SubsystemBase {
   // Compressor & Solenoid
   private final DoubleSolenoid m_DoubleSolenoid;
   private static boolean closed = false;
-  private final Ultrasonic ultraDistSensor = new Ultrasonic(6, 5);
-  private RobotContainer m_RobotContainer =  RobotContainer.getInstance();
+  //private final Ultrasonic ultraDistSensor = new Ultrasonic(6, 5);
+  // private RobotContainer m_RobotContainer =  RobotContainer.getInstance();
   // private final XboxController controller1;
   private double rumbleVal = 0;
   private double range = 0;
@@ -35,11 +35,11 @@ public class Claw extends SubsystemBase {
 
   @Override
   public void periodic() {
-    System.out.println(ultraDistSensor.getRangeMM());
+   // System.out.println(ultraDistSensor.getRangeMM());
     // Methods
    // m_RobotContainer = RobotContainer.getInstance();
-    range = ultraDistSensor.getRangeMM();
-    Comms3140.getInstance().sendDoubleTelemetry("Claw", "Claw Distance", ultraDistSensor.getRangeMM());
+    //range = ultraDistSensor.getRangeMM();
+    //Comms3140.getInstance().sendDoubleTelemetry("Claw", "Claw Distance", ultraDistSensor.getRangeMM());
 
     // if the range is greater than 3.5ft then ignore it
     // 1066.8 = 3.5ft in mm
