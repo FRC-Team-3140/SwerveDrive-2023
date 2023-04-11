@@ -4,33 +4,36 @@
 
 package frc.robot.commands.auto;
 
-import edu.wpi.first.wpilibj.interfaces.Accelerometer;
+//import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Swerve.SwerveDrive;
 
 public class DriveToWall extends CommandBase {
   SwerveDrive m_drive;
-  Accelerometer accelerometer;
-  double Threshold = 0.1;
+  double Threshold = 0.05;
   boolean hasMoved = false;
+  
   /** Creates a new DriveToEnd. */
   public DriveToWall(SwerveDrive m_drive) {
     this.m_drive = m_drive;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_drive);
   }
-
+  long startTime = 0;
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    accelerometer = m_drive.getAccelerometer();
+    startTime = System.currentTimeMillis();
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      m_drive.setChassisSpeeds(0.1, 0, 0);
-      hasMoved = true;
+      m_drive.setChassisSpeeds(0.2, 0, 0);
+      if(System.currentTimeMillis() - startTime > 200){
+        hasMoved = true;
+      }
   }
 
   // Called once the command ends or is interrupted.
@@ -42,7 +45,7 @@ public class DriveToWall extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(accelerometer.getX() > Threshold && hasMoved == true){
+    if(SwerveDrive.m_gyro.getRawAccelX() > Threshold && hasMoved == true){
       return true;
     }else{return false;}
   }

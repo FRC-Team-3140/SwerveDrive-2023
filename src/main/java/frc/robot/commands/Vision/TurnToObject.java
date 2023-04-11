@@ -38,7 +38,7 @@ public class TurnToObject extends CommandBase{
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        m_drive.setIdleModes(IdleMode.kCoast);
+        m_drive.setLocked(true);
         m_drive.setChassisSpeeds(0, 0, 0);
     }
 

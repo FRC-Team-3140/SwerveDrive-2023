@@ -1,7 +1,6 @@
 package frc.robot.commands.Balance;
 
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveOdometer;
 import frc.robot.subsystems.Swerve.SwerveDrive;

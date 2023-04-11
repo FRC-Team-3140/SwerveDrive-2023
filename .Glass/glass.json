@@ -2,6 +2,12 @@
   "NetworkTables": {
     "persistent": {
       "Comms3140": {
+        "Settings": {
+          "Telemetry": {
+            "open": true
+          },
+          "open": true
+        },
         "open": true
       },
       "Settings3140": {
@@ -11,6 +17,9 @@
         "Wrist": {
           "open": true
         },
+        "open": true
+      },
+      "SmartDashboard": {
         "open": true
       }
     },
@@ -29,12 +38,9 @@
         }
       },
       "Telemetry3140": {
-        "Wrist": {
+        "Claw": {
           "open": true
         },
-        "open": true
-      },
-      "swerve_chassis": {
         "open": true
       }
     },
@@ -621,7 +627,7 @@
     }
   },
   "NetworkTables Settings": {
-    "mode": "Client (NT4)",
+    "mode": "Client (NT3)",
     "serverTeam": "3140"
   },
   "Plots": {
@@ -745,6 +751,15 @@
                 1.0
               ],
               "id": "NT:/Telemetry3140/Wrist/Angle Filtered"
+            },
+            {
+              "color": [
+                0.7686275243759155,
+                0.30588236451148987,
+                0.32156863808631897,
+                1.0
+              ],
+              "id": "NT:/Telemetry3140/Claw/Claw Distance"
             }
           ]
         }
