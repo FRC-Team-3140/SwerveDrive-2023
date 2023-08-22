@@ -64,7 +64,7 @@ public class LED  extends SubsystemBase{
     }
 
     public void rainbow() {
-        if(runRainbow) {
+        if(runRainbow) { // jesse and elynn were here haha >:D
             for (var i = 0; i < ledBuffer.getLength(); i++) {
                 int hue;
                 if (i<55){
