@@ -104,7 +104,7 @@ public class RobotContainer {
   public final PowerManagment m_powerManagment = new PowerManagment();
   public SwerveDrive swerveDrive = new SwerveDrive();
   public SwerveOdometer swerveOdometer = new SwerveOdometer(swerveDrive);
-  public Claw claw = new Claw(2, 0, 1);
+  public Claw claw = new Claw(1, 0, 1);
   public Arm arm = new Arm(10);
   public Wrist wrist = new Wrist(9);
 
@@ -199,13 +199,13 @@ public class RobotContainer {
 
     drive_robot = new SwerveController(swerveDrive,
         () -> {
-          return -m_xbox_cotroller.getLeftY();
+          return (-m_xbox_cotroller.getLeftY());
         },
         () -> {
-          return -m_xbox_cotroller.getLeftX();
+          return (-m_xbox_cotroller.getLeftX());
         },
         () -> {
-          return -m_xbox_cotroller.getRightX();
+          return (-m_xbox_cotroller.getRightX());
         });
 
     new JoystickButton(m_xbox_cotroller, Button.kA.value)

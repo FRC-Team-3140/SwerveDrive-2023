@@ -12,12 +12,16 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
+import com.revrobotics.CANSparkMax;
 // import frc.robot.subsystems.Comms3140;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Claw extends SubsystemBase {
   // Compressor & Solenoid
   private final DoubleSolenoid m_DoubleSolenoid;
   private static boolean closed = false;
+  public CANSparkMax motor1;
+  public CANSparkMax motor2;
   //private final Ultrasonic ultraDistSensor = new Ultrasonic(6, 5);
   // private RobotContainer m_RobotContainer =  RobotContainer.getInstance();
   // private final XboxController controller1;
@@ -28,7 +32,10 @@ public class Claw extends SubsystemBase {
   /** Creates a new Arm. */
   public Claw(int PneumaticsModuleID1, int forwardCh, int reverseCh) {
     // controller1 = RobotContainer.getInstance().getController1();
-    m_DoubleSolenoid = new DoubleSolenoid(PneumaticsModuleID1, PneumaticsModuleType.CTREPCM, reverseCh, forwardCh);
+    m_DoubleSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, reverseCh, forwardCh);
+    motor1 = new CANSparkMax(1, MotorType.kBrushless);
+    motor2 = new CANSparkMax(2, MotorType.kBrushless);
+
     }
 
   
@@ -65,10 +72,17 @@ public class Claw extends SubsystemBase {
   // }
   public void clawOpen() {
     m_DoubleSolenoid.set(Value.kForward);
+    motor1.setVoltage(.2);
+    motor2.setVoltage(.2);
+
+
   }
 
   public void clawClosed() {
     m_DoubleSolenoid.set(Value.kReverse);
+    motor1.setVoltage(0);
+    motor2.setVoltage(0);
+
   }
 
   public void toggleClaw() {
