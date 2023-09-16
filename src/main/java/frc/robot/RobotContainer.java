@@ -80,7 +80,7 @@ public class RobotContainer {
   private LED led = new LED();
   private static DigitalInput limitSwitchUpper = new DigitalInput(3);
   private static DigitalInput limitSwitchLower = new DigitalInput(2);
-  private static DigitalInput limitSwitchWrist = new DigitalInput(4);
+  private static DigitalInput limitSwitchWrist = new DigitalInput(9);
 
   private static RobotContainer m_robotContainer = new RobotContainer();
 
@@ -249,8 +249,28 @@ public class RobotContainer {
     BooleanSupplier clawButtonPressedSupplier = () -> m_xbox_cotroller_2.getRightBumper();
     new JoystickButton(m_xbox_cotroller_2, Button.kRightBumper.value)
         .onTrue(new RunCommand(() -> {
-          claw.toggleClaw();
-        }).until(clawButtonPressedSupplier));/*
+          
+          if(claw.getAmps() < 4){
+            
+            m_xbox_cotroller_2.setRumble(RumbleType.kBothRumble, .2);
+          }else if(claw.getAmps() > 18){
+            m_xbox_cotroller_2.setRumble(RumbleType.kBothRumble, .5);
+          }
+          claw.clawOpen();
+        }).until(clawButtonPressedSupplier)).onFalse(new InstantCommand( () -> {
+          if(m_xbox_cotroller_2.getXButton()){
+            claw.holdCube();
+          }else{
+            claw.clawOff();
+          }
+        }));
+        
+        new JoystickButton(m_xbox_cotroller_2, Button.kLeftBumper.value)
+        .whileTrue(new RunCommand(() -> {
+          
+          claw.clawClosed();
+        })).onFalse(new InstantCommand( () -> {claw.clawOff();})
+          );/*
                                               * .withInterruptBehavior(InterruptionBehavior.kCancelSelf))
                                               * .onTrue(new RunCommand(()->{}));
                                               */

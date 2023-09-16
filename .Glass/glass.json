@@ -32,6 +32,9 @@
       "2-CubeAuto": {
         "open": true
       },
+      "Amperage": {
+        "open": true
+      },
       "AngelTesting": {
         "open": true
       },
@@ -824,7 +827,7 @@
     "Plot <7>": {
       "plots": [
         {
-          "height": 370,
+          "height": 127,
           "series": [
             {
               "color": [

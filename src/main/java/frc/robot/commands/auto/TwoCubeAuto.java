@@ -57,6 +57,8 @@ public class TwoCubeAuto extends CommandBase{
    //Make sure turn and drive works
    //    new ArmTopAuto(arm, wrist),
       new OpenClaw(claw),
+      new InstantCommand(() -> {claw.holdCube();}),
+
       
            new InstantCommand(()-> {Stage.setString("Retract Arm");}),
            new ParallelDeadlineGroup(

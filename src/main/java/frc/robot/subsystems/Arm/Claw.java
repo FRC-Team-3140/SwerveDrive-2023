@@ -8,7 +8,7 @@ package frc.robot.subsystems.Arm;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 // import edu.wpi.first.wpilibj.Ultrasonic;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;/////////////////////////////////////////////////////////////////////////////////////                                                
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
@@ -28,13 +28,12 @@ public class Claw extends SubsystemBase {
   private double rumbleVal = 0;
   private double range = 0;
   private double percentageOfMaxRange = 0;   
-
   /** Creates a new Arm. */
   public Claw(int PneumaticsModuleID1, int forwardCh, int reverseCh) {
     // controller1 = RobotContainer.getInstance().getController1();
     m_DoubleSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, reverseCh, forwardCh);
-    motor1 = new CANSparkMax(1, MotorType.kBrushless);
-    motor2 = new CANSparkMax(2, MotorType.kBrushless);
+    motor1 = new CANSparkMax(15, MotorType.kBrushless);
+    motor2 = new CANSparkMax(14, MotorType.kBrushless);
 
     }
 
@@ -70,19 +69,33 @@ public class Claw extends SubsystemBase {
   // public RunCommand openClaw(){
   // new RuncCom
   // }
-  public void clawOpen() {
-    m_DoubleSolenoid.set(Value.kForward);
-    motor1.setVoltage(.2);
-    motor2.setVoltage(.2);
 
+  public void clawClosed() {
+    m_DoubleSolenoid.set(Value.kForward);
+    motor1.setVoltage(6.1);
+    motor2.setVoltage(-6);
 
   }
 
-  public void clawClosed() {
+  public void clawOpen() {
     m_DoubleSolenoid.set(Value.kReverse);
+    motor1.setVoltage(-6.1);
+    motor2.setVoltage(6);
+
+
+  }
+  public double getAmps(){
+    return motor1.getOutputCurrent();
+  }
+  //motor 1 is sucky so it needs more voltage
+  public void clawOff(){
     motor1.setVoltage(0);
     motor2.setVoltage(0);
-
+    
+  }
+  public void holdCube(){
+    motor1.setVoltage(-1.2);
+    motor2.setVoltage(1);
   }
 
   public void toggleClaw() {

@@ -42,6 +42,7 @@ public class OneCubeAuto extends CommandBase {
                 System.out.println("Open claw");
                 claw.clawOpen();
             }),
+            new InstantCommand(() -> {claw.holdCube();}),
             
             new WaitCommand(1),
             new ParallelCommandGroup(

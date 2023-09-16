@@ -127,6 +127,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        
         m_robotContainer.getLED().flagship();
        
         SwerveDrive.headless = true;
@@ -153,6 +154,8 @@ public class Robot extends TimedRobot {
     // This function is called periodically during operator control.
     @Override
     public void teleopPeriodic() {
+        NetworkTableInstance.getDefault().getTable("Amperage").getEntry("Amps")
+        .setDouble(m_robotContainer.claw.getAmps());
 
         double position = m_robotContainer.getSwerve().getPosition();
 
