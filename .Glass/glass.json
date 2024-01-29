@@ -10,14 +10,9 @@
     },
     "types": {
       "/FMSInfo": "FMSInfo",
-      "/SmartDashboard/Auto": "String Chooser"
-    },
-    "windows": {
-      "/SmartDashboard/Auto": {
-        "window": {
-          "visible": true
-        }
-      }
+      "/SmartDashboard/Auto": "String Chooser",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/SendableChooser[0]": "String Chooser"
     }
   },
   "NetworkTables Info": {

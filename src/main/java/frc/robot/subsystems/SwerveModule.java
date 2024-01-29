@@ -101,12 +101,12 @@ public class SwerveModule extends SubsystemBase implements Constants {
         }
         
     }
-
+    SwerveModuleState thisState;
     public void setStates(SwerveModuleState state, boolean locked) {
-        state = SwerveModuleState.optimize(state, Rotation2d.fromDegrees(turnEncoder.getPos()));
-        state.speedMetersPerSecond *= state.angle.minus(Rotation2d.fromDegrees(turnEncoder.getPos())).getCos();
-        setAngle(state.angle.getDegrees());
-        setDriveSpeed(state.speedMetersPerSecond);
+        thisState = SwerveModuleState.optimize(state, Rotation2d.fromDegrees(turnEncoder.getPos()));
+        // thisState.speedMetersPerSecond *= thisState.angle.minus(Rotation2d.fromDegrees(turnEncoder.getPos())).getCos();
+        setAngle(thisState.angle.getDegrees());
+        setDriveSpeed(thisState.speedMetersPerSecond);
         NetworkTableInstance.getDefault().getTable("Speed").getEntry(moduleID).setDouble(state.speedMetersPerSecond);
     }
     
@@ -148,6 +148,6 @@ public class SwerveModule extends SubsystemBase implements Constants {
     }
 
     public SwerveModuleState getState(){
-        return new SwerveModuleState(driveEncoder.getVelocity(), new Rotation2d(turnEncoder.getPosRadians()));
+        return thisState;//new SwerveModuleState(driveEncoder.getVelocity(), new Rotation2d(turnEncoder.getPosRadians()));
     }
 }

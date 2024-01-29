@@ -25,6 +25,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -48,7 +49,7 @@ public class SwerveDrive extends SubsystemBase implements Constants {
     new SwerveModule("backLeft", 12, 7, 8, 115),
   };
 
-  private static AHRS gyro = RobotContainer.gyro;
+  public static AHRS gyro = new AHRS(Port.kMXP);
   private ChassisSpeeds botSpeeds;
 
   private final SwerveDriveKinematics kinematics =
