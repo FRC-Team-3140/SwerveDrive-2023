@@ -50,9 +50,23 @@ public class Camera extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    if (connected == false) {
+      while (connected == false) {
+        if (inst.getTable("photonvision").getSubTables().contains("april")) {
+          connected = true;
+          System.out.println("PhotonVision is connected and is probably working as expected...");
+        } else {
+          System.err.println("Photonvision Not Connected Properly!");
+          connected = false;
+          System.out.println("Checking for PhotonVision connection in 5 seconds.");
+          Timer.delay(5);
+        }
+      }
+    }
+  }
 
-  public int getAprilTagID() {
+  public int getApriltagID() {
     // If this function returns a 0, that means there is not any detected targets
 
     if (april.getLatestResult().hasTargets()) {
@@ -62,7 +76,7 @@ public class Camera extends SubsystemBase {
     }
   }
 
-  public double getAprilTagYaw() {
+  public double getApriltagYaw() {
     // If this function returns a 0, that means there is not any detected targets
 
     if (april.getLatestResult().hasTargets()) {
@@ -72,7 +86,7 @@ public class Camera extends SubsystemBase {
     }
   }
 
-  public double getAprilTagPitch() {
+  public double getApriltagPitch() {
     // If this function returns a 0, that means there is not any detected targets
 
     if (april.getLatestResult().hasTargets()) {
@@ -100,51 +114,28 @@ public class Camera extends SubsystemBase {
     }
   }
 
-  public void turnToFaceAprilTagID(int ID, boolean verbose) {
-    // Probably should return # of degrees to face apriltag for Pose2d instead of Actually turning the robot
-    // so Pathplanner can handle turning.
+  public double getDegToApriltag() {
+    // Calculate the difference in yaw angles
+    double targetYaw = targetPose.getRotation().getDegrees();
+    double requiredTurnDegrees = targetYaw - currentHeading;
 
+    // Ensure the angle is within the range of -180 to 180 degrees
+    requiredTurnDegrees = (requiredTurnDegrees + 180) % 360 - 180;
 
-    if (verbose == true) {
-      System.out.println("----------------\nID: " + getAprilTagID() + "\nYaw:" + getAprilTagYaw() + "\nPitch: "
-          + getAprilTagPitch() + "\n----------------");
-    }
-
-    if (getAprilTagYaw() > 0) {
-      // turn left
-    } else if (getAprilTagID() < 0) {
-      // turn right
-    } else {
-      // set speed 0
-    }
+    return requiredTurnDegrees;
   }
 
-  public void strafeToFaceAprilTagID(int ID, boolean verbose) {
-    if (verbose == true) {
-      System.out.println("----------------\nID: " + getAprilTagID() + "\nYaw:" + getAprilTagYaw() + "\nPitch: "
-          + getAprilTagPitch() + "\n----------------");
-    }
 
-    if (getAprilTagYaw() > 0) {
-      // slide left
-    } else if (getAprilTagID() < 0) {
-      // slide right
-    } else {
-      // set speed 0
-    }
+  public Pose2d getApriltagPose2d() {
+    // Make sure this returns the proper pose. I'm writing this without code checking...
+    return new Pose2d(new Translation2d(getApriltagDistX(), getApriltagDistY()), getDegToApriltag());
   }
-
-  /*
-   * public Transform2d moveToAprilTag() {
-   * 
-   * }
-   */
 
   public double getNoteDistance() {
     // If this function returns a 0, that means there is not any detected targets
 
-    // Need to wait until on Final Robot because calculation requires specific
-    // measurements
+    // Need to wait until cameras are on Final Robot because calculation requires specific
+    // measurements to the camera.
 
     notes.getLatestResult().getBestTarget();
     PhotonUtils.calculateDistanceToTargetMeters(0, 0, 0, 0);
@@ -162,4 +153,47 @@ public class Camera extends SubsystemBase {
     
     return newPose;
   }
+
+  /*
+  // Probably won't need methods like this that move the Robot manually while using Pathplanner
+
+  public void turnToFaceApriltagID(int ID, boolean verbose) {
+    // Probably should return # of degrees to face apriltag for Pose2d instead of Actually turning the robot
+    // so Pathplanner can handle turning.
+
+
+    if (verbose == true) {
+      System.out.println("----------------\nID: " + getApriltagID() + "\nYaw:" + getApriltagYaw() + "\nPitch: "
+          + getApriltagPitch() + "\n----------------");
+    }
+
+    if (getApriltagYaw() > 0) {
+      // turn left
+    } else if (getApriltagYaw() < 0) {
+      // turn right
+    } else {
+      // set speed 0
+    }
+  }
+
+  public void strafeToFaceApriltagID(int ID, boolean verbose) {
+    if (verbose == true) {
+      System.out.println("----------------\nID: " + getApriltagID() + "\nYaw:" + getApriltagYaw() + "\nPitch: "
+          + getApriltagPitch() + "\n----------------");
+    }
+
+    if (getApriltagYaw() > 0) {
+      // slide left
+    } else if (getApriltagID() < 0) {
+      // slide right
+    } else {
+      // set speed 0
+    }
+  }
+
+  
+  public Transform2d moveToApriltag() {
+    
+  }
+  */
 }

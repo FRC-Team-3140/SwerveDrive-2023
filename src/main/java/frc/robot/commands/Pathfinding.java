@@ -14,7 +14,7 @@ import frc.robot.Constants;
 import frc.robot.sensors.Camera;
 
 public class Pathfinding extends Command implements Constants {
-  private Pose2d targetPosition;
+  private Pose2d updatedPose;
   private Command pathfindingCommand;
 
   /**
@@ -22,11 +22,11 @@ public class Pathfinding extends Command implements Constants {
    * 
    * @param Camera
    */
-  public Pathfinding(Pose2d targetPose, Camera camera) {
+  public Pathfinding(Pose2d updatedRobotPose, Camera camera, SwerveDrive swerve) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(camera);
+    addRequirements(camera, swerve);
 
-    targetPosition = targetPose;
+    updatedPose = updatedRobotPose;
   }
 
   // Called when the command is initially scheduled.
@@ -39,14 +39,13 @@ public class Pathfinding extends Command implements Constants {
 
     // Since AutoBuilder is configured, we can use it to build pathfinding commands
     pathfindingCommand = AutoBuilder.pathfindToPose(
-        targetPosition,
+        updatedPose,
         constraints,
         0.0, // Goal end velocity in meters/sec
         0.0 // Rotation delay distance in meters. This is how far the robot should travel
             // before attempting to rotate.
     );
-
-    pathfindingCommand.schedule();
+    // Make sure this is only scheduled when the last Pathfining command is complete!
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -61,6 +60,12 @@ public class Pathfinding extends Command implements Constants {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    /*Make sure this command has an end state when the current swerve Pose is equal to the 
+      targetPose*/
+    if (swerve.getPose() == targetPose) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

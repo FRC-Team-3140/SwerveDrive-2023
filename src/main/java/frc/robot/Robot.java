@@ -41,7 +41,6 @@ public class Robot extends LoggedRobot implements Constants{
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     RobotContainer.gyro.reset();
-    RobotContainer.m_robotDrive.homeWheels();
   }
 
   /**
@@ -76,6 +75,8 @@ public class Robot extends LoggedRobot implements Constants{
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
+    RobotContainer.m_robotDrive.homeWheels();
   }
 
   /** This function is called periodically during autonomous. */
@@ -89,6 +90,8 @@ public class Robot extends LoggedRobot implements Constants{
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    RobotContainer.m_robotDrive.homeWheels();
   }
 
   @Override

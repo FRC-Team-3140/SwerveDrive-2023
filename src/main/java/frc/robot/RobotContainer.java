@@ -83,7 +83,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // return autoChooser.getSelected();
-    return new Pathfinding(camera.getUpdatedPose(), camera);
+    return new Pathfinding(camera.getUpdatedPose(), camera, swerve);
   }
 
   public void periodic() {
