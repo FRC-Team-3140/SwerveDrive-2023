@@ -4,25 +4,18 @@
 
 package frc.robot;
 
-import java.util.ArrayList;
-
-import com.choreo.lib.Choreo;
-import com.choreo.lib.ChoreoTrajectory;
 import com.kauailabs.navx.frc.AHRS;
-import com.pathplanner.lib.commands.PathPlannerAuto;
+import frc.robot.commands.Pathfinding;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ChoreoAuto;
 import frc.robot.libs.XboxCotroller;
+import frc.robot.sensors.Camera;
 import frc.robot.subsystems.SwerveDrive;
 
 
@@ -41,7 +34,7 @@ public class RobotContainer {
   SendableChooser<Command> autoChooser = new SendableChooser<>();
   Field2d m_field = new Field2d();
 
-  ChoreoTrajectory traj;
+  private Camera camera = Camera.getInstance();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -89,7 +82,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    // return autoChooser.getSelected();
+    return new Pathfinding(camera.getUpdatedPose(), camera);
   }
 
   public void periodic() {
