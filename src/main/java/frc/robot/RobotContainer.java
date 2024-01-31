@@ -6,14 +6,15 @@ package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 import frc.robot.commands.Pathfinding;
-
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.ChoreoAuto;
+// import frc.robot.commands.ChoreoAuto;
 import frc.robot.libs.XboxCotroller;
 import frc.robot.sensors.Camera;
 import frc.robot.subsystems.SwerveDrive;
@@ -41,8 +42,8 @@ public class RobotContainer {
    */
   public RobotContainer() {
 
-    autoChooser.addOption("StraightLine", new ChoreoAuto("StraightLine"));
-    autoChooser.addOption("TrunBackwards", new ChoreoAuto("TurnBackward"));
+    // autoChooser.addOption("StraightLine", new ChoreoAuto("StraightLine"));
+    // autoChooser.addOption("TrunBackwards", new ChoreoAuto("TurnBackward"));
     SmartDashboard.putData("Auto", autoChooser);
     SmartDashboard.putData(m_field);
 
@@ -83,7 +84,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // return autoChooser.getSelected();
-    return new Pathfinding(camera.getUpdatedPose(), camera, swerve);
+    return new Pathfinding(camera.getUpdatedPose(), camera, m_robotDrive);
+    // return new Pathfinding(new Pose2d(1, 0, new Rotation2d(0)), camera, m_robotDrive);
   }
 
   public void periodic() {

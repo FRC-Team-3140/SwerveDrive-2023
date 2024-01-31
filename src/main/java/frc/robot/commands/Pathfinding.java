@@ -12,10 +12,12 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.sensors.Camera;
+import frc.robot.subsystems.SwerveDrive;
 
 public class Pathfinding extends Command implements Constants {
   private Pose2d updatedPose;
   private Command pathfindingCommand;
+  private SwerveDrive swerveDrive; 
 
   /**
    * Creates a new Pathfinding.
@@ -27,6 +29,7 @@ public class Pathfinding extends Command implements Constants {
     addRequirements(camera, swerve);
 
     updatedPose = updatedRobotPose;
+    swerveDrive = swerve;
   }
 
   // Called when the command is initially scheduled.
@@ -45,7 +48,8 @@ public class Pathfinding extends Command implements Constants {
         0.0 // Rotation delay distance in meters. This is how far the robot should travel
             // before attempting to rotate.
     );
-    // Make sure this is only scheduled when the last Pathfining command is complete!
+    
+    pathfindingCommand.schedule();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -62,7 +66,7 @@ public class Pathfinding extends Command implements Constants {
   public boolean isFinished() {
     /*Make sure this command has an end state when the current swerve Pose is equal to the 
       targetPose*/
-    if (swerve.getPose() == targetPose) {
+    if (swerveDrive.getPose() == updatedPose) {
       return true;
     } else {
       return false;
