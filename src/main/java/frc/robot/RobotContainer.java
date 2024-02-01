@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 import frc.robot.commands.Pathfinding;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -87,6 +89,7 @@ public class RobotContainer {
   }
 
   public void periodic() {
+    // m_field.setRobotPose(new Pose2d(0,0, gyro.getRotation2d()));
     m_field.setRobotPose(m_robotDrive.getPose());
   }
 }

@@ -151,12 +151,12 @@ public class SwerveDrive extends SubsystemBase implements Constants {
       states[i] = modules[i].getState();
     }
     updateOdometry();
-    actualStates.set(states);
-    setStates.set(swerveModuleStates);
-    odometryStruct.set(poseEstimator.getEstimatedPosition());
-    Logger.recordOutput("Actual States", states);
-    Logger.recordOutput("Set States", swerveModuleStates);
-    Logger.recordOutput("Odometry", poseEstimator.getEstimatedPosition());
+    // actualStates.set(states);
+    // setStates.set(swerveModuleStates);
+    // odometryStruct.set(poseEstimator.getEstimatedPosition());
+    // Logger.recordOutput("Actual States", states);
+    // Logger.recordOutput("Set States", swerveModuleStates);
+    // Logger.recordOutput("Odometry", poseEstimator.getEstimatedPosition());
   }
   // AdvantageKit
 
