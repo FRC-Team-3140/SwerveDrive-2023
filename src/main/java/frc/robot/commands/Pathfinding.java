@@ -8,6 +8,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -17,7 +18,7 @@ import frc.robot.subsystems.SwerveDrive;
 public class Pathfinding extends Command implements Constants {
   private Pose2d updatedPose;
   private Command pathfindingCommand;
-  private SwerveDrive swerveDrive; 
+  private SwerveDrive swerveDrive;
 
   /**
    * Creates a new Pathfinding.
@@ -35,6 +36,7 @@ public class Pathfinding extends Command implements Constants {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    swerveDrive.resetPose(new Pose2d(3.5, 6.5, new Rotation2d(0)));
     // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
         maxSpeed, 4.0,
@@ -48,13 +50,14 @@ public class Pathfinding extends Command implements Constants {
         0.0 // Rotation delay distance in meters. This is how far the robot should travel
             // before attempting to rotate.
     );
-    
+
     pathfindingCommand.schedule();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -64,8 +67,11 @@ public class Pathfinding extends Command implements Constants {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    /*Make sure this command has an end state when the current swerve Pose is equal to the 
-      targetPose*/
+    /*
+     * Make sure this command has an end state when the current swerve Pose is equal
+     * to the
+     * targetPose
+     */
     if (swerveDrive.getPose() == updatedPose) {
       return true;
     } else {

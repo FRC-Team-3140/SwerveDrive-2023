@@ -4,10 +4,6 @@
 
 package frc.robot.sensors;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
-import frc.robot.subsystems.SwerveDrive;
-
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 
@@ -16,6 +12,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
+import frc.robot.subsystems.SwerveDrive;
 
 public class Camera extends SubsystemBase {
 
@@ -29,6 +28,7 @@ public class Camera extends SubsystemBase {
   private boolean connected = false;
 
   private SwerveDrive swerveDrive;
+  private Pose2d currentSwervePose2d;
 
   private Camera(SwerveDrive swerve) {
     while (connected == false) {
@@ -110,7 +110,7 @@ public class Camera extends SubsystemBase {
   public double getApriltagDistX() {
     if (april.getLatestResult().hasTargets()) {
       // Negative because it's distance towards Apriltag
-      return -0.8 * april.getLatestResult().getBestTarget().getBestCameraToTarget().getX();
+      return 0.8 * april.getLatestResult().getBestTarget().getBestCameraToTarget().getX();
     } else {
       return 0;
     }
@@ -119,7 +119,7 @@ public class Camera extends SubsystemBase {
   public double getApriltagDistY() {
     if (april.getLatestResult().hasTargets()) {
       // Negative because it's distance towards Apriltag
-      return -0.8 * april.getLatestResult().getBestTarget().getBestCameraToTarget().getY();
+      return 0.8 * april.getLatestResult().getBestTarget().getBestCameraToTarget().getY();
     } else {
       return 0;
     }
@@ -129,7 +129,7 @@ public class Camera extends SubsystemBase {
     // Calculate the difference in yaw angles
     if (april.getLatestResult().hasTargets()) {
       double targetYaw = getApriltagYaw();
-      double requiredTurnDegrees = targetYaw - swerveDrive.getPose().getRotation().getDegrees();
+      double requiredTurnDegrees = targetYaw - currentSwervePose2d.getRotation().getDegrees();
 
       // Ensure the angle is within the range of -180 to 180 degrees
       requiredTurnDegrees = (requiredTurnDegrees + 180) % 360 - 180;
@@ -159,16 +159,17 @@ public class Camera extends SubsystemBase {
   }
 
   public Pose2d getUpdatedPose() {
-    double x = getApriltagDistX(); 
-    double y = getApriltagDistY(); 
+    currentSwervePose2d = swerveDrive.getPose();
+    double currentX = currentSwervePose2d.getX();
+    double currentY = currentSwervePose2d.getY();
+    double newX = getApriltagDistX(); 
+    double newY = getApriltagDistY(); 
     double degs = getDegToApriltag();
-
-    System.out.println("X: " + x + "\nY: " + y + "\nD: " + degs);
     
-    Pose2d newPose = new Pose2d(x, y, new Rotation2d(degs)); 
-
+    Pose2d newPose = new Pose2d((currentX + newX), (currentY + newY), new Rotation2d((degs * (Math.PI/180)))); // Rotation2d yearns for Radians so conversion is neccesary.
+    
     System.out.println("Pose:\nX: " + newPose.getX() + "\nY: " + newPose.getY() + "\nDeg: " + newPose.getRotation().getDegrees());
-    
+
     return newPose;
   }
 

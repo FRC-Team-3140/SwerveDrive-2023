@@ -70,13 +70,14 @@ public class Robot extends LoggedRobot implements Constants{
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    
+    RobotContainer.m_robotDrive.homeWheels();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
 
-    RobotContainer.m_robotDrive.homeWheels();
   }
 
   /** This function is called periodically during autonomous. */
