@@ -6,9 +6,8 @@ package frc.robot;
 
 import java.util.ArrayList;
 
-import com.choreo.lib.Choreo;
-import com.choreo.lib.ChoreoTrajectory;
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -21,7 +20,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.ChoreoAuto;
 import frc.robot.libs.XboxCotroller;
 import frc.robot.subsystems.SwerveDrive;
 
@@ -32,25 +30,27 @@ import frc.robot.subsystems.SwerveDrive;
  * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
  * (including subsystems, commands, and button mappings) should be declared here.
  */
-public class RobotContainer {
+public class RobotContainer implements Constants {
   // The robot's subsystems
-  public static SwerveDrive m_robotDrive = new SwerveDrive();
+  public static SwerveDrive m_robotDrive;
   public static AHRS gyro = SwerveDrive.gyro;
   // The driver's controller
   public static XboxCotroller controller = new XboxCotroller(0);
-  SendableChooser<Command> autoChooser = new SendableChooser<>();
+  
+  SendableChooser<Command> autobuilder;
   Field2d m_field = new Field2d();
 
-  ChoreoTrajectory traj;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  public RobotContainer() {
 
-    autoChooser.addOption("StraightLine", new ChoreoAuto("StraightLine"));
-    autoChooser.addOption("TrunBackwards", new ChoreoAuto("TurnBackward"));
-    SmartDashboard.putData("Auto", autoChooser);
+  public RobotContainer() {
+    m_robotDrive = new SwerveDrive();
+    
+
+    autobuilder = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Path planner", autobuilder);
     SmartDashboard.putData(m_field);
 
 
@@ -58,9 +58,9 @@ public class RobotContainer {
       // The left stick controls translation of the robot.
       // Turning is controlled by the X axis of the right stick.
       m_robotDrive.run(() -> m_robotDrive.drive(
-          controller.getLeftY(),
-          controller.getLeftX(),
-          controller.getRightX(),
+          -maxSpeed* controller.getLeftY(),
+          maxSpeed*controller.getLeftX(),
+          maxSpeed*controller.getRightX(),
           false)
       )
   );
@@ -89,7 +89,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    return autobuilder.getSelected();
   }
 
   public void periodic() {

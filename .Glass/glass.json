@@ -12,7 +12,15 @@
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Auto": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Path planner": "String Chooser",
       "/SmartDashboard/SendableChooser[0]": "String Chooser"
+    },
+    "windows": {
+      "/SmartDashboard/Path planner": {
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables Info": {

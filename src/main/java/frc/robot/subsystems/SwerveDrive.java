@@ -15,6 +15,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -50,7 +51,7 @@ public class SwerveDrive extends SubsystemBase implements Constants {
   };
 
   public static AHRS gyro = new AHRS(Port.kMXP);
-  private ChassisSpeeds botSpeeds;
+  private ChassisSpeeds botSpeeds = new ChassisSpeeds(0,0,0);
 
   private final SwerveDriveKinematics kinematics =
       new SwerveDriveKinematics(
@@ -61,7 +62,7 @@ public class SwerveDrive extends SubsystemBase implements Constants {
   private final SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(
           kinematics,
-          gyro.getRotation2d(),
+          Rotation2d.fromDegrees(270 + gyro.getAngle()),
           new SwerveModulePosition[] {
             modules[0].getSwerveModulePosition(),
             modules[1].getSwerveModulePosition(),
@@ -81,8 +82,8 @@ public class SwerveDrive extends SubsystemBase implements Constants {
                 this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
                 new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your
                                                  // Constants class
-                        new PIDConstants(0.0,0.0, 0), // Translation PID constants
-                        new PIDConstants(0.0, 0.0, 0), // Rotation PID constants
+                        new PIDConstants(2.5,0.0, 0), // Translation PID constants
+                        new PIDConstants(5, 0.0, 0), // Rotation PID constants
                         3, // Max module speed, in m/s
                         botRadius, // Drive base radius in meters. Distance from robot center to furthest module.
                         new ReplanningConfig() // Default path replanning config. See the API for the options here

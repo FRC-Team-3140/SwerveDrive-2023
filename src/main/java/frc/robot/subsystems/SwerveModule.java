@@ -133,7 +133,7 @@ public class SwerveModule extends SubsystemBase implements Constants {
     public SwerveModulePosition getSwerveModulePosition(){
         double angle = turnEncoder.getPos();
         double distance = driveEncoder.getPosition();
-        return new SwerveModulePosition(distance, new Rotation2d(3.14 * angle/ 180));
+        return new SwerveModulePosition(distance, new Rotation2d((3.14 * (angle +270)/ 180)));
     }
     
     public RelativeEncoder getDriveEncoder() {
