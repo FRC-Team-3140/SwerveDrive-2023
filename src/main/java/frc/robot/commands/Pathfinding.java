@@ -37,7 +37,11 @@ public class Pathfinding extends Command implements Constants {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    // The following line IS TO BE REMOVED after testing and command is functional.
+    // The sole perpose of this line is to tell the robot that it's inside of the boundaries so it doesn't 
+    // perform any random triangular paths in attempt to get within bouds on the telemetry page of Pathplanner. 
     swerveDrive.resetPose(new Pose2d(3.5, 6.5, new Rotation2d(0)));
+    
     // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
         maxSpeed, 4.0,
@@ -58,6 +62,7 @@ public class Pathfinding extends Command implements Constants {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    System.out.println("Following Path...");
   }
 
   // Called once the command ends or is interrupted.

@@ -38,7 +38,7 @@ public class Camera extends SubsystemBase {
 
   private Camera(SwerveDrive swerve, int PhotonvisionConnectionAttempts) {
     while (connected == false && connectionAttempts <= PhotonvisionConnectionAttempts) {
-      if (inst.getTable("photonvision").getSubTables().contains("april")) {
+      if (inst.getTable("photonvision").getSubTables().conatins("april")) {
         connected = true;
         System.out.println("PhotonVision is connected and is probably working as expected...");
         break;
@@ -77,7 +77,7 @@ public class Camera extends SubsystemBase {
     if (notes == null) {
       notes = new PhotonCamera(inst, "notes");
     }
-    return april;
+    return notes;
   }
 
   private boolean testConnection() {
@@ -108,7 +108,7 @@ public class Camera extends SubsystemBase {
         Timer.delay(5);
       }
     }
-    System.out.println(heartbeat);
+    // System.out.println(heartbeat);
   }
 
   public boolean getStatus() {
@@ -139,22 +139,22 @@ public class Camera extends SubsystemBase {
   }
 
   public double getApriltagYaw() {
-    // If this function returns a 0, that means there is not any detected targets
+    // If this function returns a 999, that means there is not any detected targets
 
     if (april.getLatestResult().hasTargets()) {
       return april.getLatestResult().getBestTarget().getYaw();
     } else {
-      return -1;
+      return 999;
     }
   }
 
   public double getApriltagPitch() {
-    // If this function returns a 0, that means there is not any detected targets
+    // If this function returns a 999, that means there is not any detected targets
 
     if (april.getLatestResult().hasTargets()) {
       return april.getLatestResult().getBestTarget().getPitch();
     } else {
-      return -1;
+      return 999;
     }
   }
 
@@ -177,13 +177,10 @@ public class Camera extends SubsystemBase {
   }
 
   public double getDegToApriltag() {
-    // Calculate the difference in yaw angles
+    // Could just return getApriltagYaw() output, but this function allows for more tuning specific to the final Pose2d returned 
     if (april.getLatestResult().hasTargets()) {
       double targetYaw = getApriltagYaw();
-      double requiredTurnDegrees = targetYaw - currentSwervePose2d.getRotation().getDegrees();
-
-      // Ensure the angle is within the range of -180 to 180 degrees
-      requiredTurnDegrees = (requiredTurnDegrees + 180) % 360 - 180;
+      double requiredTurnDegrees = targetYaw + currentSwervePose2d.getRotation().getDegrees();
 
       return requiredTurnDegrees;
     } else {
@@ -192,8 +189,6 @@ public class Camera extends SubsystemBase {
   }
 
   public Pose2d getApriltagPose2d() {
-    // Make sure this returns the proper pose. I'm writing this without code
-    // checking...
     return new Pose2d(new Translation2d(getApriltagDistX(), getApriltagDistY()), new Rotation2d(getDegToApriltag()));
   }
 
@@ -218,14 +213,8 @@ public class Camera extends SubsystemBase {
     double newY = getApriltagDistY();
     double degs = getDegToApriltag();
 
-    Pose2d newPose = new Pose2d((currentX + newX), (currentY + newY), new Rotation2d((degs * (Math.PI / 180)))); // Rotation2d
-                                                                                                                 // yearns
-                                                                                                                 // for
-                                                                                                                 // Radians
-                                                                                                                 // so
-                                                                                                                 // conversion
-                                                                                                                 // is
-                                                                                                                 // neccesary.
+    // Rotation2d yearns for Radians so conversion is neccesary.
+    Pose2d newPose = new Pose2d((currentX + newX), (currentY + newY), new Rotation2d((degs * (Math.PI / 180))));
 
     System.out.println(
         "Pose:\nX: " + newPose.getX() + "\nY: " + newPose.getY() + "\nDeg: " + newPose.getRotation().getDegrees());
