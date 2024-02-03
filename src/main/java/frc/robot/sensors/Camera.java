@@ -22,17 +22,84 @@ public class Camera extends SubsystemBase {
 
   private NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
-  private PhotonCamera april;
-  private PhotonCamera notes;
+  private PhotonCamera april = null;
+
+  private PhotonCamera notes = null;
 
   private boolean connected = false;
+  private int connectionAttempts = 0;
+
+  // The heartbeat is a value in the Photonvision Networktable that continually
+  // changes.
+  private double heartbeat = 0;
+  private double previousResult = -1;
 
   private SwerveDrive swerveDrive;
   private Pose2d currentSwervePose2d;
 
-  private Camera(SwerveDrive swerve) {
-    while (connected == false) {
+  private Camera(SwerveDrive swerve, int PhotonvisionConnectionAttempts) {
+    while (connected == false && connectionAttempts > PhotonvisionConnectionAttempts) {
       if (inst.getTable("photonvision").getSubTables().contains("april")) {
+        connected = true;
+        System.out.println("PhotonVision is connected and is probably working as expected...");
+        break;
+      } else {
+        System.err.println("Photonvision Not Connected Properly!");
+        connected = false;
+        connectionAttempts++;
+        System.out.println("Checking for PhotonVision connection in 5 seconds.");
+        Timer.delay(5);
+      }
+    }
+
+    if (connected == true) {
+      aprilGetInstance();
+      notesGetInstance();
+    }
+
+    swerveDrive = swerve;
+  }
+
+  public static Camera getInstance() {
+    if (instance == null) {
+      instance = new Camera(RobotContainer.m_robotDrive, 5);
+    }
+    return instance;
+  }
+
+  private PhotonCamera aprilGetInstance() {
+    if (april == null) {
+      april = new PhotonCamera(inst, "april");
+    }
+    return april;
+  }
+
+  private PhotonCamera notesGetInstance() {
+    if (notes == null) {
+      notes = new PhotonCamera(inst, "notes");
+    }
+    return april;
+  }
+
+  private boolean testConnection() {
+    // Gets new result from april camera and test if it's equal to the previous
+    // result
+    if (heartbeat == previousResult) {
+      connected = false;
+      heartbeat = inst.getTable("photonvision").getSubTable("april").getEntry("heartbeat").getDouble(0);
+    } else { 
+      connected = true;
+    }
+
+    return connected;
+  }
+
+  private void attemptToReconnect() {
+    System.out.println(
+        "!!!!!!!!!!!!!!!!!!!!\nPhotonvision is no longer connected properly.\nAttempting reconnection\n!!!!!!!!!!!!!!!!!!!!");
+
+    while (connected == false) {
+      if (testConnection() == true) {
         connected = true;
         System.out.println("PhotonVision is connected and is probably working as expected...");
       } else {
@@ -42,39 +109,24 @@ public class Camera extends SubsystemBase {
         Timer.delay(5);
       }
     }
-    
-    april = new PhotonCamera(inst, "april");
-    notes = new PhotonCamera(inst, "notes");
-
-    swerveDrive = swerve;
+    System.out.println(heartbeat);
   }
 
-  public static Camera getInstance() {
-    if (instance == null) {
-      instance = new Camera(RobotContainer.m_robotDrive);
-    }
-    return instance;
+  public boolean getStatus() {
+    return connected;
   }
 
   @Override
   public void periodic() {
-    if (connected == false) {
-      while (connected == false) {
-        if (inst.getTable("photonvision").getSubTables().contains("april")) {
-          connected = true;
-          System.out.println("PhotonVision is connected and is probably working as expected...");
-        } else {
-          System.err.println("Photonvision Not Connected Properly!");
-          connected = false;
-          System.out.println("Checking for PhotonVision connection in 5 seconds.");
-          Timer.delay(5);
-        }
-      }
-    }
-  }
 
-  public boolean getStatus() { 
-    return connected;
+    previousResult = heartbeat;
+    heartbeat = inst.getTable("photonvision").getSubTable("april").getEntry("heartbeat").getDouble(0);
+
+    if (testConnection() == false) {
+      attemptToReconnect();
+    }
+
+    Timer.delay(1);
   }
 
   public int getApriltagID() {
@@ -140,16 +192,17 @@ public class Camera extends SubsystemBase {
     }
   }
 
-
   public Pose2d getApriltagPose2d() {
-    // Make sure this returns the proper pose. I'm writing this without code checking...
+    // Make sure this returns the proper pose. I'm writing this without code
+    // checking...
     return new Pose2d(new Translation2d(getApriltagDistX(), getApriltagDistY()), new Rotation2d(getDegToApriltag()));
   }
 
   public double getNoteDistance() {
     // If this function returns a 0, that means there is not any detected targets
 
-    // Need to wait until cameras are on Final Robot because calculation requires specific
+    // Need to wait until cameras are on Final Robot because calculation requires
+    // specific
     // measurements to the camera.
 
     notes.getLatestResult().getBestTarget();
@@ -162,57 +215,69 @@ public class Camera extends SubsystemBase {
     currentSwervePose2d = swerveDrive.getPose();
     double currentX = currentSwervePose2d.getX();
     double currentY = currentSwervePose2d.getY();
-    double newX = getApriltagDistX(); 
-    double newY = getApriltagDistY(); 
+    double newX = getApriltagDistX();
+    double newY = getApriltagDistY();
     double degs = getDegToApriltag();
-    
-    Pose2d newPose = new Pose2d((currentX + newX), (currentY + newY), new Rotation2d((degs * (Math.PI/180)))); // Rotation2d yearns for Radians so conversion is neccesary.
-    
-    System.out.println("Pose:\nX: " + newPose.getX() + "\nY: " + newPose.getY() + "\nDeg: " + newPose.getRotation().getDegrees());
+
+    Pose2d newPose = new Pose2d((currentX + newX), (currentY + newY), new Rotation2d((degs * (Math.PI / 180)))); // Rotation2d
+                                                                                                                 // yearns
+                                                                                                                 // for
+                                                                                                                 // Radians
+                                                                                                                 // so
+                                                                                                                 // conversion
+                                                                                                                 // is
+                                                                                                                 // neccesary.
+
+    System.out.println(
+        "Pose:\nX: " + newPose.getX() + "\nY: " + newPose.getY() + "\nDeg: " + newPose.getRotation().getDegrees());
 
     return newPose;
   }
 
   /*
-  // Probably won't need methods like this that move the Robot manually while using Pathplanner
-
-  public void turnToFaceApriltagID(int ID, boolean verbose) {
-    // Probably should return # of degrees to face apriltag for Pose2d instead of Actually turning the robot
-    // so Pathplanner can handle turning.
-
-
-    if (verbose == true) {
-      System.out.println("----------------\nID: " + getApriltagID() + "\nYaw:" + getApriltagYaw() + "\nPitch: "
-          + getApriltagPitch() + "\n----------------");
-    }
-
-    if (getApriltagYaw() > 0) {
-      // turn left
-    } else if (getApriltagYaw() < 0) {
-      // turn right
-    } else {
-      // set speed 0
-    }
-  }
-
-  public void strafeToFaceApriltagID(int ID, boolean verbose) {
-    if (verbose == true) {
-      System.out.println("----------------\nID: " + getApriltagID() + "\nYaw:" + getApriltagYaw() + "\nPitch: "
-          + getApriltagPitch() + "\n----------------");
-    }
-
-    if (getApriltagYaw() > 0) {
-      // slide left
-    } else if (getApriltagID() < 0) {
-      // slide right
-    } else {
-      // set speed 0
-    }
-  }
-
-  
-  public Transform2d moveToApriltag() {
-    
-  }
-  */
+   * // Probably won't need methods like this that move the Robot manually while
+   * using Pathplanner
+   * 
+   * public void turnToFaceApriltagID(int ID, boolean verbose) {
+   * // Probably should return # of degrees to face apriltag for Pose2d instead of
+   * Actually turning the robot
+   * // so Pathplanner can handle turning.
+   * 
+   * 
+   * if (verbose == true) {
+   * System.out.println("----------------\nID: " + getApriltagID() + "\nYaw:" +
+   * getApriltagYaw() + "\nPitch: "
+   * + getApriltagPitch() + "\n----------------");
+   * }
+   * 
+   * if (getApriltagYaw() > 0) {
+   * // turn left
+   * } else if (getApriltagYaw() < 0) {
+   * // turn right
+   * } else {
+   * // set speed 0
+   * }
+   * }
+   * 
+   * public void strafeToFaceApriltagID(int ID, boolean verbose) {
+   * if (verbose == true) {
+   * System.out.println("----------------\nID: " + getApriltagID() + "\nYaw:" +
+   * getApriltagYaw() + "\nPitch: "
+   * + getApriltagPitch() + "\n----------------");
+   * }
+   * 
+   * if (getApriltagYaw() > 0) {
+   * // slide left
+   * } else if (getApriltagID() < 0) {
+   * // slide right
+   * } else {
+   * // set speed 0
+   * }
+   * }
+   * 
+   * 
+   * public Transform2d moveToApriltag() {
+   * 
+   * }
+   */
 }

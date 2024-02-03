@@ -6,8 +6,6 @@ package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 import frc.robot.commands.Pathfinding;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;

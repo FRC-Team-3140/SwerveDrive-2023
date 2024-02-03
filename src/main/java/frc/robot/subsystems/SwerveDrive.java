@@ -28,8 +28,6 @@ import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-import org.littletonrobotics.junction.Logger;
-
 /** Represents a swerve drive style drivetrain. */
 public class SwerveDrive extends SubsystemBase implements Constants {
   private final Translation2d[] locations = {
@@ -187,9 +185,9 @@ public class SwerveDrive extends SubsystemBase implements Constants {
     }
     return positions;
   }
-
+  public boolean pathfinding = false;
   public boolean shouldFlipPath() {
-    if (DriverStation.getAlliance() != null) {
+    if (DriverStation.getAlliance() != null || !pathfinding) {
       return DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
     }
     return false;

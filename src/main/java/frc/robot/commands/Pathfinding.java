@@ -26,6 +26,7 @@ public class Pathfinding extends Command implements Constants {
    * @param Camera
    */
   public Pathfinding(Pose2d updatedRobotPose, Camera camera, SwerveDrive swerve) {
+    swerve.pathfinding = true;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(camera, swerve);
 
