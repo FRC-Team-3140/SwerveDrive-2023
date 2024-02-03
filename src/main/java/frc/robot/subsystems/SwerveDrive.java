@@ -161,7 +161,7 @@ public class SwerveDrive extends SubsystemBase implements Constants {
   /** Updates the field relative position of the robot. */
   public void updateOdometry() {
     poseEstimator.update(
-        Rotation2d.fromDegrees(gyro.getAngle()+270),
+        Rotation2d.fromDegrees(gyro.getAngle()-90),
         new SwerveModulePosition[] {
             modules[0].getSwerveModulePosition(),
             modules[1].getSwerveModulePosition(),

@@ -23,7 +23,6 @@ public class Camera extends SubsystemBase {
   private NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
   private PhotonCamera april = null;
-
   private PhotonCamera notes = null;
 
   private boolean connected = false;
@@ -38,7 +37,7 @@ public class Camera extends SubsystemBase {
   private Pose2d currentSwervePose2d;
 
   private Camera(SwerveDrive swerve, int PhotonvisionConnectionAttempts) {
-    while (connected == false && connectionAttempts > PhotonvisionConnectionAttempts) {
+    while (connected == false && connectionAttempts <= PhotonvisionConnectionAttempts) {
       if (inst.getTable("photonvision").getSubTables().contains("april")) {
         connected = true;
         System.out.println("PhotonVision is connected and is probably working as expected...");
