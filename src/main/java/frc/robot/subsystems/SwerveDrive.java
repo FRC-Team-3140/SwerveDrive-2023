@@ -62,7 +62,7 @@ public class SwerveDrive extends SubsystemBase implements Constants {
   private final SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(
           kinematics,
-          Rotation2d.fromDegrees(270 + gyro.getAngle()),
+          Rotation2d.fromDegrees(gyro.getAngle() + angleOffset),
           new SwerveModulePosition[] {
             modules[0].getSwerveModulePosition(),
             modules[1].getSwerveModulePosition(),
@@ -84,7 +84,7 @@ public class SwerveDrive extends SubsystemBase implements Constants {
                                                  // Constants class
                         new PIDConstants(2.5,0.0, 0), // Translation PID constants
                         new PIDConstants(5, 0.0, 0), // Rotation PID constants
-                        3, // Max module speed, in m/s
+                        2, // Max module speed, in m/s
                         botRadius, // Drive base radius in meters. Distance from robot center to furthest module.
                         new ReplanningConfig() // Default path replanning config. See the API for the options here
                 ),

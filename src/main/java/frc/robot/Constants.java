@@ -12,6 +12,7 @@ public interface Constants {
     public static final double botRadius = Math.hypot(botLength, botWidth);
     public static final double maxChassisTurnSpeed = maxSpeed/botRadius; // Max Speed divided by the circumference a circle determined by the distance of the module from the center, divided by 2 pi to convert to radians
     public double encoderRotationToMeters = 2*Math.PI*((wheelDiameter/2)/gearRatio)/42;
+    public double angleOffset = 270; //Looked at the odometry from advantagescope; realized I needed to turn it 270 degrees in order for it to align properly 
 
     public double fieldLength = 286;
 }

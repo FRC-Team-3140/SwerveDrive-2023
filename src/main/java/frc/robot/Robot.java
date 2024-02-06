@@ -78,11 +78,11 @@ public class Robot extends LoggedRobot implements Constants{
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     // m_robotContainer.m_robotDrive.resetPose(new Pose2d());
+    // RobotContainer.m_robotDrive.homeWheels();
 
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      RobotContainer.m_robotDrive.homeWheels();
       m_autonomousCommand.schedule();
     }
   }
@@ -99,6 +99,7 @@ public class Robot extends LoggedRobot implements Constants{
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    RobotContainer.m_robotDrive.homeWheels();
   }
 
   @Override

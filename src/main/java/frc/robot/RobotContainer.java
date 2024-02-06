@@ -11,14 +11,18 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.libs.XboxCotroller;
 import frc.robot.subsystems.SwerveDrive;
@@ -51,7 +55,7 @@ public class RobotContainer implements Constants {
 
     autobuilder = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Path planner", autobuilder);
-    SmartDashboard.putData(m_field);
+    // SmartDashboard.putData(m_field);
 
 
     m_robotDrive.setDefaultCommand(
@@ -80,7 +84,9 @@ public class RobotContainer implements Constants {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    
+    new JoystickButton(controller, Button.kA.value).onTrue(new InstantCommand(()->SwerveDrive.gyro.reset()));
+  new JoystickButton(controller, Button.kB.value).onTrue(new InstantCommand(()->m_robotDrive.resetPose(new Pose2d(2,7, new Rotation2d()))));
+
   }
 
   /**
@@ -93,6 +99,6 @@ public class RobotContainer implements Constants {
   }
 
   public void periodic() {
-    m_field.setRobotPose(m_robotDrive.getPose());
+    // m_field.setRobotPose(m_robotDrive.getPose());
   }
 }
