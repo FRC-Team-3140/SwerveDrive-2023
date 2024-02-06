@@ -132,11 +132,12 @@ public class Camera extends SubsystemBase {
     heartbeat = inst.getTable("photonvision").getSubTable("april").getEntry("heartbeat").getDouble(0);
 
     // Was using Timer.delay() function here, but this caused issues with the other subsystems...
-    if ((count % delayTime) == 0 && testConnection() == false && !attemptReconnection.isAlive()) {
+    if ((count % delayTime) == 0 && !attemptReconnection.isAlive() && testConnection() == false) {
       try {
         attemptReconnection.start();
       } catch (IllegalThreadStateException e) {
         System.out.println("Exception occured in Camera: \n" + e + "\nThread state: " + attemptReconnection.getState());
+        attemptReconnection.join();
       }
     }
     
