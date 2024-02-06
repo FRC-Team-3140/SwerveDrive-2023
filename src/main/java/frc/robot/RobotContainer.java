@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 import frc.robot.commands.Pathfinding;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -16,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.libs.XboxCotroller;
 import frc.robot.sensors.Camera;
 import frc.robot.subsystems.SwerveDrive;
-
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -45,17 +46,14 @@ public class RobotContainer {
     SmartDashboard.putData("Auto", autoChooser);
     SmartDashboard.putData(m_field);
 
-
     m_robotDrive.setDefaultCommand(
-      // The left stick controls translation of the robot.
-      // Turning is controlled by the X axis of the right stick.
-      m_robotDrive.run(() -> m_robotDrive.drive(
-          controller.getLeftY(),
-          controller.getLeftX(),
-          controller.getRightX(),
-          false)
-      )
-  );
+        // The left stick controls translation of the robot.
+        // Turning is controlled by the X axis of the right stick.
+        m_robotDrive.run(() -> m_robotDrive.drive(
+            controller.getLeftY(),
+            controller.getLeftX(),
+            controller.getRightX(),
+            false)));
     // Configure the button bindings
     configureButtonBindings();
 
@@ -72,7 +70,7 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    
+
   }
 
   /**

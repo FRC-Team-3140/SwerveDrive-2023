@@ -26,28 +26,38 @@ public class Camera extends SubsystemBase {
   private PhotonCamera notes = null;
 
   private boolean connected = false;
-  private int connectionAttempts = 0;
+  private int connectionAttempts = 1;
 
   // The heartbeat is a value in the Photonvision Networktable that continually
   // changes.
   private double heartbeat = 0;
   private double previousResult = -1;
+  
+  // This thread allows this connection check to run in the background and not block
+  // other Subsystems.
+  private Thread attemptReconnection = new Thread(this::attemptToReconnect);
+  
+  // Must start not at 0 so check doesn't run early
+  private int count = 1;
 
+  // Time to delay periodic Networktable connection check. IN Mili-Seconds!! 
+  private double delayTime = 1000.0;
+  
   private SwerveDrive swerveDrive;
   private Pose2d currentSwervePose2d;
 
   private Camera(SwerveDrive swerve, int PhotonvisionConnectionAttempts) {
     while (connected == false && connectionAttempts <= PhotonvisionConnectionAttempts) {
-      if (inst.getTable("photonvision").getSubTables().conatins("april")) {
+      if (inst.getTable("photonvision").getSubTables().contains("april")) {
         connected = true;
         System.out.println("PhotonVision is connected and is probably working as expected...");
         break;
       } else {
         System.err.println("Photonvision Not Connected Properly!");
         connected = false;
-        connectionAttempts++;
-        System.out.println("Checking for PhotonVision connection in 5 seconds.");
+        System.out.println("Attempt: " + connectionAttempts + "\nChecking for PhotonVision connection in 5 seconds.");
         Timer.delay(5);
+        connectionAttempts++;
       }
     }
 
@@ -86,7 +96,7 @@ public class Camera extends SubsystemBase {
     if (heartbeat == previousResult) {
       connected = false;
       heartbeat = inst.getTable("photonvision").getSubTable("april").getEntry("heartbeat").getDouble(0);
-    } else { 
+    } else {
       connected = true;
     }
 
@@ -101,6 +111,7 @@ public class Camera extends SubsystemBase {
       if (testConnection() == true) {
         connected = true;
         System.out.println("PhotonVision is connected and is probably working as expected...");
+        break;
       } else {
         System.err.println("Photonvision Not Connected Properly!");
         connected = false;
@@ -117,15 +128,19 @@ public class Camera extends SubsystemBase {
 
   @Override
   public void periodic() {
-
     previousResult = heartbeat;
     heartbeat = inst.getTable("photonvision").getSubTable("april").getEntry("heartbeat").getDouble(0);
 
-    if (testConnection() == false) {
-      attemptToReconnect();
+    // Was using Timer.delay() function here, but this caused issues with the other subsystems...
+    if ((count % delayTime) == 0 && testConnection() == false && !attemptReconnection.isAlive()) {
+      try {
+        attemptReconnection.start();
+      } catch (IllegalThreadStateException e) {
+        System.out.println("Exception occured in Camera: \n" + e + "\nThread state: " + attemptReconnection.getState());
+      }
     }
-
-    Timer.delay(1);
+    
+    count++;
   }
 
   public int getApriltagID() {
@@ -159,25 +174,28 @@ public class Camera extends SubsystemBase {
   }
 
   public double getApriltagDistX() {
+    // This coordinate is relative to the robot w/t the Photonvision axis 90* out of phase.
     if (april.getLatestResult().hasTargets()) {
       // Negative because it's distance towards Apriltag
-      return 0.8 * april.getLatestResult().getBestTarget().getBestCameraToTarget().getX();
+      return 0.5 * april.getLatestResult().getBestTarget().getBestCameraToTarget().getY();
     } else {
       return 0;
     }
   }
 
   public double getApriltagDistY() {
+    // This coordinate is relative to the robot w/t the Photonvision axis 90* out of phase.
     if (april.getLatestResult().hasTargets()) {
       // Negative because it's distance towards Apriltag
-      return 0.8 * april.getLatestResult().getBestTarget().getBestCameraToTarget().getY();
+      return 0.5 * april.getLatestResult().getBestTarget().getBestCameraToTarget().getX();
     } else {
       return 0;
     }
   }
 
   public double getDegToApriltag() {
-    // Could just return getApriltagYaw() output, but this function allows for more tuning specific to the final Pose2d returned 
+    // Could just return getApriltagYaw() output, but this function allows for more
+    // tuning specific to the final Pose2d returned
     if (april.getLatestResult().hasTargets()) {
       double targetYaw = getApriltagYaw();
       double requiredTurnDegrees = targetYaw + currentSwervePose2d.getRotation().getDegrees();
@@ -214,7 +232,7 @@ public class Camera extends SubsystemBase {
     double degs = getDegToApriltag();
 
     // Rotation2d yearns for Radians so conversion is neccesary.
-    Pose2d newPose = new Pose2d((currentX + newX), (currentY + newY), new Rotation2d((degs * (Math.PI / 180))));
+    Pose2d newPose = new Pose2d((currentX - newX), (currentY - newY), new Rotation2d((degs * (Math.PI / 180))));
 
     System.out.println(
         "Pose:\nX: " + newPose.getX() + "\nY: " + newPose.getY() + "\nDeg: " + newPose.getRotation().getDegrees());

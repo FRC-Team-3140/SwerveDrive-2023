@@ -45,7 +45,7 @@ public class SwerveDrive extends SubsystemBase implements Constants {
   };
 
   public static AHRS gyro = new AHRS(Port.kMXP);
-  private ChassisSpeeds botSpeeds = new ChassisSpeeds(0,0,0);
+  private ChassisSpeeds botSpeeds = new ChassisSpeeds(0, 0, 0);
 
   private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
       locations[0], locations[1], locations[2], locations[3]);
@@ -67,6 +67,8 @@ public class SwerveDrive extends SubsystemBase implements Constants {
       new Pose2d(),
       VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
       VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
+
+  public boolean allowPathMirroring = false; 
 
   public SwerveDrive() {
     gyro.reset();
@@ -91,7 +93,7 @@ public class SwerveDrive extends SubsystemBase implements Constants {
           // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
           var alliance = DriverStation.getAlliance();
-          if (alliance.isPresent()) {
+          if (alliance.isPresent() && allowPathMirroring) {
             return alliance.get() == DriverStation.Alliance.Red;
           }
           return false;
@@ -162,7 +164,7 @@ public class SwerveDrive extends SubsystemBase implements Constants {
   /** Updates the field relative position of the robot. */
   public void updateOdometry() {
     poseEstimator.update(
-        Rotation2d.fromDegrees(gyro.getAngle()-90),
+        Rotation2d.fromDegrees(gyro.getAngle() + 270),
         new SwerveModulePosition[] {
             modules[0].getSwerveModulePosition(),
             modules[1].getSwerveModulePosition(),
@@ -186,7 +188,9 @@ public class SwerveDrive extends SubsystemBase implements Constants {
     }
     return positions;
   }
+
   public boolean pathfinding = false;
+
   public boolean shouldFlipPath() {
     if (DriverStation.getAlliance() != null || !pathfinding) {
       return DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
