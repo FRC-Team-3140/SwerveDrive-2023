@@ -19,6 +19,7 @@ public class Pathfinding extends Command implements Constants {
   private Pose2d updatedPose;
   private Command pathfindingCommand;
   private SwerveDrive swerveDrive;
+  private boolean pathCompleted = false; 
 
   /**
    * Creates a new Pathfinding.
@@ -26,12 +27,13 @@ public class Pathfinding extends Command implements Constants {
    * @param Camera
    */
   public Pathfinding(Pose2d updatedRobotPose, Camera camera, SwerveDrive swerve) {
-    swerve.pathfinding = true;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(camera, swerve);
-
+    
     updatedPose = updatedRobotPose;
     swerveDrive = swerve;
+
+    swerveDrive.pathfinding = true;
   }
 
   // Called when the command is initially scheduled.
@@ -48,6 +50,8 @@ public class Pathfinding extends Command implements Constants {
     // once the Pathfinding command hits it's end state it will be allowed to 
     // path mirror again. - TK
     swerveDrive.allowPathMirroring = false;
+
+    pathCompleted = false; 
 
     // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
@@ -73,6 +77,9 @@ public class Pathfinding extends Command implements Constants {
   @Override
   public void execute() {
     System.out.println("Following Path...");
+    if (pathfindingCommand.isFinished()){
+      pathCompleted = true;
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -88,7 +95,7 @@ public class Pathfinding extends Command implements Constants {
     * to the
     * targetPose
     */
-    if (swerveDrive.getPose() == updatedPose) {
+    if (swerveDrive.getPose() == updatedPose || pathCompleted) {
       swerveDrive.allowPathMirroring = true; 
       return true;
     } else {

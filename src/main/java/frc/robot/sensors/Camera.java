@@ -13,7 +13,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.Pathfinding;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.SwerveDrive;
 
@@ -33,23 +35,29 @@ public class Camera extends SubsystemBase {
   // changes.
   private double heartbeat = 0;
   private double previousResult = -1;
-  
-  // This thread allows this connection check to run in the background and not block
+
+  // This thread allows this connection check to run in the background and not
+  // block
   // other Subsystems.
   private Thread attemptReconnection = new Thread(this::attemptToReconnect);
-  
+
   // Must start not at 0 so check doesn't run early
   private int count = 1;
 
-  // Time to delay periodic Networktable connection check. IN Mili-Seconds!! 
+  // Time to delay periodic Networktable connection check. IN Mili-Seconds!!
   private double delayTime = 1000.0;
-  
+
+  // Time to delay connection attempts is in SECONDS! - TK
+  private double attemptDelay;
+
   private SwerveDrive swerveDrive;
   private Pose2d currentSwervePose2d;
 
   private double percentTravelDist = 0.8; // Must be < 1
 
-  private Camera(SwerveDrive swerve, int PhotonvisionConnectionAttempts) {
+  private Camera(SwerveDrive swerve, int PhotonvisionConnectionAttempts, double delayBetweenAttempts) {
+    attemptDelay = delayBetweenAttempts;
+
     while (connected == false && connectionAttempts <= PhotonvisionConnectionAttempts) {
       if (inst.getTable("photonvision").getSubTables().contains("april")) {
         connected = true;
@@ -58,8 +66,9 @@ public class Camera extends SubsystemBase {
       } else {
         System.err.println("Photonvision Not Connected Properly!");
         connected = false;
-        System.out.println("Attempt: " + connectionAttempts + "\nChecking for PhotonVision connection in 5 seconds.");
-        Timer.delay(5);
+        System.out.println("Attempt: " + connectionAttempts + "\nChecking for PhotonVision connection in "
+            + attemptDelay + " seconds.");
+        Timer.delay(attemptDelay);
         connectionAttempts++;
       }
     }
@@ -74,7 +83,7 @@ public class Camera extends SubsystemBase {
 
   public static Camera getInstance() {
     if (instance == null) {
-      instance = new Camera(RobotContainer.m_robotDrive, 5);
+      instance = new Camera(RobotContainer.m_robotDrive, 5, 1);
     }
     return instance;
   }
@@ -118,9 +127,12 @@ public class Camera extends SubsystemBase {
       } else {
         System.err.println("Photonvision Not Connected Properly!");
         connected = false;
-        System.out.println("Checking for PhotonVision connection in 5 seconds.");
-        Timer.delay(5);
+        System.out.println("Checking for PhotonVision connection in " + attemptDelay + " seconds.");
+        Timer.delay(attemptDelay);
       }
+
+      aprilGetInstance();
+      notesGetInstance();
     }
     // System.out.println(heartbeat);
   }
@@ -134,7 +146,8 @@ public class Camera extends SubsystemBase {
     previousResult = heartbeat;
     heartbeat = inst.getTable("photonvision").getSubTable("april").getEntry("heartbeat").getDouble(0);
 
-    // Was using Timer.delay() function here, but this caused issues with the other subsystems...
+    // Was using Timer.delay() function here, but this caused issues with the other
+    // subsystems...
     if ((count % delayTime) == 0 && !attemptReconnection.isAlive() && testConnection() == false) {
       try {
         attemptReconnection.start();
@@ -142,16 +155,21 @@ public class Camera extends SubsystemBase {
         System.out.println("Exception occured in Camera: \n" + e + "\nThread state: " + attemptReconnection.getState());
       }
     }
-    
+
     count++;
 
-    System.out.println(Math.toDegrees(Math.atan2(getApriltagDistY(), getApriltagDistX())));
+    // System.out.println(Math.toDegrees(Math.atan2(getApriltagDistY(),
+    // getApriltagDistX())));
+
+    // Photonvision coordinates are reversed reletive to bot coordinates. The
+    // following print statement is Photonvision's order - TK
+    System.out.println("X: " + getApriltagDistY() + " Y: " + getApriltagDistX());
   }
 
   public int getApriltagID() {
     // If this function returns a 0, that means there is not any detected targets
 
-    if (april.getLatestResult().hasTargets()) {
+    if (connected && april.getLatestResult().hasTargets()) {
       return april.getLatestResult().getBestTarget().getFiducialId();
     } else {
       return -1;
@@ -161,7 +179,7 @@ public class Camera extends SubsystemBase {
   public double getApriltagYaw() {
     // If this function returns a 999, that means there is not any detected targets
 
-    if (april.getLatestResult().hasTargets()) {
+    if (connected && april.getLatestResult().hasTargets()) {
       return april.getLatestResult().getBestTarget().getYaw();
     } else {
       return 999;
@@ -171,8 +189,8 @@ public class Camera extends SubsystemBase {
   public double getApriltagYaw(int id) {
     // If this function returns a 999, that means there is not any detected targets
 
-    if (april.getLatestResult().hasTargets()) {
-      for (PhotonTrackedTarget target : april.getLatestResult().getTargets()){
+    if (connected && april.getLatestResult().hasTargets()) {
+      for (PhotonTrackedTarget target : april.getLatestResult().getTargets()) {
         if (target.getFiducialId() == id) {
           return target.getYaw();
         }
@@ -186,7 +204,7 @@ public class Camera extends SubsystemBase {
   public double getApriltagPitch() {
     // If this function returns a 999, that means there is not any detected targets
 
-    if (april.getLatestResult().hasTargets()) {
+    if (connected && april.getLatestResult().hasTargets()) {
       return april.getLatestResult().getBestTarget().getPitch();
     } else {
       return 999;
@@ -194,8 +212,9 @@ public class Camera extends SubsystemBase {
   }
 
   public double getApriltagDistX() {
-    // This coordinate is relative to the robot w/t the Photonvision axis 90* out of phase.
-    if (april.getLatestResult().hasTargets()) {
+    // This coordinate is relative to the robot w/t the Photonvision axis 90* out of
+    // phase.
+    if (connected && april.getLatestResult().hasTargets()) {
       return april.getLatestResult().getBestTarget().getBestCameraToTarget().getY();
     } else {
       return 0;
@@ -203,8 +222,9 @@ public class Camera extends SubsystemBase {
   }
 
   public double getApriltagDistX(int id) {
-    // This coordinate is relative to the robot w/t the Photonvision axis 90* out of phase.
-    if (april.getLatestResult().hasTargets()) {
+    // This coordinate is relative to the robot w/t the Photonvision axis 90* out of
+    // phase.
+    if (connected && april.getLatestResult().hasTargets()) {
       for (PhotonTrackedTarget target : april.getLatestResult().getTargets()) {
         if (target.getFiducialId() == id) {
           return target.getBestCameraToTarget().getY();
@@ -217,8 +237,9 @@ public class Camera extends SubsystemBase {
   }
 
   public double getApriltagDistY() {
-    // This coordinate is relative to the robot w/t the Photonvision axis 90* out of phase.
-    if (april.getLatestResult().hasTargets()) {
+    // This coordinate is relative to the robot w/t the Photonvision axis 90* out of
+    // phase.
+    if (connected && april.getLatestResult().hasTargets()) {
       return percentTravelDist * april.getLatestResult().getBestTarget().getBestCameraToTarget().getX();
     } else {
       return 0;
@@ -226,8 +247,9 @@ public class Camera extends SubsystemBase {
   }
 
   public double getApriltagDistY(int id) {
-    // This coordinate is relative to the robot w/t the Photonvision axis 90* out of phase.
-    if (april.getLatestResult().hasTargets()) {
+    // This coordinate is relative to the robot w/t the Photonvision axis 90* out of
+    // phase.
+    if (connected && april.getLatestResult().hasTargets()) {
       for (PhotonTrackedTarget target : april.getLatestResult().getTargets()) {
         if (target.getFiducialId() == id) {
           return percentTravelDist * target.getBestCameraToTarget().getX();
@@ -240,24 +262,32 @@ public class Camera extends SubsystemBase {
   }
 
   public double getDegToApriltag() {
-    // Usable range of values with best consistancy: -50 - 50 With respect to camera. - TK
-    if (april.getLatestResult().hasTargets()) {
-      double targetYaw = getApriltagYaw();
+    // Usable range of values with best consistancy: -50 - 50 With respect to
+    // camera. - TK
+    if (connected && april.getLatestResult().hasTargets()) {
+      // double targetYaw = getApriltagYaw();
       double requiredTurnDegrees;
-      
+
       /*
-      * Takes Photonvision Z angle theta value (3D processing mode on camera) and gets sign,
-      * if sign is negative (apriltag is on left of frame), it will turn left the # of degs.
-      * that arcTan or inverse tan returns from the X & Y coorinates. Else it turns right 
-      * by the arcTan or inverse tan of the X & Y coordinates. - TK
-      */
-     
-      if (Math.signum(targetYaw) == -1) {
-        requiredTurnDegrees = -Math.atan2(getApriltagDistY(), getApriltagDistX());
-      } else {
-        requiredTurnDegrees = Math.atan2(getApriltagDistY(), getApriltagDistX());
-      }
+       * Takes Photonvision Z angle theta value (3D processing mode on camera) and
+       * gets sign,
+       * if sign is negative (apriltag is on left of frame), it will turn left the #
+       * of degs.
+       * that arcTan or inverse tan returns from the X & Y coorinates. Else it turns
+       * right
+       * by the arcTan or inverse tan of the X & Y coordinates. - TK
+       */
+
+      // if (Math.signum(targetYaw) == -1) {
+      //   requiredTurnDegrees = -Math.toDegrees(Math.atan2(getApriltagDistY(), getApriltagDistX()));
+      // } else {
+      //   requiredTurnDegrees = Math.toDegrees(Math.atan2(getApriltagDistY(), getApriltagDistX()));
+      // }
+
+      requiredTurnDegrees = Math.toDegrees(Math.atan2(getApriltagDistY(), getApriltagDistX()));
       
+      System.out.println(requiredTurnDegrees);
+
       return requiredTurnDegrees;
     } else {
       return 0;
@@ -265,26 +295,30 @@ public class Camera extends SubsystemBase {
   }
 
   public double getDegToApriltag(int id) {
-    // Usable range of values with best consistancy: -50 - 50 With respect to camera. - TK
-    if (april.getLatestResult().hasTargets()) {
-      for (PhotonTrackedTarget target : april.getLatestResult().getTargets()){
+    // Usable range of values with best consistancy: -50 - 50 With respect to
+    // camera. - TK
+    if (connected && april.getLatestResult().hasTargets()) {
+      for (PhotonTrackedTarget target : april.getLatestResult().getTargets()) {
         if (target.getFiducialId() == id) {
           double targetYaw = getApriltagYaw(id);
           double requiredTurnDegrees;
-          
+
           /*
-          * Takes Photonvision Z angle theta value (3D processing mode on camera) and gets sign,
-          * if sign is negative (apriltag is on left of frame), it will turn left the # of degs.
-          * that arcTan or inverse tan returns from the X & Y coorinates. Else it turns right 
-          * by the arcTan or inverse tan of the X & Y coordinates. - TK
-          */
+           * Takes Photonvision Z angle theta value (3D processing mode on camera) and
+           * gets sign,
+           * if sign is negative (apriltag is on left of frame), it will turn left the #
+           * of degs.
+           * that arcTan or inverse tan returns from the X & Y coorinates. Else it turns
+           * right
+           * by the arcTan or inverse tan of the X & Y coordinates. - TK
+           */
 
           if (Math.signum(targetYaw) == -1) {
-            requiredTurnDegrees = -Math.atan2(getApriltagDistY(id), getApriltagDistX(id));
+            requiredTurnDegrees = -Math.toDegrees(Math.atan2(getApriltagDistY(id), getApriltagDistX(id)));
           } else {
-            requiredTurnDegrees = Math.atan2(getApriltagDistY(id), getApriltagDistX(id));
+            requiredTurnDegrees = Math.toDegrees(Math.atan2(getApriltagDistY(id), getApriltagDistX(id)));
           }
-          
+
           return requiredTurnDegrees;
         }
       }
@@ -311,19 +345,46 @@ public class Camera extends SubsystemBase {
     return 0.0;
   }
 
+  public Command turnToFaceApriltag() {
+    double currentX = swerveDrive.getPose().getX();
+    double currentY = swerveDrive.getPose().getY();
+
+    Pathfinding rotate = new Pathfinding(new Pose2d(currentX, currentY, new Rotation2d(getDegToApriltag())), Camera.getInstance(), swerveDrive);
+    
+    return rotate;
+  }
+
+  public Command turnToFaceApriltag(int id) {
+    double currentX = swerveDrive.getPose().getX();
+    double currentY = swerveDrive.getPose().getY();
+
+    Pathfinding rotate = new Pathfinding(new Pose2d(currentX, currentY, new Rotation2d(getDegToApriltag(id))), Camera.getInstance(), swerveDrive);
+    
+    return rotate;
+  }
+  
   public Pose2d getUpdatedPose() {
+    Command currentTurnCommand;
+
+    currentTurnCommand = turnToFaceApriltag();
+    
+    currentTurnCommand.schedule();
+    
+    while(!currentTurnCommand.isFinished()) {
+      System.out.println("Waiting for turn Command to finish...");
+    }
+
     currentSwervePose2d = swerveDrive.getPose();
     double currentX = currentSwervePose2d.getX();
     double currentY = currentSwervePose2d.getY();
     double newX = getApriltagDistX();
     double newY = getApriltagDistY();
-    double degs = getDegToApriltag();
+    // double degs = getDegToApriltag();
 
     // Rotation2d yearns for Radians so conversion is neccesary.
-    Pose2d newPose = new Pose2d((currentX - newX), (currentY - newY), new Rotation2d((degs * (Math.PI / 180))));
+    Pose2d newPose = new Pose2d((currentX - newX), (currentY - newY), new Rotation2d(0));
 
-    System.out.println(
-        "Pose:\nX: " + newPose.getX() + "\nY: " + newPose.getY() + "\nDeg: " + newPose.getRotation().getDegrees());
+    System.out.println("Pose:\nX: " + newPose.getX() + "\nY: " + newPose.getY());
 
     return newPose;
   }
