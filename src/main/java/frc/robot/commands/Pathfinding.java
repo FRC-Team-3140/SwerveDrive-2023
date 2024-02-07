@@ -78,18 +78,18 @@ public class Pathfinding extends Command implements Constants {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    swerveDrive.allowPathMirroring = true; 
   }
-
+  
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     /*
-     * Make sure this command has an end state when the current swerve Pose is equal
-     * to the
-     * targetPose
-     */
+    * Make sure this command has an end state when the current swerve Pose is equal
+    * to the
+    * targetPose
+    */
     if (swerveDrive.getPose() == updatedPose) {
+      swerveDrive.allowPathMirroring = true; 
       return true;
     } else {
       return false;

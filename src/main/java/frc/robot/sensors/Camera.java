@@ -6,6 +6,7 @@ package frc.robot.sensors;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -45,6 +46,8 @@ public class Camera extends SubsystemBase {
   
   private SwerveDrive swerveDrive;
   private Pose2d currentSwervePose2d;
+
+  private double percentTravelDist = 0.8; // Must be < 1
 
   private Camera(SwerveDrive swerve, int PhotonvisionConnectionAttempts) {
     while (connected == false && connectionAttempts <= PhotonvisionConnectionAttempts) {
@@ -137,11 +140,12 @@ public class Camera extends SubsystemBase {
         attemptReconnection.start();
       } catch (IllegalThreadStateException e) {
         System.out.println("Exception occured in Camera: \n" + e + "\nThread state: " + attemptReconnection.getState());
-        attemptReconnection.join();
       }
     }
     
     count++;
+
+    System.out.println(Math.toDegrees(Math.atan2(getApriltagDistY(), getApriltagDistX())));
   }
 
   public int getApriltagID() {
@@ -164,6 +168,21 @@ public class Camera extends SubsystemBase {
     }
   }
 
+  public double getApriltagYaw(int id) {
+    // If this function returns a 999, that means there is not any detected targets
+
+    if (april.getLatestResult().hasTargets()) {
+      for (PhotonTrackedTarget target : april.getLatestResult().getTargets()){
+        if (target.getFiducialId() == id) {
+          return target.getYaw();
+        }
+      }
+      return 0;
+    } else {
+      return 999;
+    }
+  }
+
   public double getApriltagPitch() {
     // If this function returns a 999, that means there is not any detected targets
 
@@ -177,8 +196,21 @@ public class Camera extends SubsystemBase {
   public double getApriltagDistX() {
     // This coordinate is relative to the robot w/t the Photonvision axis 90* out of phase.
     if (april.getLatestResult().hasTargets()) {
-      // Negative because it's distance towards Apriltag
-      return 0.5 * april.getLatestResult().getBestTarget().getBestCameraToTarget().getY();
+      return april.getLatestResult().getBestTarget().getBestCameraToTarget().getY();
+    } else {
+      return 0;
+    }
+  }
+
+  public double getApriltagDistX(int id) {
+    // This coordinate is relative to the robot w/t the Photonvision axis 90* out of phase.
+    if (april.getLatestResult().hasTargets()) {
+      for (PhotonTrackedTarget target : april.getLatestResult().getTargets()) {
+        if (target.getFiducialId() == id) {
+          return target.getBestCameraToTarget().getY();
+        }
+      }
+      return 0;
     } else {
       return 0;
     }
@@ -187,21 +219,66 @@ public class Camera extends SubsystemBase {
   public double getApriltagDistY() {
     // This coordinate is relative to the robot w/t the Photonvision axis 90* out of phase.
     if (april.getLatestResult().hasTargets()) {
-      // Negative because it's distance towards Apriltag
-      return 0.5 * april.getLatestResult().getBestTarget().getBestCameraToTarget().getX();
+      return percentTravelDist * april.getLatestResult().getBestTarget().getBestCameraToTarget().getX();
+    } else {
+      return 0;
+    }
+  }
+
+  public double getApriltagDistY(int id) {
+    // This coordinate is relative to the robot w/t the Photonvision axis 90* out of phase.
+    if (april.getLatestResult().hasTargets()) {
+      for (PhotonTrackedTarget target : april.getLatestResult().getTargets()) {
+        if (target.getFiducialId() == id) {
+          return percentTravelDist * target.getBestCameraToTarget().getX();
+        }
+      }
+      return 0;
     } else {
       return 0;
     }
   }
 
   public double getDegToApriltag() {
-    // Could just return getApriltagYaw() output, but this function allows for more
-    // tuning specific to the final Pose2d returned
+    // Usable range of values with best consistancy: -50 - 50 With respect to camera. - TK
     if (april.getLatestResult().hasTargets()) {
       double targetYaw = getApriltagYaw();
-      double requiredTurnDegrees = targetYaw + currentSwervePose2d.getRotation().getDegrees();
-
+      double requiredTurnDegrees;
+      // (Math.signum(targetYaw) * (Math.abs(targetYaw) + 180) + currentSwervePose2d.getRotation().getDegrees());
+      if (Math.signum(targetYaw) == -1) {
+        // Take current apriltag yaw |yaw| - 180 to find the offset back to center |ans| to get positive value 
+        // and add sign back to turn in the correct direction. - TK 
+        requiredTurnDegrees = -(Math.abs((Math.abs(targetYaw) - 180)));
+      } else {
+        requiredTurnDegrees = Math.abs((Math.abs(targetYaw) - 180));
+      }
+      
       return requiredTurnDegrees;
+    } else {
+      return 0;
+    }
+  }
+
+  public double getDegToApriltag(int id) {
+    // Usable range of values with best consistancy: -50 - 50 With respect to camera. - TK
+    if (april.getLatestResult().hasTargets()) {
+      for (PhotonTrackedTarget target : april.getLatestResult().getTargets()){
+        if (target.getFiducialId() == id) {
+          double targetYaw = getApriltagYaw(id);
+          double requiredTurnDegrees;
+          
+          if (Math.signum(targetYaw) == -1) {
+            // Take current apriltag yaw |yaw| - 180 to find the offset back to center |ans| to get positive value 
+            // and add sign back to turn in the correct direction. - TK 
+            requiredTurnDegrees = -(Math.abs((Math.abs(targetYaw) - 130)));
+          } else {
+            requiredTurnDegrees = Math.abs((Math.abs(targetYaw) - 130));
+          }
+          
+          return requiredTurnDegrees;
+        }
+      }
+      return 0;
     } else {
       return 0;
     }
@@ -231,6 +308,23 @@ public class Camera extends SubsystemBase {
     double newX = getApriltagDistX();
     double newY = getApriltagDistY();
     double degs = getDegToApriltag();
+
+    // Rotation2d yearns for Radians so conversion is neccesary.
+    Pose2d newPose = new Pose2d((currentX - newX), (currentY - newY), new Rotation2d((degs * (Math.PI / 180))));
+
+    System.out.println(
+        "Pose:\nX: " + newPose.getX() + "\nY: " + newPose.getY() + "\nDeg: " + newPose.getRotation().getDegrees());
+
+    return newPose;
+  }
+
+  public Pose2d getUpdatedPose(int id) {
+    currentSwervePose2d = swerveDrive.getPose();
+    double currentX = currentSwervePose2d.getX();
+    double currentY = currentSwervePose2d.getY();
+    double newX = getApriltagDistX(id);
+    double newY = getApriltagDistY(id);
+    double degs = getDegToApriltag(id);
 
     // Rotation2d yearns for Radians so conversion is neccesary.
     Pose2d newPose = new Pose2d((currentX - newX), (currentY - newY), new Rotation2d((degs * (Math.PI / 180))));
