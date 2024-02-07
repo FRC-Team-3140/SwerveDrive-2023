@@ -244,13 +244,18 @@ public class Camera extends SubsystemBase {
     if (april.getLatestResult().hasTargets()) {
       double targetYaw = getApriltagYaw();
       double requiredTurnDegrees;
-      // (Math.signum(targetYaw) * (Math.abs(targetYaw) + 180) + currentSwervePose2d.getRotation().getDegrees());
+      
+      /*
+      * Takes Photonvision Z angle theta value (3D processing mode on camera) and gets sign,
+      * if sign is negative (apriltag is on left of frame), it will turn left the # of degs.
+      * that arcTan or inverse tan returns from the X & Y coorinates. Else it turns right 
+      * by the arcTan or inverse tan of the X & Y coordinates. - TK
+      */
+     
       if (Math.signum(targetYaw) == -1) {
-        // Take current apriltag yaw |yaw| - 180 to find the offset back to center |ans| to get positive value 
-        // and add sign back to turn in the correct direction. - TK 
-        requiredTurnDegrees = -(Math.abs((Math.abs(targetYaw) - 180)));
+        requiredTurnDegrees = -Math.atan2(getApriltagDistY(), getApriltagDistX());
       } else {
-        requiredTurnDegrees = Math.abs((Math.abs(targetYaw) - 180));
+        requiredTurnDegrees = Math.atan2(getApriltagDistY(), getApriltagDistX());
       }
       
       return requiredTurnDegrees;
@@ -267,12 +272,17 @@ public class Camera extends SubsystemBase {
           double targetYaw = getApriltagYaw(id);
           double requiredTurnDegrees;
           
+          /*
+          * Takes Photonvision Z angle theta value (3D processing mode on camera) and gets sign,
+          * if sign is negative (apriltag is on left of frame), it will turn left the # of degs.
+          * that arcTan or inverse tan returns from the X & Y coorinates. Else it turns right 
+          * by the arcTan or inverse tan of the X & Y coordinates. - TK
+          */
+
           if (Math.signum(targetYaw) == -1) {
-            // Take current apriltag yaw |yaw| - 180 to find the offset back to center |ans| to get positive value 
-            // and add sign back to turn in the correct direction. - TK 
-            requiredTurnDegrees = -(Math.abs((Math.abs(targetYaw) - 130)));
+            requiredTurnDegrees = -Math.atan2(getApriltagDistY(id), getApriltagDistX(id));
           } else {
-            requiredTurnDegrees = Math.abs((Math.abs(targetYaw) - 130));
+            requiredTurnDegrees = Math.atan2(getApriltagDistY(id), getApriltagDistX(id));
           }
           
           return requiredTurnDegrees;
