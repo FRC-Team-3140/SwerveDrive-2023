@@ -48,9 +48,9 @@ public class RobotContainer {
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
         m_robotDrive.run(() -> m_robotDrive.drive(
-            controller.getLeftY(),
-            controller.getLeftX(),
-            controller.getRightX(),
+            -Constants.maxSpeed*controller.getLeftY(),
+            -Constants.maxSpeed*controller.getLeftX(),
+            -Constants.maxSpeed*controller.getRightX(),
             false)));
     // Configure the button bindings
     configureButtonBindings();

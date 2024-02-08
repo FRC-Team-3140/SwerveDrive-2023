@@ -163,7 +163,7 @@ public class Camera extends SubsystemBase {
 
     // Photonvision coordinates are reversed reletive to bot coordinates. The
     // following print statement is Photonvision's order - TK
-    System.out.println("X: " + getApriltagDistY() + " Y: " + getApriltagDistX());
+    //System.out.println("X: " + getApriltagDistY() + " Y: " + getApriltagDistX());
   }
 
   public int getApriltagID() {
@@ -384,7 +384,7 @@ public class Camera extends SubsystemBase {
     // Rotation2d yearns for Radians so conversion is neccesary.
     Pose2d newPose = new Pose2d((currentX - newX), (currentY - newY), new Rotation2d(0));
 
-    System.out.println("Pose:\nX: " + newPose.getX() + "\nY: " + newPose.getY());
+    //System.out.println("Pose:\nX: " + newPose.getX() + "\nY: " + newPose.getY());
 
     return newPose;
   }
@@ -400,9 +400,9 @@ public class Camera extends SubsystemBase {
     // Rotation2d yearns for Radians so conversion is neccesary.
     Pose2d newPose = new Pose2d((currentX - newX), (currentY - newY), new Rotation2d((degs * (Math.PI / 180))));
 
-    System.out.println(
+    /*System.out.println(
         "Pose:\nX: " + newPose.getX() + "\nY: " + newPose.getY() + "\nDeg: " + newPose.getRotation().getDegrees());
-
+*/
     return newPose;
   }
 
