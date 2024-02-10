@@ -513,7 +513,7 @@ public class NoteLocation {
    * Background Reading:
    * - https://medium.com/@itberrios6/coordinate-transforms-for-sensor-fusion-40de05a6acf4
    * - https://towardsdatascience.com/the-one-stop-guide-for-transformation-matrices-cea8f609bdb1
-   * - https://www.youtube.com/watch?v=JxwLyZ-I7vI
+   * - https://www.youtube.com/watch?v=NWOL8yXL6xI
    * 
    * The pose estimation method can be one of the following:
    * - CENTERED_TAG: The "best" tag is the one with the smallest absolute yaw (i.e., the one directly in front of the robot).
