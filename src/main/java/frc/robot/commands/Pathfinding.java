@@ -33,7 +33,7 @@ public class Pathfinding extends Command implements Constants {
     updatedPose = updatedRobotPose;
     swerveDrive = swerve;
 
-    swerveDrive.pathfinding = true;
+    swerveDrive.allowPathMirroring = true;
   }
 
   // Called when the command is initially scheduled.
@@ -95,10 +95,12 @@ public class Pathfinding extends Command implements Constants {
     * to the
     * targetPose
     */
-    if (swerveDrive.getPose() == updatedPose || pathCompleted) {
+    if (swerveDrive.getPose().equals(updatedPose) /*|| pathCompleted*/) {
       swerveDrive.allowPathMirroring = true; 
+      System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!FINISHED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       return true;
     } else {
+      System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!NOT FINISHED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       return false;
     }
   }

@@ -5,12 +5,12 @@
 package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
-import frc.robot.commands.Pathfinding;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 // import frc.robot.commands.ChoreoAuto;
 import frc.robot.libs.XboxCotroller;
@@ -76,9 +76,9 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
+  public SequentialCommandGroup getAutonomousCommand() {
     // return autoChooser.getSelected();
-    return new Pathfinding(camera.getUpdatedPose(), camera, m_robotDrive);
+    return camera.moveToAprilTag();
     // return new Pathfinding(new Pose2d(4.5, 6.5, new Rotation2d(0)), camera, m_robotDrive);
   }
 

@@ -189,10 +189,8 @@ public class SwerveDrive extends SubsystemBase implements Constants {
     return positions;
   }
 
-  public boolean pathfinding = false;
-
   public boolean shouldFlipPath() {
-    if (DriverStation.getAlliance() != null || !pathfinding) {
+    if (DriverStation.getAlliance() != null || !allowPathMirroring) {
       return DriverStation.getAlliance().get() == DriverStation.Alliance.Red;
     }
     return false;

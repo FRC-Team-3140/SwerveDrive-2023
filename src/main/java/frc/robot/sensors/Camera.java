@@ -14,6 +14,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.Pathfinding;
 import frc.robot.RobotContainer;
@@ -45,15 +47,35 @@ public class Camera extends SubsystemBase {
   private int count = 1;
 
   // Time to delay periodic Networktable connection check. IN Mili-Seconds!!
-  private double delayTime = 1000.0;
+  private double delayTime = 2000.0;
 
   // Time to delay connection attempts is in SECONDS! - TK
   private double attemptDelay;
 
   private SwerveDrive swerveDrive;
   private Pose2d currentSwervePose2d;
+  private double currentX;
+  private double currentY;
+  private double newX;
+  private double newY;
 
   private double percentTravelDist = 0.8; // Must be < 1
+
+  private int speakerAprilTag = 2;
+
+  public class aprilTagLocation {
+    public final boolean aprilTagdetected;
+    public final double aprilTagdistance;
+    public final double aprilTagAngle;
+    public final int aprilTagID;
+
+    public aprilTagLocation(boolean isDetected, double dist, double angle, int id) {
+      aprilTagdetected = isDetected;
+      aprilTagdistance = dist;
+      aprilTagAngle = angle;
+      aprilTagID = id;
+    }
+  }
 
   private Camera(SwerveDrive swerve, int PhotonvisionConnectionAttempts, double delayBetweenAttempts) {
     attemptDelay = delayBetweenAttempts;
@@ -163,7 +185,17 @@ public class Camera extends SubsystemBase {
 
     // Photonvision coordinates are reversed reletive to bot coordinates. The
     // following print statement is Photonvision's order - TK
-    System.out.println("X: " + getApriltagDistY() + " Y: " + getApriltagDistX());
+    // System.out.println("X: " + getApriltagDistY() + " Y: " + getApriltagDistX());
+
+    // inst.getTable("Vision").getSubTable("Camera").getEntry("X: ").setDouble(getApriltagDistX(speakerAprilTag));
+    // inst.getTable("Vision").getSubTable("Camera").getEntry("Y: ").setDouble(getApriltagDistY(speakerAprilTag));
+    // inst.getTable("Vision").getSubTable("Camera").getEntry("Degrees: ").setDouble(getDegToApriltag(speakerAprilTag));
+
+    aprilTagLocation tag = getAprilTagLocation(speakerAprilTag);
+    inst.getTable("Vision").getSubTable("Camera").getEntry("ID: ").setInteger(tag.aprilTagID);
+    inst.getTable("Vision").getSubTable("Camera").getEntry("Detected: ").setBoolean(tag.aprilTagdetected);
+    inst.getTable("Vision").getSubTable("Camera").getEntry("Dist: ").setDouble(tag.aprilTagdistance);
+    inst.getTable("Vision").getSubTable("Camera").getEntry("Degrees: ").setDouble(tag.aprilTagAngle);
   }
 
   public int getApriltagID() {
@@ -261,6 +293,14 @@ public class Camera extends SubsystemBase {
     }
   }
 
+  public double getAprilTagDist() {
+    double dist;
+
+    dist = Math.sqrt((Math.pow(getApriltagDistX(), 2) + Math.pow(getApriltagDistY(), 2)));
+
+    return dist; 
+  }
+
   public double getDegToApriltag() {
     // Usable range of values with best consistancy: -50 - 50 With respect to
     // camera. - TK
@@ -284,7 +324,7 @@ public class Camera extends SubsystemBase {
       //   requiredTurnDegrees = Math.toDegrees(Math.atan2(getApriltagDistY(), getApriltagDistX()));
       // }
 
-      requiredTurnDegrees = Math.toDegrees(Math.atan2(getApriltagDistY(), getApriltagDistX()));
+      requiredTurnDegrees = Math.toDegrees(Math.atan2(getApriltagDistX(), getApriltagDistY()));
       
       System.out.println(requiredTurnDegrees);
 
@@ -300,7 +340,6 @@ public class Camera extends SubsystemBase {
     if (connected && april.getLatestResult().hasTargets()) {
       for (PhotonTrackedTarget target : april.getLatestResult().getTargets()) {
         if (target.getFiducialId() == id) {
-          double targetYaw = getApriltagYaw(id);
           double requiredTurnDegrees;
 
           /*
@@ -313,11 +352,7 @@ public class Camera extends SubsystemBase {
            * by the arcTan or inverse tan of the X & Y coordinates. - TK
            */
 
-          if (Math.signum(targetYaw) == -1) {
-            requiredTurnDegrees = -Math.toDegrees(Math.atan2(getApriltagDistY(id), getApriltagDistX(id)));
-          } else {
-            requiredTurnDegrees = Math.toDegrees(Math.atan2(getApriltagDistY(id), getApriltagDistX(id)));
-          }
+          requiredTurnDegrees = Math.toDegrees(Math.atan2(getApriltagDistX(id), getApriltagDistY(id)));
 
           return requiredTurnDegrees;
         }
@@ -330,6 +365,20 @@ public class Camera extends SubsystemBase {
 
   public Pose2d getApriltagPose2d() {
     return new Pose2d(new Translation2d(getApriltagDistX(), getApriltagDistY()), new Rotation2d(getDegToApriltag()));
+  }
+
+  public aprilTagLocation getAprilTagLocation(int id) {
+    if (april.getLatestResult().hasTargets()) {
+      for (PhotonTrackedTarget target : april.getLatestResult().getTargets()) {
+        if (target.getFiducialId() == id) {
+          double dist = getApriltagDistY(id);
+          double deg = getDegToApriltag(id);
+
+          return new aprilTagLocation(true, dist, deg, id);
+        }
+      }
+    }
+    return new aprilTagLocation(false, 0, 0, -1);
   }
 
   public double getNoteDistance() {
@@ -363,47 +412,36 @@ public class Camera extends SubsystemBase {
     return rotate;
   }
   
-  public Pose2d getUpdatedPose() {
-    Command currentTurnCommand;
+  public SequentialCommandGroup moveToAprilTag() {
+    return new SequentialCommandGroup(
+      turnToFaceApriltag(speakerAprilTag), 
+      new InstantCommand(() -> {
+        currentSwervePose2d = swerveDrive.getPose();
+        currentX = currentSwervePose2d.getX();
+        currentY = currentSwervePose2d.getY();
+        newX = getApriltagDistX(speakerAprilTag);
+        newY = getApriltagDistY(speakerAprilTag);
 
-    currentTurnCommand = turnToFaceApriltag();
-    
-    currentTurnCommand.schedule();
-    
-    while(!currentTurnCommand.isFinished()) {
-      System.out.println("Waiting for turn Command to finish...");
-    }
-
-    currentSwervePose2d = swerveDrive.getPose();
-    double currentX = currentSwervePose2d.getX();
-    double currentY = currentSwervePose2d.getY();
-    double newX = getApriltagDistX();
-    double newY = getApriltagDistY();
-    // double degs = getDegToApriltag();
-
-    // Rotation2d yearns for Radians so conversion is neccesary.
-    Pose2d newPose = new Pose2d((currentX - newX), (currentY - newY), new Rotation2d(0));
-
-    System.out.println("Pose:\nX: " + newPose.getX() + "\nY: " + newPose.getY());
-
-    return newPose;
+        new Pathfinding(new Pose2d((currentX - newX), (currentY - newY), new Rotation2d(0)), Camera.getInstance(), swerveDrive).schedule();
+      }),
+      turnToFaceApriltag(speakerAprilTag)
+    );
   }
 
-  public Pose2d getUpdatedPose(int id) {
-    currentSwervePose2d = swerveDrive.getPose();
-    double currentX = currentSwervePose2d.getX();
-    double currentY = currentSwervePose2d.getY();
-    double newX = getApriltagDistX(id);
-    double newY = getApriltagDistY(id);
-    double degs = getDegToApriltag(id);
+  public SequentialCommandGroup moveToAprilTag(int id) {
+    return new SequentialCommandGroup(
+      turnToFaceApriltag(id), 
+      new InstantCommand(() -> {
+        currentSwervePose2d = swerveDrive.getPose();
+        currentX = currentSwervePose2d.getX();
+        currentY = currentSwervePose2d.getY();
+        newX = getApriltagDistX(id);
+        newY = getApriltagDistY(id);
 
-    // Rotation2d yearns for Radians so conversion is neccesary.
-    Pose2d newPose = new Pose2d((currentX - newX), (currentY - newY), new Rotation2d((degs * (Math.PI / 180))));
-
-    System.out.println(
-        "Pose:\nX: " + newPose.getX() + "\nY: " + newPose.getY() + "\nDeg: " + newPose.getRotation().getDegrees());
-
-    return newPose;
+        new Pathfinding(new Pose2d((currentX - newX), (currentY - newY), new Rotation2d(0)), Camera.getInstance(), swerveDrive).schedule();
+      }),
+      turnToFaceApriltag(id)
+    );
   }
 
   /*
