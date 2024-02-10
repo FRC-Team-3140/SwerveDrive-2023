@@ -506,7 +506,7 @@ public class NoteLocation {
 
 
   /**
-   * This method returns the pose of the "best" detected AprilTag, according to the specified pose estimation method.
+   * This method returns the robot pose based on the "best" detected AprilTag, according to the specified pose estimation method.
    * 
    * TODO: This is my attempt at writing the method you need.  Probably not correct but maybe it will help.  Getting the coordinate transforms between field centric and robot centric coordinates will be very hard.  Work on the easier things first. - DB
    * 
@@ -526,7 +526,7 @@ public class NoteLocation {
    * @param method The pose estimation method to use.
    * @return A Pose2d object representing the pose of the "best" detected AprilTag, or a default Pose2d object if no targets are detected.
    */
-  public Pose2d getBestAprilTagPose(PoseEstimationMethod method) {
+  public Pose2d getBestAprilTagRobotPose(PoseEstimationMethod method) {
     PhotonTrackedTarget bestTarget = null;
 
     if (april.getLatestResult().hasTargets()) {
