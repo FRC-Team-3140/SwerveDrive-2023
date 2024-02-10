@@ -10,6 +10,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
@@ -21,12 +22,43 @@ import frc.robot.commands.Pathfinding;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.SwerveDrive;
 
+/* TODO: These are suggestions from copilot on refactoring and simplifying this class. - DB
+* 
+* This class is indeed quite large and complex. Here are some suggestions to simplify it:
+* 
+* 1. **Separate concerns**: This class seems to be doing a lot of things - managing connections, handling camera instances, and dealing with AprilTag locations. Consider breaking it down into smaller classes, each with a single responsibility.
+* 
+* 2. **Avoid using magic numbers**: There are several numbers in the code (like 999, 0.8, 2, etc.) that could be replaced with named constants to make the code more readable and maintainable.
+*
+* 3. **Use a connection manager**: The connection handling logic could be moved to a separate class or method to simplify the main class.
+*
+* 4. **Use a factory pattern for camera instances**: Instead of having `aprilGetInstance` and `notesGetInstance` methods, consider using a factory method that takes the camera name as a parameter.
+* 
+* 5. **Avoid using threads directly**: The use of a Thread for reconnection attempts could be replaced with a higher-level concurrency construct, like a ScheduledExecutorService, to make the code safer and easier to manage.
+* 
+* 6. **Refactor repeated code**: There are several places where the same or similar code is repeated (like the code for getting AprilTag data). This could be refactored into helper methods to reduce duplication.
+* 
+* 7. **Use data classes for AprilTag data**: Instead of having separate methods for each piece of AprilTag data, consider creating a data class (or struct, depending on your language) to hold all the data for an AprilTag. This would simplify the interface of the class and make the code easier to understand.
+*
+* 8. **Use logging instead of System.out.println**: Replace all the `System.out.println` and `System.err.println` calls with proper logging. This will give you more control over the output and make it easier to manage.
+*
+* 9. **Handle exceptions properly**: There are places where exceptions are caught and printed, but not actually handled. Make sure to handle exceptions in a way that makes sense for your application.
+* 
+*10. **Use meaningful variable names**: Some variable names are not very descriptive (like `inst` and `april`). Using more descriptive names can make the code easier to understand.
+*/
+
+/**
+ * This class is used to manage the Photonvision cameras and their connections.
+ * It also provides methods to get the location of the speaker's apriltag, 
+ * detect notes for the intake camera, and find the robots pose for path finding.
+ */
 public class Camera extends SubsystemBase {
 
   private static Camera instance = null;
 
   private NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
+  // TODO: Refactor to apriltag_camera and note_camera - DB
   private PhotonCamera april = null;
   private PhotonCamera notes = null;
 
@@ -61,9 +93,16 @@ public class Camera extends SubsystemBase {
 
   private double percentTravelDist = 0.8; // Must be < 1
 
-  private int speakerAprilTag = 2;
+  // variables used to set the camera system up based on the robots team assignment
+  enum Team {UNKNOWN, RED, BLUE};
+
+  private Team currentTeam = Team.UNKNOWN;
+  private int speakerAprilTag = -1;
+  private int ampAprilTag = -1;
+  private int pickupAprilTag = -1;
 
   public class aprilTagLocation {
+    // TODO: variable names can be improved.  Lock at "NoteLocation" - DB
     public final boolean aprilTagdetected;
     public final double aprilTagdistance;
     public final double aprilTagAngle;
@@ -76,6 +115,18 @@ public class Camera extends SubsystemBase {
       aprilTagID = id;
     }
   }
+
+public class NoteLocation {
+  public final boolean isDetected;
+  public final double distance;
+  public final double angle;
+
+  public NoteLocation(boolean isDetected, double dist, double angle, int id) {
+    this.isDetected = isDetected;
+    this.distance = dist;
+    this.angle = angle;
+  }
+}
 
   private Camera(SwerveDrive swerve, int PhotonvisionConnectionAttempts, double delayBetweenAttempts) {
     attemptDelay = delayBetweenAttempts;
@@ -110,6 +161,27 @@ public class Camera extends SubsystemBase {
     return instance;
   }
 
+
+  /**
+   * Sets up the team assignment for the camera.
+   * 
+   * @param team The team to assign (RED or BLUE).
+   */
+  public void setupTeamAssignment(Team team) {
+    currentTeam = team;
+    // TODO: Check these values. They may be incorrect. - DB
+    if (currentTeam == Team.RED) {
+      speakerAprilTag = 4;
+      ampAprilTag = 5;
+      pickupAprilTag = 10;
+    } else if (currentTeam == Team.BLUE) {
+      speakerAprilTag = 7;
+      ampAprilTag = 6;
+      pickupAprilTag = 1;
+    }
+  }
+
+  // TODO: This looks like a singleton pattern, but it's not. This is private inside a class. Just create the apriltag camera in the constructor.  Delete this method - DB
   private PhotonCamera aprilGetInstance() {
     if (april == null) {
       april = new PhotonCamera(inst, "april");
@@ -117,6 +189,7 @@ public class Camera extends SubsystemBase {
     return april;
   }
 
+  // TODO: This looks like a singleton pattern, but it's not. This is private inside a class. Just create the note camera in the constructor. Delete this method - DB
   private PhotonCamera notesGetInstance() {
     if (notes == null) {
       notes = new PhotonCamera(inst, "notes");
@@ -196,6 +269,57 @@ public class Camera extends SubsystemBase {
     inst.getTable("Vision").getSubTable("Camera").getEntry("Detected: ").setBoolean(tag.aprilTagdetected);
     inst.getTable("Vision").getSubTable("Camera").getEntry("Dist: ").setDouble(tag.aprilTagdistance);
     inst.getTable("Vision").getSubTable("Camera").getEntry("Degrees: ").setDouble(tag.aprilTagAngle);
+  }
+
+
+  // TODO: These four methods are really what is needed to automate most of what we need. - DB
+  /**
+   * This method returns the location of the speaker's apriltag. Make sure the result is detected before using the data.
+   * relative to the robot's current position.
+   * 
+   *  TODO: Double check that this method is working as expected. - DB
+   * 
+   * @return The location of the speaker's apriltag relative to the robot.
+   */
+  public aprilTagLocation getSpeakerLocation() {
+    return getAprilTagLocation(speakerAprilTag);
+  }
+
+  /**
+   * This method returns the location of a note in the environment.
+   *
+   * The location is represented as a NoteLocation object, which contains information about whether a note is detected,
+   * the distance to the note, and the angle to the note from the current position.
+   *
+   * TODO: Currently, this method returns a default NoteLocation object with all values set to 0 and detection set to false.
+   * This should be updated to return actual note location data when available.
+   *
+   * @return A NoteLocation object representing the location of a note.
+   */
+  public NoteLocation getNoteLocation() {
+    return new NoteLocation(false, 0, 0, 0);
+  }
+
+  /**
+   * Retrieves the location of the AprilTag for the amp.  Make sure the result is detected before using the data.
+   * 
+   * TODO: Double check that this method is working as expected. - DB
+   * 
+   * @return The location of the AprilTag relative to the robot.
+   */
+  public aprilTagLocation getAmpLocation() {
+    return getAprilTagLocation(ampAprilTag);
+  }
+
+  /**
+   * Retrieves the location of the AprilTag for the pickup.  Make sure the result is detected before using the data.
+   *
+   * TODO: Double check that this method is working as expected. - DB
+   * 
+   * @return The location of the AprilTag relative to the robot.
+   */
+  public aprilTagLocation getPickupLocation() {
+    return getAprilTagLocation(pickupAprilTag);
   }
 
   public int getApriltagID() {
@@ -363,16 +487,115 @@ public class Camera extends SubsystemBase {
     }
   }
 
+  // TODO: It is unclear what this method is for?  Robot centric or estimate field location? - DB  
   public Pose2d getApriltagPose2d() {
     return new Pose2d(new Translation2d(getApriltagDistX(), getApriltagDistY()), new Rotation2d(getDegToApriltag()));
   }
 
+  // TODO: Estimate field location from apriltags? I think this is what you need for path planning and odometer updates. - DB
+
+  /**
+   * Enumeration representing different methods for pose estimation.
+   * The available methods are:
+   * - CENTERED_TAG: Estimates the pose based on the center of the detected object.
+   * - AVERAGE: Estimates the pose based on the average position of multiple detected objects.
+   * - CLOSEST_TAG: Estimates the pose based on the closest detected object.
+   * - HIGHEST_CONFIDENCE: Estimates the pose based on the object with the highest confidence level.
+   */
+  enum PoseEstimationMethod {CENTERED_TAG, CLOSEST_TAG, HIGHEST_CONFIDENCE, AVERAGE};
+
+
+  /**
+   * This method returns the pose of the "best" detected AprilTag, according to the specified pose estimation method.
+   * 
+   * TODO: This is my attempt at writing the method you need.  Probably not correct but maybe it will help.  Getting the coordinate transforms between field centric and robot centric coordinates will be very hard.  Work on the easier things first. - DB
+   * 
+   * Background Reading:
+   * - https://medium.com/@itberrios6/coordinate-transforms-for-sensor-fusion-40de05a6acf4
+   * - https://towardsdatascience.com/the-one-stop-guide-for-transformation-matrices-cea8f609bdb1
+   * - https://www.youtube.com/watch?v=JxwLyZ-I7vI
+   * 
+   * The pose estimation method can be one of the following:
+   * - CENTERED_TAG: The "best" tag is the one with the smallest absolute yaw (i.e., the one directly in front of the robot).
+   * - CLOSEST_TAG: The "best" tag is the one with the smallest distance to the robot.
+   * - HIGHEST_CONFIDENCE: The "best" tag is the one with the highest detection confidence (i.e., the largest area).
+   * - AVERAGE: The "best" pose is the average of the poses of all detected tags.
+   *
+   * If no targets are detected, this method returns a default Pose2d object.
+   *
+   * @param method The pose estimation method to use.
+   * @return A Pose2d object representing the pose of the "best" detected AprilTag, or a default Pose2d object if no targets are detected.
+   */
+  public Pose2d getBestAprilTagPose(PoseEstimationMethod method) {
+    PhotonTrackedTarget bestTarget = null;
+
+    if (april.getLatestResult().hasTargets()) {
+      for (PhotonTrackedTarget target : april.getLatestResult().getTargets()) {
+        if (bestTarget == null) {
+          bestTarget = target;
+        } else {
+          switch (method) {
+            case CENTERED_TAG:
+              // TODO: Check this.
+              // Assuming the centered tag is the one with the smallest absolute yaw
+              if (Math.abs(target.getYaw()) < Math.abs(bestTarget.getYaw())) {
+                bestTarget = target;
+              }
+              break;
+            case CLOSEST_TAG:
+              // TODO: Check this.
+              // Assuming the closest tag is the one with the smallest distance
+              if (target.getBestCameraToTarget().getY() < bestTarget.getBestCameraToTarget().getY()) {
+                bestTarget = target;
+              }
+              break;
+            case HIGHEST_CONFIDENCE:
+              // TODO: Check this.
+              // Assuming the highest confidence tag is the one with the smallest pose ambiguity
+              if (target.getPoseAmbiguity() < bestTarget.getPoseAmbiguity()) {
+                bestTarget = target;
+              }
+              break;
+            case AVERAGE:
+              // For average, you would need to average the poses of all targets
+              // TODO: This is a bit more complex and is left as an exercise
+              break;
+          }
+        }
+      }
+    }
+
+    if(bestTarget != null) {
+      // TODO: Check this math.  It could be completely wrong.  I think the transform is in the camera frame, so you may need to invert it to get the robot frame. - DB
+      // TODO: Do we need a table of apriltag field locations or is that provide by Photonvision? - DB
+
+      Transform3d transform = bestTarget.getBestCameraToTarget();
+      // bestTarget.getAlternateCameraToTarget(); // TODO: If ambigutity is high this may be a better choice.
+      // transform = transform.inverse(); // TODO: The inverse may translate between camera and april tag coordinates.
+      return new Pose2d(new Translation2d(transform.getX(), transform.getY()), transform.getRotation().toRotation2d());
+    }
+
+  return null;
+}
+  /**
+   * Retrieves the location of an AprilTag with the specified ID.
+   * 
+   * TODO: Keep this method.  The other methods can call this one for all robot centered actions. - DB
+   * TODO: If this works I think you can move just the code needed for this method here and delete the other apriltag methods. - DB
+   * 
+   * @param id The ID of the AprilTag to locate.
+   * @return The location of the AprilTag as an instance of the aprilTagLocation class.
+   */
   public aprilTagLocation getAprilTagLocation(int id) {
     if (april.getLatestResult().hasTargets()) {
       for (PhotonTrackedTarget target : april.getLatestResult().getTargets()) {
         if (target.getFiducialId() == id) {
-          double dist = getApriltagDistY(id);
-          double deg = getDegToApriltag(id);
+          double x = target.getBestCameraToTarget().getX();
+          double y = target.getBestCameraToTarget().getY();
+          double dist = Math.sqrt(x*x + y*y);
+
+          // TODO: double check this.  You might need to use the negitive of the x or y to get the correct angle. - DB
+          double deg = Math.toDegrees(Math.atan2(x,y));
 
           return new aprilTagLocation(true, dist, deg, id);
         }
@@ -381,6 +604,7 @@ public class Camera extends SubsystemBase {
     return new aprilTagLocation(false, 0, 0, -1);
   }
 
+  // TODO: move this code to the getNoteLocation method. Clean up the rest. - DB
   public double getNoteDistance() {
     // If this function returns a 0, that means there is not any detected targets
 
@@ -403,6 +627,7 @@ public class Camera extends SubsystemBase {
     return rotate;
   }
 
+  // TODO: I looked at how the swerve drive is currently being used.  There should be no problem if you write a simple command to do this.  That command should probably be outside of this class. - DB
   public Command turnToFaceApriltag(int id) {
     double currentX = swerveDrive.getPose().getX();
     double currentY = swerveDrive.getPose().getY();
