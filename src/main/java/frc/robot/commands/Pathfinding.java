@@ -8,7 +8,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -17,9 +16,9 @@ import frc.robot.subsystems.SwerveDrive;
 
 public class Pathfinding extends Command implements Constants {
   private Pose2d updatedPose;
-  private Command pathfindingCommand;
+  private Command pathToFollow;
   private SwerveDrive swerveDrive;
-  private boolean pathCompleted = false; 
+  private boolean pathCompleted = false;
 
   /**
    * Creates a new Pathfinding.
@@ -29,29 +28,28 @@ public class Pathfinding extends Command implements Constants {
   public Pathfinding(Pose2d updatedRobotPose, Camera camera, SwerveDrive swerve) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(camera, swerve);
-    
+
     updatedPose = updatedRobotPose;
     swerveDrive = swerve;
 
-    swerveDrive.allowPathMirroring = true;
+    // This will prevent Pathplanner from mirroring the generated camera path
+    // once the Pathfinding command hits it's end state it will be allowed to
+    // path mirror again. - TK
+    swerveDrive.allowPathMirroring = false;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     // The following line IS TO BE REMOVED after testing and command is functional.
-    // The sole perpose of this line is to tell the robot that it's inside of the
+    // The sole purpose of this line is to tell the robot that it's inside of the
     // boundaries so it doesn't
     // perform any random triangular paths in attempt to get within bouds on the
     // telemetry page of Pathplanner. - TK
-    swerveDrive.resetPose(new Pose2d(3.5, 6.5, new Rotation2d(0)));
     
-    // This will prevent Pathplanner from mirroring the generated camera path
-    // once the Pathfinding command hits it's end state it will be allowed to 
-    // path mirror again. - TK
-    swerveDrive.allowPathMirroring = false;
+    // swerveDrive.resetPose(new Pose2d(swerveDrive.getPose().getX(), swerveDrive.getPose().getY(), swerveDrive.getPose().getRotation()));
 
-    pathCompleted = false; 
+    pathCompleted = false;
 
     // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
@@ -59,7 +57,7 @@ public class Pathfinding extends Command implements Constants {
         Units.degreesToRadians(540), Units.degreesToRadians(720));
 
     // Since AutoBuilder is configured, we can use it to build pathfinding commands
-    pathfindingCommand = AutoBuilder.pathfindToPose(
+    pathToFollow = AutoBuilder.pathfindToPose(
         updatedPose,
         constraints,
         0.0, // Goal end velocity in meters/sec
@@ -67,40 +65,44 @@ public class Pathfinding extends Command implements Constants {
             // before attempting to rotate.
     );
 
-    if (!pathfindingCommand.isScheduled()) {
-      pathfindingCommand.schedule();
-      System.out.println("!!!!!!!!!!!!!!!!!!!!\nScheduled Pathfinding\n!!!!!!!!!!!!!!!!!!!!");
-    }
+    // if (!pathToFollow.isScheduled()) {
+    //   pathToFollow.schedule();
+    //   System.out.println("!!!!!!!!!!!!!!!!!!!!\nScheduled Pathfinding\n!!!!!!!!!!!!!!!!!!!!");
+    // }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     System.out.println("Following Path...");
-    if (pathfindingCommand.isFinished()){
+
+    if (pathToFollow.isFinished()) {
       pathCompleted = true;
     }
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
   }
-  
+
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     /*
-    * Make sure this command has an end state when the current swerve Pose is equal
-    * to the
-    * targetPose
-    */
-    if (swerveDrive.getPose().equals(updatedPose) /*|| pathCompleted*/) {
-      swerveDrive.allowPathMirroring = true; 
-      System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!FINISHED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+     * Make sure this command has an end state when the current swerve Pose is equal
+     * to the
+     * targetPose
+     */
+    if (/* swerveDrive.getPose().equals(updatedPose) */pathCompleted) {
+      swerveDrive.allowPathMirroring = true;
+      System.out.println(
+          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!FINISHED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       return true;
     } else {
-      System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!NOT FINISHED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      System.out.println(
+          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!NOT FINISHED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       return false;
     }
   }

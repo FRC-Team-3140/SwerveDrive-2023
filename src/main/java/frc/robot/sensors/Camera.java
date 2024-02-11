@@ -10,7 +10,6 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -39,8 +38,7 @@ public class Camera extends SubsystemBase {
   private double previousResult = -1;
 
   // This thread allows this connection check to run in the background and not
-  // block
-  // other Subsystems.
+  // block other Subsystems.
   private Thread attemptReconnection = new Thread(this::attemptToReconnect);
 
   // Must start not at 0 so check doesn't run early
@@ -110,6 +108,10 @@ public class Camera extends SubsystemBase {
     return instance;
   }
 
+  // Attempt reconnection method attempts to reinstantiate cameras on
+  // reconnection.
+  // The "singleton" is just here to return the already created instance if there
+  // is one - TK
   private PhotonCamera aprilGetInstance() {
     if (april == null) {
       april = new PhotonCamera(inst, "april");
@@ -117,6 +119,10 @@ public class Camera extends SubsystemBase {
     return april;
   }
 
+  // Attempt reconnection method attempts to reinstantiate cameras on
+  // reconnection.
+  // The "singleton" is just here to return the already created instance if there
+  // is one - TK
   private PhotonCamera notesGetInstance() {
     if (notes == null) {
       notes = new PhotonCamera(inst, "notes");
@@ -187,15 +193,20 @@ public class Camera extends SubsystemBase {
     // following print statement is Photonvision's order - TK
     // System.out.println("X: " + getApriltagDistY() + " Y: " + getApriltagDistX());
 
-    // inst.getTable("Vision").getSubTable("Camera").getEntry("X: ").setDouble(getApriltagDistX(speakerAprilTag));
-    // inst.getTable("Vision").getSubTable("Camera").getEntry("Y: ").setDouble(getApriltagDistY(speakerAprilTag));
-    // inst.getTable("Vision").getSubTable("Camera").getEntry("Degrees: ").setDouble(getDegToApriltag(speakerAprilTag));
+    // inst.getTable("Vision").getSubTable("Camera").getEntry("X:
+    // ").setDouble(getApriltagDistX(speakerAprilTag));
+    // inst.getTable("Vision").getSubTable("Camera").getEntry("Y:
+    // ").setDouble(getApriltagDistY(speakerAprilTag));
+    // inst.getTable("Vision").getSubTable("Camera").getEntry("Degrees:
+    // ").setDouble(getDegToApriltag(speakerAprilTag));
 
     aprilTagLocation tag = getAprilTagLocation(speakerAprilTag);
     inst.getTable("Vision").getSubTable("Camera").getEntry("ID: ").setInteger(tag.aprilTagID);
     inst.getTable("Vision").getSubTable("Camera").getEntry("Detected: ").setBoolean(tag.aprilTagdetected);
     inst.getTable("Vision").getSubTable("Camera").getEntry("Dist: ").setDouble(tag.aprilTagdistance);
     inst.getTable("Vision").getSubTable("Camera").getEntry("Degrees: ").setDouble(tag.aprilTagAngle);
+
+    System.out.println("X: " + swerveDrive.getPose().getX() + " Y: " + swerveDrive.getPose().getY() + " Deg: " + swerveDrive.getPose().getRotation().getDegrees());
   }
 
   public int getApriltagID() {
@@ -272,7 +283,7 @@ public class Camera extends SubsystemBase {
     // This coordinate is relative to the robot w/t the Photonvision axis 90* out of
     // phase.
     if (connected && april.getLatestResult().hasTargets()) {
-      return percentTravelDist * april.getLatestResult().getBestTarget().getBestCameraToTarget().getX();
+      return april.getLatestResult().getBestTarget().getBestCameraToTarget().getX();
     } else {
       return 0;
     }
@@ -284,7 +295,7 @@ public class Camera extends SubsystemBase {
     if (connected && april.getLatestResult().hasTargets()) {
       for (PhotonTrackedTarget target : april.getLatestResult().getTargets()) {
         if (target.getFiducialId() == id) {
-          return percentTravelDist * target.getBestCameraToTarget().getX();
+          return target.getBestCameraToTarget().getX();
         }
       }
       return 0;
@@ -298,7 +309,7 @@ public class Camera extends SubsystemBase {
 
     dist = Math.sqrt((Math.pow(getApriltagDistX(), 2) + Math.pow(getApriltagDistY(), 2)));
 
-    return dist; 
+    return dist;
   }
 
   public double getDegToApriltag() {
@@ -319,13 +330,17 @@ public class Camera extends SubsystemBase {
        */
 
       // if (Math.signum(targetYaw) == -1) {
-      //   requiredTurnDegrees = -Math.toDegrees(Math.atan2(getApriltagDistY(), getApriltagDistX()));
+      // requiredTurnDegrees = -Math.toDegrees(Math.atan2(getApriltagDistY(),
+      // getApriltagDistX()));
       // } else {
-      //   requiredTurnDegrees = Math.toDegrees(Math.atan2(getApriltagDistY(), getApriltagDistX()));
+      // requiredTurnDegrees = Math.toDegrees(Math.atan2(getApriltagDistY(),
+      // getApriltagDistX()));
       // }
 
+      // Need to use the getX method that we wrote for Y in atan because it returns
+      // the Photon Y. - TK
       requiredTurnDegrees = Math.toDegrees(Math.atan2(getApriltagDistX(), getApriltagDistY()));
-      
+
       System.out.println(requiredTurnDegrees);
 
       return requiredTurnDegrees;
@@ -352,6 +367,8 @@ public class Camera extends SubsystemBase {
            * by the arcTan or inverse tan of the X & Y coordinates. - TK
            */
 
+          // Need to use the getX method that we wrote for Y in atan because it returns
+          // the Photon Y. - TK
           requiredTurnDegrees = Math.toDegrees(Math.atan2(getApriltagDistX(id), getApriltagDistY(id)));
 
           return requiredTurnDegrees;
@@ -361,10 +378,6 @@ public class Camera extends SubsystemBase {
     } else {
       return 0;
     }
-  }
-
-  public Pose2d getApriltagPose2d() {
-    return new Pose2d(new Translation2d(getApriltagDistX(), getApriltagDistY()), new Rotation2d(getDegToApriltag()));
   }
 
   public aprilTagLocation getAprilTagLocation(int id) {
@@ -398,8 +411,9 @@ public class Camera extends SubsystemBase {
     double currentX = swerveDrive.getPose().getX();
     double currentY = swerveDrive.getPose().getY();
 
-    Pathfinding rotate = new Pathfinding(new Pose2d(currentX, currentY, new Rotation2d(getDegToApriltag())), Camera.getInstance(), swerveDrive);
-    
+    Pathfinding rotate = new Pathfinding(new Pose2d(currentX, currentY, new Rotation2d(getDegToApriltag())),
+        Camera.getInstance(), swerveDrive);
+
     return rotate;
   }
 
@@ -407,87 +421,48 @@ public class Camera extends SubsystemBase {
     double currentX = swerveDrive.getPose().getX();
     double currentY = swerveDrive.getPose().getY();
 
-    Pathfinding rotate = new Pathfinding(new Pose2d(currentX, currentY, new Rotation2d(getDegToApriltag(id))), Camera.getInstance(), swerveDrive);
-    
+    Pathfinding rotate = new Pathfinding(new Pose2d(currentX, currentY, new Rotation2d(getDegToApriltag(id))),
+        Camera.getInstance(), swerveDrive);
+
     return rotate;
   }
-  
-  public SequentialCommandGroup moveToAprilTag() {
-    return new SequentialCommandGroup(
-      turnToFaceApriltag(speakerAprilTag), 
-      new InstantCommand(() -> {
-        currentSwervePose2d = swerveDrive.getPose();
-        currentX = currentSwervePose2d.getX();
-        currentY = currentSwervePose2d.getY();
-        newX = getApriltagDistX(speakerAprilTag);
-        newY = getApriltagDistY(speakerAprilTag);
 
-        new Pathfinding(new Pose2d((currentX - newX), (currentY - newY), new Rotation2d(0)), Camera.getInstance(), swerveDrive).schedule();
-      }),
-      turnToFaceApriltag(speakerAprilTag)
+  public SequentialCommandGroup moveToAprilTag() {
+    // SequentialCommandGroup goToAprilTag = new SequentialCommandGroup(
+    //     turnToFaceApriltag(speakerAprilTag),
+    //     new InstantCommand(() -> {
+    //       currentSwervePose2d = swerveDrive.getPose();
+    //       currentX = currentSwervePose2d.getX();
+    //       currentY = currentSwervePose2d.getY();
+    //       newX = getApriltagDistX(speakerAprilTag);
+    //       newY = percentTravelDist * getApriltagDistY(speakerAprilTag);
+    //     }),
+    //     new Pathfinding(new Pose2d((currentX - newX), (currentY - newY), new Rotation2d(0)), Camera.getInstance(),
+    //         swerveDrive),
+    //     turnToFaceApriltag(speakerAprilTag));
+    
+    SequentialCommandGroup goToAprilTag = new SequentialCommandGroup(
+      new InstantCommand(() -> swerveDrive.resetPose(new Pose2d(3.5, 6.5, new Rotation2d(swerveDrive.getPose().getRotation().getDegrees())))),
+      new Pathfinding(new Pose2d((swerveDrive.getPose().getX() + 0.25), (swerveDrive.getPose().getY() + 0.25), new Rotation2d((swerveDrive.getPose().getRotation().getDegrees() + 45))), Camera.getInstance(), swerveDrive),
+      new InstantCommand(() -> System.out.println("DONE"))
     );
+
+    return goToAprilTag;
   }
 
   public SequentialCommandGroup moveToAprilTag(int id) {
     return new SequentialCommandGroup(
-      turnToFaceApriltag(id), 
-      new InstantCommand(() -> {
-        currentSwervePose2d = swerveDrive.getPose();
-        currentX = currentSwervePose2d.getX();
-        currentY = currentSwervePose2d.getY();
-        newX = getApriltagDistX(id);
-        newY = getApriltagDistY(id);
+        turnToFaceApriltag(id),
+        new InstantCommand(() -> {
+          currentSwervePose2d = swerveDrive.getPose();
+          currentX = currentSwervePose2d.getX();
+          currentY = currentSwervePose2d.getY();
+          newX = getApriltagDistX(id);
+          newY = getApriltagDistY(id);
 
-        new Pathfinding(new Pose2d((currentX - newX), (currentY - newY), new Rotation2d(0)), Camera.getInstance(), swerveDrive).schedule();
-      }),
-      turnToFaceApriltag(id)
-    );
+          new Pathfinding(new Pose2d((currentX - newX), (currentY - newY), new Rotation2d(0)), Camera.getInstance(),
+              swerveDrive).schedule();
+        }),
+        turnToFaceApriltag(id));
   }
-
-  /*
-   * // Probably won't need methods like this that move the Robot manually while
-   * using Pathplanner
-   * 
-   * public void turnToFaceApriltagID(int ID, boolean verbose) {
-   * // Probably should return # of degrees to face apriltag for Pose2d instead of
-   * Actually turning the robot
-   * // so Pathplanner can handle turning.
-   * 
-   * 
-   * if (verbose == true) {
-   * System.out.println("----------------\nID: " + getApriltagID() + "\nYaw:" +
-   * getApriltagYaw() + "\nPitch: "
-   * + getApriltagPitch() + "\n----------------");
-   * }
-   * 
-   * if (getApriltagYaw() > 0) {
-   * // turn left
-   * } else if (getApriltagYaw() < 0) {
-   * // turn right
-   * } else {
-   * // set speed 0
-   * }
-   * }
-   * 
-   * public void strafeToFaceApriltagID(int ID, boolean verbose) {
-   * if (verbose == true) {
-   * System.out.println("----------------\nID: " + getApriltagID() + "\nYaw:" +
-   * getApriltagYaw() + "\nPitch: "
-   * + getApriltagPitch() + "\n----------------");
-   * }
-   * 
-   * if (getApriltagYaw() > 0) {
-   * // slide left
-   * } else if (getApriltagID() < 0) {
-   * // slide right
-   * } else {
-   * // set speed 0
-   * }
-   * }
-   * 
-   * 
-   * public Transform2d moveToApriltag() {
-   * 
-   * }
-   */
 }

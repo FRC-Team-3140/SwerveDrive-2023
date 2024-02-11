@@ -21,7 +21,7 @@ public class Robot extends LoggedRobot implements Constants {
   @Override
   public void autonomousPeriodic() {
     // driveWithJoystick(false);
-    // swerve.updateOdometry();
+    swerve.updateOdometry();
   }
 
   @Override
