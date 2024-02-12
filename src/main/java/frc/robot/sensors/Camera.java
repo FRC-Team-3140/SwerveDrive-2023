@@ -206,7 +206,7 @@ public class Camera extends SubsystemBase {
     inst.getTable("Vision").getSubTable("Camera").getEntry("Dist: ").setDouble(tag.aprilTagdistance);
     inst.getTable("Vision").getSubTable("Camera").getEntry("Degrees: ").setDouble(tag.aprilTagAngle);
 
-    System.out.println("X: " + swerveDrive.getPose().getX() + " Y: " + swerveDrive.getPose().getY() + " Deg: " + swerveDrive.getPose().getRotation().getDegrees());
+    // System.out.println("X: " + swerveDrive.getPose().getX() + " Y: " + swerveDrive.getPose().getY() + " Deg: " + swerveDrive.getPose().getRotation().getDegrees());
   }
 
   public int getApriltagID() {
@@ -427,7 +427,7 @@ public class Camera extends SubsystemBase {
     return rotate;
   }
 
-  public SequentialCommandGroup moveToAprilTag() {
+  public SequentialCommandGroup pathfindToAprilTag() {
     // SequentialCommandGroup goToAprilTag = new SequentialCommandGroup(
     //     turnToFaceApriltag(speakerAprilTag),
     //     new InstantCommand(() -> {
@@ -442,15 +442,19 @@ public class Camera extends SubsystemBase {
     //     turnToFaceApriltag(speakerAprilTag));
     
     SequentialCommandGroup goToAprilTag = new SequentialCommandGroup(
-      new InstantCommand(() -> swerveDrive.resetPose(new Pose2d(3.5, 6.5, new Rotation2d(swerveDrive.getPose().getRotation().getDegrees())))),
-      new Pathfinding(new Pose2d((swerveDrive.getPose().getX() + 0.25), (swerveDrive.getPose().getY() + 0.25), new Rotation2d((swerveDrive.getPose().getRotation().getDegrees() + 45))), Camera.getInstance(), swerveDrive),
+      // new InstantCommand(() -> swerveDrive.resetPose(new Pose2d(4.5, 6.5, new Rotation2d(Math.toRadians(swerveDrive.getPose().getRotation().getDegrees()))))),
+      new InstantCommand(() -> System.out.println("X: " + swerveDrive.getPose().getX() + " Y: " + swerveDrive.getPose().getY())),
+      // new Pathfinding(new Pose2d((swerveDrive.getPose().getX()/* + 0.25*/), (swerveDrive.getPose().getY()/* + 0.25*/), new Rotation2d(Math.toRadians(swerveDrive.getPose().getRotation().getDegrees() + 45))), Camera.getInstance(), swerveDrive),
+      new InstantCommand(() -> System.out.println("DistX to Target: "+getApriltagDistX(2))),
+      // new InstantCommand(() -> RobotContainer.m_robotDrive.drive(0, Math.signum(getApriltagDistX(2)), getDegToApriltag(2), false)),
+      new InstantCommand(() -> RobotContainer.m_robotDrive.drive(0,1.0*Math.signum(getApriltagDistX(2)), 0, false)),
       new InstantCommand(() -> System.out.println("DONE"))
     );
 
     return goToAprilTag;
   }
 
-  public SequentialCommandGroup moveToAprilTag(int id) {
+  public SequentialCommandGroup pathfindToAprilTag(int id) {
     return new SequentialCommandGroup(
         turnToFaceApriltag(id),
         new InstantCommand(() -> {

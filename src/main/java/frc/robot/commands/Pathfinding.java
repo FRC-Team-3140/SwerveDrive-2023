@@ -65,23 +65,23 @@ public class Pathfinding extends Command implements Constants {
             // before attempting to rotate.
     );
 
-    // if (!pathToFollow.isScheduled()) {
-    //   pathToFollow.schedule();
-    //   System.out.println("!!!!!!!!!!!!!!!!!!!!\nScheduled Pathfinding\n!!!!!!!!!!!!!!!!!!!!");
-    // }
   }
-
+  
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     System.out.println("Following Path...");
-
+    
     if (pathToFollow.isFinished()) {
       pathCompleted = true;
     }
-
+    
+    if (!pathToFollow.isScheduled()) {
+      pathToFollow.schedule();
+      System.out.println("!!!!!!!!!!!!!!!!!!!!\nScheduled Pathfinding\n!!!!!!!!!!!!!!!!!!!!");
+    }
   }
-
+  
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {

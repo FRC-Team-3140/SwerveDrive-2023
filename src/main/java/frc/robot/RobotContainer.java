@@ -43,14 +43,15 @@ public class RobotContainer {
     SmartDashboard.putData("Auto", autoChooser);
     SmartDashboard.putData(m_field);
 
-    m_robotDrive.setDefaultCommand(
-        // The left stick controls translation of the robot.
-        // Turning is controlled by the X axis of the right stick.
-        m_robotDrive.run(() -> m_robotDrive.drive(
-            controller.getLeftY(),
-            controller.getLeftX(),
-            controller.getRightX(),
-            false)));
+    // m_robotDrive.setDefaultCommand(
+    //     // The left stick controls translation of the robot.
+    //     // Turning is controlled by the X axis of the right stick.
+    //     m_robotDrive.run(() -> m_robotDrive.drive(
+    //         controller.getLeftY(),
+    //         controller.getLeftX(),
+    //         controller.getRightX(),
+    //         false)));
+    
     // Configure the button bindings
     configureButtonBindings();
 
@@ -77,7 +78,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // return autoChooser.getSelected();
-    return camera.moveToAprilTag();
+    return camera.pathfindToAprilTag();
     // return new Pathfinding(new Pose2d(4.5, 6.5, new Rotation2d(0)), camera, m_robotDrive);
   }
 

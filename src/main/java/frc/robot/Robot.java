@@ -6,9 +6,13 @@ package frc.robot;
 
 import org.littletonrobotics.junction.LoggedRobot;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.SwerveDrive;
 
 public class Robot extends LoggedRobot implements Constants {
@@ -21,12 +25,12 @@ public class Robot extends LoggedRobot implements Constants {
   @Override
   public void autonomousPeriodic() {
     // driveWithJoystick(false);
-    swerve.updateOdometry();
+    // swerve.updateOdometry();
   }
 
   @Override
   public void teleopPeriodic() {
-    // driveWithJoystick(true);
+    driveWithJoystick(false);
     // System.out.println(RobotContainer.gyro.getAngle());
   }
 
@@ -81,15 +85,17 @@ public class Robot extends LoggedRobot implements Constants {
    */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-    RobotContainer.m_robotDrive.homeWheels();
-
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
-
+    new SequentialCommandGroup(
+      new InstantCommand(() -> {RobotContainer.m_robotDrive.homeWheels();}),
+      new WaitCommand(5),
+      new InstantCommand(() -> {
+        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+        // schedule the autonomous command (example)
+        if (m_autonomousCommand != null) {
+          m_autonomousCommand.schedule();
+        }
+      })
+    ).schedule();
   }
 
   /** This function is called periodically during autonomous. */
@@ -105,7 +111,7 @@ public class Robot extends LoggedRobot implements Constants {
       m_autonomousCommand.cancel();
     }
 
-    // RobotContainer.m_robotDrive.homeWheels();
+    RobotContainer.m_robotDrive.homeWheels();
   }
 
   @Override
@@ -129,22 +135,22 @@ public class Robot extends LoggedRobot implements Constants {
   public void simulationPeriodic() {
   }
 
-  // private void driveWithJoystick(boolean fieldRelative) {
-  // // Get the x speed. We are inverting this because Xbox controllers return
-  // // negative values when we push forward.
-  // final var xSpeed = -m_controller.getLeftY() * maxSpeed;
+  private void driveWithJoystick(boolean fieldRelative) {
+    // Get the x speed. We are inverting this because Xbox controllers return
+    // negative values when we push forward.
+    final var xSpeed = -m_controller.getLeftY() * maxSpeed;
 
-  // // Get the y speed or sideways/strafe speed. We are inverting this because
-  // // we want a positive value when we pull to the left. Xbox controllers
-  // // return positive values when you pull to the right by default.
-  // final var ySpeed = m_controller.getLeftX() * maxSpeed;
+    // Get the y speed or sideways/strafe speed. We are inverting this because
+    // we want a positive value when we pull to the left. Xbox controllers
+    // return positive values when you pull to the right by default.
+    final var ySpeed = m_controller.getLeftX() * maxSpeed;
 
-  // // Get the rate of angular rotation. We are inverting this because we want a
-  // // positive value when we pull to the left (remember, CCW is positive in
-  // // mathematics). Xbox controllers return positive values when you pull to
-  // // the right by default.
-  // final var rot = -m_controller.getRightX() * maxChassisTurnSpeed;
+    // Get the rate of angular rotation. We are inverting this because we want a
+    // positive value when we pull to the left (remember, CCW is positive in
+    // mathematics). Xbox controllers return positive values when you pull to
+    // the right by default.
+    final var rot = -m_controller.getRightX() * maxChassisTurnSpeed;
 
-  // swerve.drive(xSpeed, ySpeed, rot, fieldRelative);
-  // }
+    swerve.drive(xSpeed, ySpeed, rot, fieldRelative);
+  }
 }

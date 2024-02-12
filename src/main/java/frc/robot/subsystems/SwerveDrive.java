@@ -80,8 +80,8 @@ public class SwerveDrive extends SubsystemBase implements Constants {
         this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-            new PIDConstants(1.0, 0.0, 0.0), // Translation PID constants
-            new PIDConstants(1.0, 0.0, 0.0), // Rotation PID constants
+            new PIDConstants(0.0, 0.0, 0.0), // Translation PID constants
+            new PIDConstants(0.0, 0.0, 0.0), // Rotation PID constants
             maxSpeed, // Max module speed, in m/s
             botRadius, // Drive base radius in meters. Distance from robot center to furthest module.
             new ReplanningConfig() // Default path replanning config. See the API for the options here
@@ -164,7 +164,7 @@ public class SwerveDrive extends SubsystemBase implements Constants {
   /** Updates the field relative position of the robot. */
   public void updateOdometry() {
     poseEstimator.update(
-        Rotation2d.fromDegrees(gyro.getAngle() + 270),
+        Rotation2d.fromDegrees(gyro.getAngle() /*+ 270*/),
         new SwerveModulePosition[] {
             modules[0].getSwerveModulePosition(),
             modules[1].getSwerveModulePosition(),
