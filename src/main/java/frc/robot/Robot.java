@@ -30,7 +30,7 @@ public class Robot extends LoggedRobot implements Constants {
 
   @Override
   public void teleopPeriodic() {
-    driveWithJoystick(false);
+    driveWithJoystick(true);
     // System.out.println(RobotContainer.gyro.getAngle());
   }
 

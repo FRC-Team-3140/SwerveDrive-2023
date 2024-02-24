@@ -11,54 +11,71 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.libs.AbsoluteEncoder;
 
-public class SwerveModule extends SubsystemBase implements Constants {
+/**
+ * Represents a swerve module, which is a combination of a drive motor and a turn motor.
+ * This class provides methods to control the angle and speed of the module.
+ */
+public class SwerveModule extends SubsystemBase { // TODO: This probably does not need to be a subsystem
 
-    // Zero : 0.697578
-    // One : 0.701239
-    // Two: 0.467096
-    // Three : 0.207867
-    public String moduleID;
-    public int analogID;
-    public int pwmID;
-    public int driveMotorID;
-    public int turnMotorID;
-    public double baseAngle;
-    public CANSparkMax turnMotor;
-    public CANSparkMax driveMotor;
-    public PIDController turnPID;
-    public PIDController drivePID;
-    public AbsoluteEncoder turnEncoder;
-    public RelativeEncoder driveEncoder;
+    private static final double kTurnD = .02;
+    private static final double kDriveP = 0.09;
+    private static double kTurnP = .008;
 
-    public double botMass = 24.4;
+    private static double kDriveSetpointTolerance = .5;
+    private static double kTurnSetpointTolerance = .2;
+    private static double kTurnVelocityTolerance = .1;
 
-    public double P = .008;
+    private static final double kDriveFeedforwardKs = 0.084706;
+    private static final double kDriveFeedforwardKv = 2.4433;
+    private static final double kDriveFeedforwardKa = 0.10133;
 
-    public double driveSetpointTolerance = .5;
-    public double turnSetpointTolerance = .2;
-    public double turnVelocityTolerance = .1;
+    private String moduleID;
+    private CANSparkMax turnMotor;
+    private CANSparkMax driveMotor;
+    private PIDController turnPID;
+    private PIDController drivePID;
+    private AbsoluteEncoder turnEncoder;
+    private RelativeEncoder driveEncoder;
 
-    private SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.084706, 2.4433, 0.10133);
+    private final NetworkTable moduleTable; // NetworkTable for the module
 
-    // private TrapezoidProfile.Constraints constraints = new
-    // TrapezoidProfile.Constraints(maxDriveSpeed, maxAcceleration);
-    // private State initialState = new TrapezoidProfile.State(0, 0);
-    // private TrapezoidProfile trapezoidProfile;
+    /**
+     * Represents a feedforward controller for a simple motor.
+     * 
+     * The SimpleMotorFeedforward class calculates the feedforward term for a motor controller
+     * based on the motor's static gain (kS), velocity gain (kV), and acceleration gain (kA).
+     * It is commonly used to compensate for the dynamics of a motor and achieve better control
+     * performance.
+     */
+    private final SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(kDriveFeedforwardKs, kDriveFeedforwardKv, kDriveFeedforwardKa);
 
     // Conversion Factor for the motor encoder output to wheel output
     // (Circumference / Gear Ratio) * Inches to meters conversion
 
+    boolean encoderSets = false;
+
+    SwerveModuleState thisState;
+
+    /**
+     * Represents a swerve module on a robot's drivetrain.
+     * Each swerve module consists of a drive motor, a turn motor, and associated sensors and controllers.
+     *
+     * @param moduleID    The unique identifier for the swerve module.
+     * @param analogID    The analog input ID for the turn encoder.
+     * @param driveMotorID    The CAN ID for the drive motor.
+     * @param turnMotorID    The CAN ID for the turn motor.
+     * @param baseAngle    The base angle offset for the turn encoder.
+     */
     public SwerveModule(String moduleID, int analogID, int driveMotorID, int turnMotorID, double baseAngle) {
         this.moduleID = moduleID;
-        this.baseAngle = baseAngle;
-        this.turnMotorID = turnMotorID;
-        this.driveMotorID = driveMotorID;
-        this.analogID = analogID;
+
+        moduleTable = NetworkTableInstance.getDefault().getTable(moduleID);
 
         driveMotor = new CANSparkMax(driveMotorID, MotorType.kBrushless);
         driveMotor.setIdleMode(IdleMode.kBrake);
@@ -76,82 +93,146 @@ public class SwerveModule extends SubsystemBase implements Constants {
         turnEncoder.setPositionOffset(baseAngle);
         driveEncoder = driveMotor.getEncoder();
 
-        turnPID = new PIDController(P, 0, 0);
+        turnPID = new PIDController(kTurnP, 0, 0);
         // we don't use I or D
         turnPID.enableContinuousInput(0, 360);
-        turnPID.setTolerance(turnSetpointTolerance, turnVelocityTolerance);
+        turnPID.setTolerance(kTurnSetpointTolerance, kTurnVelocityTolerance);
+
         // determined from a SYSID scan
-        drivePID = new PIDController(0.09, 0, .02);
-        drivePID.setTolerance(driveSetpointTolerance);
+        drivePID = new PIDController(kDriveP, 0, kTurnD);
+        drivePID.setTolerance(kDriveSetpointTolerance);
 
     }
 
-    boolean encoderSets = false;
-
-    // runs while the bot is running
+    /**
+        * This method is called periodically to update the state of the SwerveModule.
+        * If the encoder sets have not been initialized, it sets the velocity and position conversion factors for the drive encoder.
+        */
     @Override
     public void periodic() {
+
+        moduleTable.getEntry("Speed Setpoint").setDouble(drivePID.getSetpoint());
+        moduleTable.getEntry("Speed Actual").setDouble(driveEncoder.getVelocity());
+        moduleTable.getEntry("Speed Error").setDouble(drivePID.getSetpoint() - driveEncoder.getVelocity());
+
+        moduleTable.getEntry("Angle Setpoint").setDouble(turnPID.getSetpoint());
+        moduleTable.getEntry("Angle Actual").setDouble(turnEncoder.getPos());
+        moduleTable.getEntry("Angle Error").setDouble(getAngleError());
+
         if (!encoderSets) {
-            driveEncoder.setVelocityConversionFactor(encoderRotationToMeters);
-            driveEncoder.setPositionConversionFactor(42 * encoderRotationToMeters);
-
+            driveEncoder.setVelocityConversionFactor(Constants.encoderRotationToMeters);
+            driveEncoder.setPositionConversionFactor(42 * Constants.encoderRotationToMeters);
         }
-
     }
 
-    SwerveModuleState thisState;
-
+    /**
+     * Sets the states of the Swerve module.
+     * 
+     * @param state The desired state of the Swerve module.
+     * @param locked A boolean indicating whether the module is locked or not.
+     */
     public void setStates(SwerveModuleState state, boolean locked) {
         thisState = SwerveModuleState.optimize(state, Rotation2d.fromDegrees(turnEncoder.getPos()));
-        // thisState.speedMetersPerSecond *=
-        // thisState.angle.minus(Rotation2d.fromDegrees(turnEncoder.getPos())).getCos();
         setAngle(thisState.angle.getDegrees());
         setDriveSpeed(thisState.speedMetersPerSecond);
-        NetworkTableInstance.getDefault().getTable("Speed").getEntry(moduleID).setDouble(state.speedMetersPerSecond);
     }
 
+
+    /**
+     * Sets the desired angle for the swerve module.
+     * 
+     * @param angle the desired angle in degrees
+     */
     public void setAngle(double angle) {
         turnPID.setSetpoint(angle);
         turnMotor.set(-turnPID.calculate(turnEncoder.getPos()));
     }
 
+    /**
+     * Sets the drive speed of the swerve module.
+     * 
+     * @param velocity the desired velocity of the drive motor
+     */
     public void setDriveSpeed(double velocity) {
-        drivePID.setSetpoint(velocity);
-        driveMotor.setVoltage(driveFeedforward.calculate(velocity));
-        NetworkTableInstance.getDefault().getTable(moduleID).getEntry("Set Speed").setDouble(velocity);
-        NetworkTableInstance.getDefault().getTable(moduleID).getEntry("Actual Speed")
-                .setDouble(driveEncoder.getVelocity());
-        // drivePID.calculate(driveEncoder.getVelocity())); ///drivePID added too much
-        // instability
+        // TODO: drivePID added too much instability
+        drivePID.setSetpoint(velocity); // TODO remove?
+
+        double voltagePercent = driveFeedforward.calculate(velocity);
+
+        // Power should be adjusted based on the current angle error in the turn motor
+        double turnError = getAngleError();
+
+        // If the turn error is greater than 90 degrees, the drive motor should be 0
+        if (Math.abs(turnError) > 90) {
+            voltagePercent = 0;
+        }
+        
+        voltagePercent = Math.cos( Math.toRadians(turnError) ) * voltagePercent;
+
+        driveMotor.setVoltage(voltagePercent);
+
+        // drivePID.calculate(driveEncoder.getVelocity())); 
     }
 
+    /**
+     * Calculates the error between the target angle and the current angle.
+     * The error is normalized to be within the range of -180 to 180 degrees.
+     *
+     * @return the angle error in degrees
+     */
+    private double getAngleError() {
+        double error = turnPID.getPositionError();
+        while (error > 180) error -= 360;
+        while (error <= -180) error += 360;
+        return error;
+    }
+
+    /**
+     * Sets the turn speed of the swerve module.
+     * 
+     * @param speed the desired turn speed, ranging from -1.0 to 1.0
+     */
     public void setTurnSpeed(double speed) {
-        speed = Math.max(Math.min(speed, maxTurnSpeed), -maxTurnSpeed);
+        speed = Math.max(Math.min(speed, Constants.maxTurnSpeed), -Constants.maxTurnSpeed);
         turnMotor.set(speed);
     }
 
+    /**
+     * Retrieves the position of the swerve module.
+     *
+     * @return The swerve module position.
+     */
     public SwerveModulePosition getSwerveModulePosition() {
-        double angle = turnEncoder.getPos();
-        double distance = driveEncoder.getPosition();
-        return new SwerveModulePosition(distance, new Rotation2d((angle/* + 270*/) * Math.PI / 180));
-        // ^ 3*3.14/2+3.14 * angle/ 180)); Erm... Idk what's going on here || This math
-        // is the equivalent of adding 270 degs in Radians
+        double angle = turnEncoder.getPos(); // Get the angle from the turn encoder.
+        double distance = driveEncoder.getPosition(); // Get the distance from the drive encoder.
+        double angleRadians = angle * Math.PI / 180; // Convert the angle to radians.
+        return new SwerveModulePosition(distance, new Rotation2d(angleRadians));
     }
 
-    public RelativeEncoder getDriveEncoder() {
+    /**
+     * Returns the drive encoder for the swerve module.
+     *
+     * @return the drive encoder
+     */
+    private RelativeEncoder getDriveEncoder() { // TODO: Remove?
         return this.driveEncoder;
     }
 
-    public CANcoder getTurnEncoder() {
+    /**
+     * Returns the CANcoder used for measuring the turn angle of the swerve module.
+     *
+     * @return the CANcoder used for measuring the turn angle
+     */
+    private CANcoder getTurnEncoder() { // TODO: Remove?
         return this.turnEncoder;
     }
 
-    public String getModuleID() {
-        return this.moduleID;
-    }
-
-    public SwerveModuleState getState() {
-        return thisState;// new SwerveModuleState(driveEncoder.getVelocity(), new
-                         // Rotation2d(turnEncoder.getPosRadians()));
+    /**
+     * Returns the current state of the Swerve module.
+     *
+     * @return the current state of the Swerve module
+     */
+    public SwerveModuleState getState() { 
+        return thisState;
     }
 }
