@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 // import frc.robot.commands.ChoreoAuto;
 import frc.robot.libs.XboxCotroller;
-import frc.robot.sensors.Camera;
+//import frc.robot.sensors.Camera;
 import frc.robot.subsystems.SwerveDrive;
 
 /*
@@ -31,7 +31,7 @@ public class RobotContainer {
   SendableChooser<Command> autoChooser = new SendableChooser<>();
   Field2d m_field = new Field2d();
 
-  private Camera camera = Camera.getInstance();
+  //private Camera camera = Camera.getInstance();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -77,9 +77,10 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return autoChooser.getSelected();
-    return camera.pathfindToAprilTag();
+    return autoChooser.getSelected();
+    //return camera.pathfindToAprilTag();
     // return new Pathfinding(new Pose2d(4.5, 6.5, new Rotation2d(0)), camera, m_robotDrive);
+  
   }
 
   public void periodic() {
