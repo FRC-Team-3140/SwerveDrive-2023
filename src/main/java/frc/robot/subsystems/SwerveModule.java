@@ -161,11 +161,6 @@ public class SwerveModule extends SubsystemBase { // TODO: This probably does no
 
         // Power should be adjusted based on the current angle error in the turn motor
         double turnError = getAngleError();
-
-        // If the turn error is greater than 90 degrees, the drive motor should be 0
-        if (Math.abs(turnError) > 90) {
-            voltagePercent = 0;
-        }
         
         voltagePercent = Math.cos( Math.toRadians(turnError) ) * voltagePercent;
 
